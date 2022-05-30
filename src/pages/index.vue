@@ -1,52 +1,38 @@
 <script setup lang="ts">
-const name = $ref('')
+import { storeToRefs } from 'pinia'
+import { useMainStore } from '~/stores/mainStore'
+const { client, data, loading, error } = storeToRefs(useMainStore())
+const { query } = useMainStore()
 
-const router = useRouter()
-const go = () => {
-  console.log('button clicked')
-  router.replace('/test')
+const result = reactive({ data: undefined })
+onMounted(async () => {
+  result.data = await query()
+})
+
+const getMock = async () => {
+  result.data = await query()
 }
 </script>
 
 <template>
-  <div>
-    <div i-carbon-campsite text-4xl inline-block />
-    <p>
-      <a rel="noreferrer" href="https://github.com/antfu/vitesse-lite" target="_blank">
-        Vitesse Lite
-      </a>
-    </p>
-    <p>
-      <em text-sm op75>Opinionated Vite Starter Template</em>
-    </p>
+  <h1>Home</h1>
+  {{ `result ${result.data}` }}
+  <Button @click="getMock">
+    Query
+  </Button>
+  <div class="">
+    {{ `loading ${loading}` }}
+  </div>
+  <div class="">
+    {{ `error ${error}` }}
+  </div>
+  <h2>Employees</h2>
+  <div class="">
+    {{ data.employees }}
+  </div>
 
-    <Counter />
-
-    <div py-4 />
-    {{ `typed ${name}` }}
-
-    <input
-      id="input"
-      v-model="name"
-      placeholder="What's your name?"
-      type="text"
-      autocomplete="false"
-      p="x-4 y-2"
-      w="250px"
-      text="center"
-      bg="transparent"
-      border="~ rounded gray-200 dark:gray-700"
-      outline="none active:none"
-      @keydown.enter="go"
-    >
-
-    <div>
-      <button
-        class="m-3 text-sm btn"
-        @click="go"
-      >
-        Go
-      </button>
-    </div>
+  <h3>Versions</h3>
+  <div class="">
+    {{ client.versions }}
   </div>
 </template>

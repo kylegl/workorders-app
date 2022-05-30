@@ -10,7 +10,11 @@ import {
 
 export default defineConfig({
   shortcuts: [
-    ['btn', 'px-4 py-1 rounded inline-block bg-teal-600 text-white cursor-pointer hover:bg-teal-700 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50'],
+    ['in_out', 'transition duration-300 ease-in-out'],
+    ['text-h3', 'text-3xl font-semibold tracking-wider'],
+    ['text-h4', 'text-2xl font-semibold tracking-wider'],
+    ['text-h5', 'text-lg font-semibold tracking-wider'],
+    ['btn-primary', 'px-4 py-1 rounded bg-bg-b cursor-pointer hover:bg-bg-c disabled:cursor-default disabled:bg-bg-d disabled:opacity-50'],
     ['icon-btn', 'text-[0.9em] inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-teal-600'],
   ],
   presets: [
@@ -21,13 +25,29 @@ export default defineConfig({
       warn: true,
     }),
     presetWebFonts({
+      provider: 'google',
       fonts: {
-        sans: 'DM Sans',
-        serif: 'DM Serif Display',
-        mono: 'DM Mono',
+        sans: 'Titillium Web',
+        mono: 'Fira Code',
       },
     }),
   ],
+  theme: {
+    colors: {
+      bgA: '#242424',
+      bgB: '#373737',
+      bgC: '#505050',
+      bgD: '#A1A1AA',
+      bgF: '#1D1D1D',
+      fgNorm: '#F9F9F9',
+      fgMuted: '#D4D4D4',
+      fgSubtle: '#A4A4A4',
+    },
+    fontFamily: {
+      sans: 'Titillium Web',
+      mono: 'Fira Code',
+    },
+  },
   // transformers: [
   //   transformerDirectives(),
   //   transformerVariantGroup(),
