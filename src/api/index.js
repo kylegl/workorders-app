@@ -6,7 +6,7 @@ const Query = async () => {
   if (isGoogle)
     return await gasQuery()
 
-  const response = await fetch('http://localhost:3000/mock-api')
+  const response = await fetch('http://localhost:3333/mock-api')
   if (response.ok) {
     const result = await response.json()
 
