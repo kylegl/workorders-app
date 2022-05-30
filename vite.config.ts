@@ -33,10 +33,14 @@ export default defineConfig({
         'vue/macros',
         'vue-router',
         '@vueuse/core',
+        {
+          pinia: ['storeToRefs'],
+        },
       ],
       dts: true,
       dirs: [
         './src/composables',
+        './src/stores',
       ],
       vueTemplate: true,
     }),
