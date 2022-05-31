@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
     <div class="flex items-start w-full gap-x-8 text-lg bg-bg-a p-4">
       <router-link to="/workorders" class="text-fg-norm no-underline flex gap-x-2">
