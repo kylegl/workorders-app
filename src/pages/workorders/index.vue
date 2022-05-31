@@ -66,7 +66,7 @@ const search = () => {
       <div v-for="workorder in workorders" :key="workorder.id">
         <div class="flex gap-x-2 w-full bg-bg-a border border-bg-d rounded p-[.5rem] ">
           <div class="">
-            {{ workorder.start_date }}
+            {{ parseTimestampToDate(workorder.start_date) }}
           </div>
           <div class="">
             {{ workorder.id }}

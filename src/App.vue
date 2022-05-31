@@ -14,9 +14,7 @@
       md="static"
     />
     <router-view
-      w-full
-      max-w-7xl
-      mx-auto
+      class="w-full max-w-7xl mx-auto"
       md="p-8"
     />
   </main>
