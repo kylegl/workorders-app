@@ -14,7 +14,7 @@ export const useWorkorderStore = defineStore('workorderList', {
     async fetchWorkorders() {
       try {
         this.loading = true
-        this.mainStore.query()
+        await this.mainStore.query()
         this.workorders = this.mainStore.data?.workorders ?? []
         this.loading = false
       }

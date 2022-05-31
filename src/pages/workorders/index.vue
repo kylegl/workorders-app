@@ -1,17 +1,15 @@
 <script setup>
-import { useWorkorderStore } from './stores/workorderStore.js'
-import { useClientStore } from './stores/clientStore.js'
-import { useEmployeeStore } from './stores/employeeStore.js'
-
 const { workorders, loading, error } = storeToRefs(useWorkorderStore())
 const { fetchWorkorders, getById } = useWorkorderStore()
 const { clients } = storeToRefs(useClientStore())
 const { employees } = storeToRefs(useEmployeeStore())
 const { getClientById, fetchClients } = useClientStore()
-const { getEmployeeById } = useEmployeeStore()
+const { getEmployeeById, fetchEmployees } = useEmployeeStore()
 
 fetchClients()
 fetchWorkorders()
+fetchEmployees()
+
 const filters = ['Job', 'Status', 'Team']
 const searchValue = ref('')
 
@@ -77,13 +75,13 @@ const search = () => {
             {{ workorder.status }}
           </div>
           <div class="">
-            {{ getClientById(workorder.client_id)?.name }}
+            cli{{ getClientById(workorder.client_id)?.name }}
           </div>
           <div class="">
             {{ workorder.description }}
           </div>
           <div class="">
-            {{ getEmployeeById(workorder.employee_id)?.name }}
+            emp{{ getEmployeeById(workorder.employee_id)?.name }}
           </div>
         </div>
       </div>

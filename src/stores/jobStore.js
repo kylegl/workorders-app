@@ -14,7 +14,7 @@ export const useJobStore = defineStore('jobList', {
     async fetchJobs() {
       try {
         this.loading = true
-        this.mainStore.query()
+        await this.mainStore.query()
         this.jobs = this.mainStore.data?.jobs ?? []
         this.loading = false
       }

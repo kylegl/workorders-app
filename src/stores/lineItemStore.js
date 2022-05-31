@@ -14,7 +14,7 @@ export const useLineItemStore = defineStore('lineItemList', {
     async fetchLineItems() {
       try {
         this.loading = true
-        this.mainStore.query()
+        await this.mainStore.query()
         this.line_items = this.mainStore.data?.line_items ?? []
         this.loading = false
       }

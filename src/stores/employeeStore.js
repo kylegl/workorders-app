@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { useUid } from '../composables/uuid'
 import { useMainStore } from './mainStore'
 
 export const useEmployeeStore = defineStore('employeeList', {
@@ -10,12 +9,13 @@ export const useEmployeeStore = defineStore('employeeList', {
   }),
   getters: {
     mainStore: () => useMainStore(),
+    getEmployeeById: state => id => state.employees.find(entry => entry.id === id),
   },
   actions: {
     async fetchEmployees() {
       try {
         this.loading = true
-        this.mainStore.query()
+        await this.mainStore.query()
         this.employees = this.mainStore.data.employees ?? []
         this.loading = false
       }

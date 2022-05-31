@@ -14,7 +14,7 @@ export const useBidStore = defineStore('bidList', {
     async fetchBids() {
       try {
         this.loading = true
-        this.mainStore.query()
+        await this.mainStore.query()
         this.bids = this.mainStore.data?.bids ?? []
         this.loading = false
       }

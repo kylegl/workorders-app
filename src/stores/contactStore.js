@@ -15,7 +15,7 @@ export const useContactStore = defineStore('contactList', {
     async fetchContacts() {
       try {
         this.loading = true
-        this.mainStore.query()
+        await this.mainStore.query()
         this.contacts = this.mainStore.data.contacts ?? []
         this.loading = false
       }
