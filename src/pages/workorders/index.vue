@@ -17,6 +17,60 @@ const search = () => {
   console.log(searchValue.value)
   console.log(getClientById(33))
 }
+
+const workorderTableHeaders = [
+  {
+    key: 'start_date',
+    title: 'Start Date',
+    type: 'date',
+    callback: '',
+    width: '',
+    align: 'start',
+  },
+  {
+    key: 'id',
+    title: 'ID',
+    type: '',
+    callback: '20px',
+    width: '',
+    align: 'start',
+  },
+  {
+    key: 'status',
+    title: 'Status',
+    type: '',
+    callback: '',
+    width: '',
+    align: 'start',
+  },
+  {
+    key: 'client_id',
+    title: 'Client',
+    type: 'id',
+    callback: getClientById,
+    width: '1fr',
+    align: 'start',
+  },
+  {
+    key: 'description',
+    title: 'Description',
+    type: '',
+    callback: '',
+    width: '',
+    align: 'start',
+  },
+  {
+    key: 'employee_id',
+    title: 'Assigned To',
+    type: 'id',
+    callback: getEmployeeById,
+    width: '',
+    align: 'start',
+  },
+
+]
+
+// , 'ID', 'Status', 'Client', 'Description', 'Assigned']
 </script>
 
 <template>
@@ -63,28 +117,13 @@ const search = () => {
       <div v-if="error" class="">
         {{ error }}
       </div>
-      <div v-for="workorder in workorders" :key="workorder.id">
-        <div class="flex gap-x-2 w-full bg-bg-a border border-bg-d rounded p-[.5rem] ">
-          <div class="">
-            {{ parseTimestampToDate(workorder.start_date) }}
-          </div>
-          <div class="">
-            {{ workorder.id }}
-          </div>
-          <div class="">
-            {{ workorder.status }}
-          </div>
-          <div class="">
-            cli{{ getClientById(workorder.client_id)?.name }}
-          </div>
-          <div class="">
-            {{ workorder.description }}
-          </div>
-          <div class="">
-            emp{{ getEmployeeById(workorder.employee_id)?.name }}
-          </div>
-        </div>
-      </div>
+
+      <Table
+        :headers="workorderTableHeaders"
+        :data="workorders"
+        col-width="workorderTable"
+        class="grid-cols-6"
+      />
     </section>
   </div>
 </template>
