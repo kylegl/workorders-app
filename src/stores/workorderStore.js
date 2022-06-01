@@ -133,27 +133,27 @@ export const useWorkorderStore = defineStore('workorderList', {
     displayKeys: state => keys => keys.map((key) => { return { key, title: state.schema[key].title } }),
   },
   actions: {
-    // parseWorkorder(id) {
-    //   const workorder = this.getById(id)
-    //   if (!workorder) return
+    getWorkorder(id) {
+      const workorder = this.getById(id)
+      if (!workorder) return
 
-    //   const res = Object.entries(workorder).reduce((result, item) => {
-    //     let [key, value] = item
-    //     let updatedValue
+      const res = Object.entries(workorder).reduce((result, item) => {
+        let [key, value] = item
+        let updatedValue
 
-    //     if (!this.schema[key].type) updatedValue = value
-    //     if (this.schema[key].type === 'date') updatedValue = parseTimestampToDate(value)
-    //     if (this.schema[key].type === 'id') {
-    //       updatedValue = this.schema[key].store().getById(value)?.[this.schema[key].entryKey]
-    //       key = this.schema[key].key
-    //     }
+        if (!this.schema[key].type) updatedValue = value
+        if (this.schema[key].type === 'date') updatedValue = parseTimestampToDate(value)
+        if (this.schema[key].type === 'id') {
+          updatedValue = this.schema[key].store().getById(value)?.[this.schema[key].entryKey]
+          key = this.schema[key].key
+        }
 
-    //     result[key] = updatedValue
-    //     return result
-    //   }, {})
-
-    //   return res
-    // },
+        result[key] = updatedValue
+        return result
+      }, {})
+      console.log(res)
+      return res
+    },
     // getDisplayValues: () => {
     //   return this.state.workorders
     // },

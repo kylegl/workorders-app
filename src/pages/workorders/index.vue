@@ -1,19 +1,13 @@
 <script setup>
 const { workorders, loading, error } = storeToRefs(useWorkorderStore())
 const { fetchWorkorders, displayValues, displayKeys } = useWorkorderStore()
-const { clients } = storeToRefs(useClientStore())
-const { employees } = storeToRefs(useEmployeeStore())
-const { fetchClients } = useClientStore()
-const { getEmployeeById, fetchEmployees } = useEmployeeStore()
-const { jobs } = storeToRefs(useJobStore())
-const { getById } = useJobStore()
 
 const filters = ['Job', 'Status', 'Team']
 const searchValue = ref('')
 
 const search = () => {
+  // eslint-disable-next-line no-console
   console.log(searchValue.value)
-  console.log(getClientById(33))
 }
 
 const workorderTableHeaders = [
@@ -35,10 +29,6 @@ const tableValues = ({ headers, values }) => {
 const getTableValues = computed(() => {
   return tableValues({ headers: workorderTableHeaders, values: displayValues })
 })
-
-const go = () => {
-
-}
 </script>
 
 <template>
@@ -63,7 +53,7 @@ const go = () => {
           </template>
         </Input>
 
-        <Button class="text-h4 button-primary" @click="go">
+        <Button class="text-h4 button-primary" @click="undefined">
           <Icon class="i-fa-solid:plus text-2xl" />
           Work Order
         </Button>
