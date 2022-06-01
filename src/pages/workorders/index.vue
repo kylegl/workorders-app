@@ -1,14 +1,12 @@
 <script setup>
 const { workorders, loading, error } = storeToRefs(useWorkorderStore())
-const { fetchWorkorders, getById } = useWorkorderStore()
+const { fetchWorkorders, displayValues, displayKeys } = useWorkorderStore()
 const { clients } = storeToRefs(useClientStore())
 const { employees } = storeToRefs(useEmployeeStore())
-const { getClientById, fetchClients } = useClientStore()
+const { fetchClients } = useClientStore()
 const { getEmployeeById, fetchEmployees } = useEmployeeStore()
-
-fetchClients()
-fetchWorkorders()
-fetchEmployees()
+const { jobs } = storeToRefs(useJobStore())
+const { getById } = useJobStore()
 
 const filters = ['Job', 'Status', 'Team']
 const searchValue = ref('')
@@ -19,58 +17,28 @@ const search = () => {
 }
 
 const workorderTableHeaders = [
-  {
-    key: 'start_date',
-    title: 'Start Date',
-    type: 'date',
-    callback: '',
-    width: '',
-    align: 'start',
-  },
-  {
-    key: 'id',
-    title: 'ID',
-    type: '',
-    callback: '20px',
-    width: '',
-    align: 'start',
-  },
-  {
-    key: 'status',
-    title: 'Status',
-    type: '',
-    callback: '',
-    width: '',
-    align: 'start',
-  },
-  {
-    key: 'client_id',
-    title: 'Client',
-    type: 'id',
-    callback: getClientById,
-    width: '1fr',
-    align: 'start',
-  },
-  {
-    key: 'description',
-    title: 'Description',
-    type: '',
-    callback: '',
-    width: '',
-    align: 'start',
-  },
-  {
-    key: 'employee_id',
-    title: 'Assigned To',
-    type: 'id',
-    callback: getEmployeeById,
-    width: '',
-    align: 'start',
-  },
-
+  { key: 'start_date', title: 'Start Date' },
+  { key: 'id', title: 'ID' },
+  { key: 'status', title: 'Status' },
+  { key: 'client', title: 'Client' },
+  { key: 'description', title: 'Description' },
+  { key: 'employee', title: 'Assigned' },
 ]
 
-// , 'ID', 'Status', 'Client', 'Description', 'Assigned']
+const tableValues = ({ headers, values }) => {
+  return values.map(entry => Object.fromEntries(headers.reduce((row, header) => {
+    row = [...row, [header.key, entry[header.key]]]
+    return row
+  }, [])))
+}
+
+const getTableValues = computed(() => {
+  return tableValues({ headers: workorderTableHeaders, values: displayValues })
+})
+
+const go = () => {
+
+}
 </script>
 
 <template>
@@ -95,7 +63,7 @@ const workorderTableHeaders = [
           </template>
         </Input>
 
-        <Button class="text-h4 button-primary">
+        <Button class="text-h4 button-primary" @click="go">
           <Icon class="i-fa-solid:plus text-2xl" />
           Work Order
         </Button>
@@ -118,12 +86,14 @@ const workorderTableHeaders = [
         {{ error }}
       </div>
 
-      <Table
-        :headers="workorderTableHeaders"
-        :data="workorders"
-        col-width="workorderTable"
-        class="grid-cols-6"
-      />
+      <template v-if="workorders">
+        <Table
+          :headers="workorderTableHeaders"
+          :data="getTableValues"
+          col-width="workorderTable"
+          class="grid-cols-6"
+        />
+      </template>
     </section>
   </div>
 </template>

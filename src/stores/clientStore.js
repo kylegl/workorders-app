@@ -10,6 +10,8 @@ export const useClientStore = defineStore('clientList', {
   getters: {
     mainStore: () => useMainStore(),
     getClientById: state => id => state.clients.find(entry => entry.id === id),
+    getById: state => id => state.clients.find(entry => entry.id === id),
+
   },
   actions: {
     async fetchClients() {

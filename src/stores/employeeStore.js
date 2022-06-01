@@ -1,30 +1,19 @@
 import { defineStore } from 'pinia'
-import { useMainStore } from './mainStore'
+import { useUid } from '~/composables'
+import { useMainStore } from '~/stores/mainStore'
 
-export const useEmployeeStore = defineStore('employeeList', {
+export const useEmployeeStore = defineStore('employees', {
   state: () => ({
     employees: [],
-    loading: true,
+    loading: false,
     error: undefined,
   }),
   getters: {
-    mainStore: () => useMainStore(),
-    getEmployeeById: state => id => state.employees.find(entry => entry.id === id),
+    getById: state => id => state.employees.find(entry => entry.id === id),
   },
   actions: {
-    async fetchEmployees() {
-      try {
-        this.loading = true
-        await this.mainStore.query()
-        this.employees = this.mainStore.data.employees ?? []
-        this.loading = false
-      }
-      catch (err) {
-        this.error = 'I\'m had trouble finding the employees'
-        this.loading = false
-      }
-    },
     async addEmployee({ employee }) {
+      const mainStore = useMainStore()
       employee.id = useUid()
       this.employees.push(employee)
 
@@ -33,9 +22,10 @@ export const useEmployeeStore = defineStore('employeeList', {
         action: 'add',
         params: { tableName: 'employees', data: [employee] },
       }
-      const req = await this.mainStore.mutation({ items: [item] })
+      const req = await mainStore.mutation({ items: [item] })
     },
     async deleteEmployee({ employee }) {
+      const mainStore = useMainStore()
       this.employees = this.employees.filter(currentEmployee => employee.id !== currentEmployee.id)
 
       const item = {
@@ -44,7 +34,7 @@ export const useEmployeeStore = defineStore('employeeList', {
         params: { tableName: 'employees', data: [employee] },
       }
 
-      const req = await this.mainStore.mutation({ items: [item] })
+      const req = await mainStore.mutation({ items: [item] })
     },
   },
 })

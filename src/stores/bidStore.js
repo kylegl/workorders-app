@@ -9,6 +9,7 @@ export const useBidStore = defineStore('bidList', {
   }),
   getters: {
     mainStore: () => useMainStore(),
+    getById: state => id => state.bids.find(entry => entry.id === id),
   },
   actions: {
     async fetchBids() {
