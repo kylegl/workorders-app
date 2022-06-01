@@ -8,6 +8,7 @@ export const useLineItemStore = defineStore('lineItemList', {
   }),
   getters: {
     getById: state => id => state.lineItems.find(entry => entry.id === id),
+    getLineItemsByWorkorderId: state => id => state.lineItems.filter(lineItem => lineItem.workorder_id === id),
   },
   actions: {
   },

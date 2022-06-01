@@ -1,6 +1,6 @@
 <script setup>
 const { workorders, loading, error } = storeToRefs(useWorkorderStore())
-const { fetchWorkorders, displayValues, displayKeys } = useWorkorderStore()
+const { displayValues, displayKeys } = useWorkorderStore()
 
 const filters = ['Job', 'Status', 'Team']
 const searchValue = ref('')
@@ -25,7 +25,6 @@ const tableValues = ({ headers, values }) => {
     return row
   }, [])))
 }
-
 const getTableValues = computed(() => {
   return tableValues({ headers: workorderTableHeaders, values: displayValues })
 })
