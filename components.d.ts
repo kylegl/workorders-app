@@ -9,7 +9,6 @@ declare module '@vue/runtime-core' {
     Card: typeof import('./src/components/Card.vue')['default']
     Icon: typeof import('./src/components/Icon.vue')['default']
     Input: typeof import('./src/components/Input.vue')['default']
-    LineItemTable: typeof import('./src/components/LineItemTable.vue')['default']
     Nav: typeof import('./src/components/Nav.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
