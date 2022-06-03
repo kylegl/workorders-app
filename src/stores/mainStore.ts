@@ -36,7 +36,17 @@ export const useMainStore = defineStore('main', {
     error: undefined,
   }),
   getters: {
-    getByType: state => ({ type }: GetParams) => state.data[type],
+    getByType(state) {
+      return ({ type, getParsed = false }: GetParams) => {
+        const data = state.data[type]
+        return getParsed
+          ? {
+              data,
+              displayValues: data.map(row => this.formatRowData({ row })),
+            }
+          : data
+      }
+    },
     getStoreDataKeys: state => Object.keys(state.data),
     getById(state) {
       return ({ id, type, getParsed = false }: GetParams) => {

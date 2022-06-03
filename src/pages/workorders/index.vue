@@ -1,6 +1,6 @@
-<script setup>
-const { workorders, loading, error } = storeToRefs(useWorkorderStore())
-const { displayValues, displayKeys } = useWorkorderStore()
+<script setup lang="ts">
+const { data, loading, error } = storeToRefs(useMainStore())
+const { getByType } = useMainStore()
 
 const filters = ['Job', 'Status', 'Team']
 const searchValue = ref('')
@@ -14,19 +14,49 @@ const workorderTableHeaders = [
   { key: 'start_date', title: 'Start Date' },
   { key: 'id', title: 'ID' },
   { key: 'status', title: 'Status' },
-  { key: 'client', title: 'Client' },
+  { key: 'client_id', displayProp: 'name', title: 'Client' },
   { key: 'description', title: 'Description' },
-  { key: 'employee', title: 'Assigned' },
+  { key: 'employee_id', displayProp: 'name', title: 'Assigned' },
 ]
 
-const tableValues = ({ headers, values }) => {
-  return values.map(entry => Object.fromEntries(headers.reduce((row, header) => {
-    row = [...row, [header.key, entry[header.key]]]
+interface HeaderParam {
+  key: string
+  keyProp?: string | undefined
+  title: string
+}
+
+interface TableParams {
+  headers: HeaderParam[]
+  values: string[]
+}
+
+const parseTHisFUCK = () => {
+  const values = getByType({ type: 'workorders', getParsed: true })
+  console.log(values)
+  const result = values.data.map((row, index) => {
+    const displayValues = values.displayValues[index]
+
+    Object.keys(displayValues).forEach(key => row[key] = displayValues[key])
     return row
-  }, [])))
+  })
+  console.log(result)
+  return result
+}
+
+// TODO PARSE DATA FROM MAINSTORE INTO TABLE
+const tableValues = ({ headers, values }: TableParams) => {
+  const res = values.data.map((row, index) => {
+    return headers.reduce((result, header) => {
+      if (header?.displayProp) result[header.key] = values.displayValues[index][header.displayProp]
+      else result[header.key] = row[header.key]
+      return result
+    }, {})
+  })
+  console.log(res)
+  return res
 }
 const getTableValues = computed(() => {
-  return tableValues({ headers: workorderTableHeaders, values: displayValues })
+  return tableValues({ headers: workorderTableHeaders, values: getByType({ type: 'workorders', getParsed: true }) })
 })
 </script>
 
@@ -46,7 +76,7 @@ const getTableValues = computed(() => {
           @enter="search"
         >
           <template #after>
-            <button class="flex" @click="search">
+            <button class="flex" @click="parseTHisFUCK">
               <Icon class="i-fluent-search-12-regular text-2xl in_out" hover="bg-fg-subtle" />
             </button>
           </template>
@@ -75,7 +105,7 @@ const getTableValues = computed(() => {
         {{ error }}
       </div>
 
-      <template v-if="workorders">
+      <template v-if="false">
         <Table
           :headers="workorderTableHeaders"
           :data="getTableValues"
