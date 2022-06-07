@@ -1,27 +1,15 @@
 import { defineStore } from 'pinia'
-import { useMainStore } from './mainStore'
 
 export const useLineItemStore = defineStore('lineItemList', {
   state: () => ({
-    line_items: [],
-    loading: true,
+    lineItems: [],
+    loading: false,
     error: undefined,
   }),
   getters: {
-    mainStore: () => useMainStore(),
+    getById: state => id => state.lineItems.find(entry => entry.id === id),
+    getLineItemsByWorkorderId: state => id => state.lineItems.filter(lineItem => lineItem.workorder_id === id),
   },
   actions: {
-    async fetchLineItems() {
-      try {
-        this.loading = true
-        this.mainStore.query()
-        this.line_items = this.mainStore.data?.line_items ?? []
-        this.loading = false
-      }
-      catch (err) {
-        this.error = 'I\'m had trouble finding the lineItems'
-        this.loading = false
-      }
-    },
   },
 })

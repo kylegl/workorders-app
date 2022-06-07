@@ -4,7 +4,7 @@ import clients from './data/clients.json'
 import contacts from './data/contacts.json'
 import employees from './data/employees.json'
 import jobs from './data/jobs.json'
-import line_items from './data/line_items.json'
+import lineItems from './data/line_items.json'
 import workorders from './data/workorders.json'
 
 export const handlers = [
@@ -17,7 +17,7 @@ export const handlers = [
         contacts,
         employees,
         jobs,
-        line_items,
+        lineItems,
         workorders,
       }),
     )
