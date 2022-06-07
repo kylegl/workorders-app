@@ -9,7 +9,7 @@ export const parseTimestampToDate = (timestamp: string) => {
   return `${instant.month}/${instant.day}/${instant.year}`
 }
 
-export const parseTimestamptoInputFormat = (timestamp: string) => {
+export const parseTimestampToInputFormat = (timestamp: string) => {
   const instant = Temporal.Instant
     .fromEpochMilliseconds(parseInt(timestamp))
     .toZonedDateTimeISO('America/Los_Angeles')

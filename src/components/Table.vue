@@ -3,13 +3,12 @@ interface Header {
   key: string
   title: string
 }
-
 interface Props {
   headers: Header[]
-  data: []
+  values: []
 }
 
-const { headers, data } = defineProps<Props>()
+const { headers, values } = defineProps<Props>()
 </script>
 
 <template>
@@ -21,20 +20,20 @@ const { headers, data } = defineProps<Props>()
     </div>
 
     <div
-      v-for="entry in data"
-      :key="entry.id"
+      v-for="row in values"
+      :key="row.id"
     >
       <router-link
-        :to="{ name: 'workorders-id', params: { id: entry.id } }"
+        :to="{ name: 'workorders-id', params: { id: row.id } }"
         class="grid gap-x-4 gap-y-4 border rounded bg-bg-c items-center px-4"
       >
         <div
           v-for="header in headers"
-          :key="header.key + entry.id"
+          :key="header.title + row.id"
           class="gap-y-4"
         >
           {{
-            entry[header.key]
+            row[header.key]
           }}
         </div>
       </router-link>

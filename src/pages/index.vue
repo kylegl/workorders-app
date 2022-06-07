@@ -2,38 +2,40 @@
 const { client, data, loading, error } = storeToRefs(useMainStore())
 const { query, getById } = useMainStore()
 
-const result = reactive({ data: undefined })
+const result = $ref()
 
 onMounted(() => {
-  result.data = query()
+  query()
 })
 
 const getMock = () => {
-  result.data = query()
+  query()
 }
 
-const test = reactive({})
-const test2 = ref({})
+let test = $ref()
+let test2 = $ref()
 
 const go = () => {
-  test.value = getById({ id: 1, type: 'jobs', getParsed: true })
-  test2.value = data.value.clients.find(clients => clients.id === test.value.data.client_id)
+  test = getById({ id: 3, type: 'workorders', getParsed: true })
+  // console.log('id', test.client_id)
+  test2 = getById({ id: test.client_id.id, type: 'clients' })
 }
 
 const changeData = () => {
-
-  test.value.displayValues.client_id.name = "FUCK YOU"
+  test.client_id.name = 'FUCK YOU'
 }
 </script>
 
 <template>
   <div>
     <h1>Home</h1>
-    {{ 'getter response' }}
-    {{ test }}
+    <div class="border p-4 rounded bg-b-f">
+      {{ test }}
+    </div>
     <div class="border p-4 rounded bg-b-f">
       store value
       {{ test2 }}
+      <!-- {{ data?.employees }} -->
     </div>
     <Button @click="getMock">
       Query

@@ -5,14 +5,15 @@ const { getByType } = useMainStore()
 const filters = ['Job', 'Status', 'Team']
 const searchValue = ref('')
 
+// TODO add suspense logic to await resutls. https://www.trpkovski.com/2021/09/25/suspense-feature-in-vue-3-with-sfc-script-setup/
 const search = () => {
   // eslint-disable-next-line no-console
   console.log(searchValue.value)
 }
 
-const workorderTableHeaders = [
+const workorderTableHeaders: HeaderParam[] = [
   { key: 'start_date', title: 'Start Date' },
-  { key: 'id', title: 'ID' },
+  { key: 'id', title: 'Id' },
   { key: 'status', title: 'Status' },
   { key: 'client_id', displayProp: 'name', title: 'Client' },
   { key: 'description', title: 'Description' },
@@ -21,42 +22,25 @@ const workorderTableHeaders = [
 
 interface HeaderParam {
   key: string
-  keyProp?: string | undefined
+  displayProp?: string | undefined
   title: string
 }
 
-interface TableParams {
-  headers: HeaderParam[]
-  values: string[]
-}
+const tableHeaders = reactive([])
+const tableValues = reactive([])
 
-const parseTHisFUCK = () => {
-  const values = getByType({ type: 'workorders', getParsed: true })
-  console.log(values)
-  const result = values.data.map((row, index) => {
-    const displayValues = values.displayValues[index]
-
-    Object.keys(displayValues).forEach(key => row[key] = displayValues[key])
-    return row
-  })
-  console.log(result)
-  return result
-}
-
-// TODO PARSE DATA FROM MAINSTORE INTO TABLE
-const tableValues = ({ headers, values }: TableParams) => {
-  const res = values.data.map((row, index) => {
-    return headers.reduce((result, header) => {
-      if (header?.displayProp) result[header.key] = values.displayValues[index][header.displayProp]
-      else result[header.key] = row[header.key]
-      return result
+onBeforeMount(() => {
+  const data = getByType({ type: 'workorders', getParsed: true })
+  const values = data.map((row) => {
+    return workorderTableHeaders.reduce((newRow, header) => {
+      if (header?.displayProp) newRow[header.key] = row[header.key]?.[header.displayProp]
+      else newRow[header.key] = row[header.key]
+      return newRow
     }, {})
   })
-  console.log(res)
-  return res
-}
-const getTableValues = computed(() => {
-  return tableValues({ headers: workorderTableHeaders, values: getByType({ type: 'workorders', getParsed: true }) })
+
+  workorderTableHeaders.forEach(header => tableHeaders.push(header))
+  values.forEach(row => tableValues.push(row))
 })
 </script>
 
@@ -76,7 +60,7 @@ const getTableValues = computed(() => {
           @enter="search"
         >
           <template #after>
-            <button class="flex" @click="parseTHisFUCK">
+            <button class="flex" @click="true">
               <Icon class="i-fluent-search-12-regular text-2xl in_out" hover="bg-fg-subtle" />
             </button>
           </template>
@@ -104,11 +88,10 @@ const getTableValues = computed(() => {
       <div v-if="error" class="">
         {{ error }}
       </div>
-
-      <template v-if="false">
+      <template v-if="tableValues.length">
         <Table
-          :headers="workorderTableHeaders"
-          :data="getTableValues"
+          :headers="tableHeaders"
+          :values="tableValues"
           col-width="workorderTable"
           class="grid-cols-6"
         />

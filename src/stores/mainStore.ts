@@ -39,12 +39,9 @@ export const useMainStore = defineStore('main', {
     getByType(state) {
       return ({ type, getParsed = false }: GetParams) => {
         const data = state.data[type]
-        return getParsed
-          ? {
-              data,
-              displayValues: data.map(row => this.formatRowData({ row })),
-            }
-          : data
+        if (!getParsed) return data
+        // TODO Changing this to just return parsed values
+        return data.map(row => this.formatRowData({ row }))
       }
     },
     getStoreDataKeys: state => Object.keys(state.data),
@@ -52,7 +49,7 @@ export const useMainStore = defineStore('main', {
       return ({ id, type, getParsed = false }: GetParams) => {
         const row = state.data[type].find(entry => entry.id === id)
         return getParsed
-          ? { data: row, displayValues: this.formatRowData({ row }) }
+          ? this.formatRowData({ row })
           : row
       }
     },
@@ -73,8 +70,9 @@ export const useMainStore = defineStore('main', {
 
           const isDateType = isDate(key)
           if (isDateType)
-            result[key] = row[key] ? parseTimestampToDate(row[key]) : row[key]
+            result[key] = row[key] ? parseTimestampToInputFormat(row[key]) : row[key]
 
+          if (!isDateType && !type) result[key] = row[key]
           return result
         }, {})
         return parsedRow
@@ -96,6 +94,7 @@ export const useMainStore = defineStore('main', {
         })
 
         this.loading = false
+        this.error = undefined
       }
       catch (err) {
         this.error = err

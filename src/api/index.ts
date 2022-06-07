@@ -10,7 +10,7 @@ const Query = async (): Promise<ApiResponse> => {
     res = result
   }
 
-  const response = await fetch('http://localhost:3333/mock-api')
+  const response = await fetch('http://localhost:4000/mock-api')
   if (response.ok) {
     const result = await response.json()
 
