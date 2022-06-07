@@ -47,9 +47,6 @@ export default defineConfig({
       sans: 'Titillium Web',
       mono: 'Fira Code',
     },
-    gridTemplateColumns: {
-      workorderTable: '50px 20px 100px 150px auto 100px',
-    },
   },
   // transformers: [
   //   transformerDirectives(),

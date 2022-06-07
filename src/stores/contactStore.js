@@ -1,19 +1,30 @@
 import { defineStore } from 'pinia'
+import { useUid } from '../composables/uuid'
 import { useMainStore } from './mainStore'
-import { useUid } from '~/composables'
 
 export const useContactStore = defineStore('contactList', {
   state: () => ({
     contacts: [],
-    loading: false,
+    loading: true,
     error: undefined,
   }),
   getters: {
-    getById: state => id => state.contacts.find(entry => entry.id === id),
+    mainStore: () => useMainStore(),
   },
   actions: {
+    async fetchContacts() {
+      try {
+        this.loading = true
+        this.mainStore.query()
+        this.contacts = this.mainStore.data.contacts ?? []
+        this.loading = false
+      }
+      catch (err) {
+        this.error = 'I\'m had trouble finding the contacts'
+        this.loading = false
+      }
+    },
     async addContact({ contact }) {
-      const mainStore = useMainStore()
       contact.id = useUid()
       this.contacts.push(contact)
 
@@ -22,10 +33,9 @@ export const useContactStore = defineStore('contactList', {
         action: 'add',
         params: { tableName: 'contacts', data: [contact] },
       }
-      const req = await mainStore.mutation({ items: [item] })
+      const req = await this.mainStore.mutation({ items: [item] })
     },
     async deleteEmployee({ contact }) {
-      const mainStore = useMainStore()
       this.contacts = this.contacts.filter(currentEmployee => contact.id !== currentEmployee.id)
 
       const item = {
@@ -34,7 +44,7 @@ export const useContactStore = defineStore('contactList', {
         params: { tableName: 'contacts', data: [contact] },
       }
 
-      const req = await mainStore.mutation({ items: [item] })
+      const req = await this.mainStore.mutation({ items: [item] })
     },
   },
 })

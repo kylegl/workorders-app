@@ -9,13 +9,12 @@ export const useBidStore = defineStore('bidList', {
   }),
   getters: {
     mainStore: () => useMainStore(),
-    getById: state => id => state.bids.find(entry => entry.id === id),
   },
   actions: {
     async fetchBids() {
       try {
         this.loading = true
-        await this.mainStore.query()
+        this.mainStore.query()
         this.bids = this.mainStore.data?.bids ?? []
         this.loading = false
       }

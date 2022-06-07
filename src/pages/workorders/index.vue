@@ -1,47 +1,24 @@
-<script setup lang="ts">
-const { data, loading, error } = storeToRefs(useMainStore())
-const { getByType } = useMainStore()
+<script setup>
+import { useWorkorderStore } from './stores/workorderStore.js'
+import { useClientStore } from './stores/clientStore.js'
+import { useEmployeeStore } from './stores/employeeStore.js'
 
+const { workorders, loading, error } = storeToRefs(useWorkorderStore())
+const { fetchWorkorders, getById } = useWorkorderStore()
+const { clients } = storeToRefs(useClientStore())
+const { employees } = storeToRefs(useEmployeeStore())
+const { getClientById, fetchClients } = useClientStore()
+const { getEmployeeById } = useEmployeeStore()
+
+fetchClients()
+fetchWorkorders()
 const filters = ['Job', 'Status', 'Team']
 const searchValue = ref('')
 
-// TODO add suspense logic to await resutls. https://www.trpkovski.com/2021/09/25/suspense-feature-in-vue-3-with-sfc-script-setup/
 const search = () => {
-  // eslint-disable-next-line no-console
   console.log(searchValue.value)
+  console.log(getClientById(33))
 }
-
-const workorderTableHeaders: HeaderParam[] = [
-  { key: 'start_date', title: 'Start Date' },
-  { key: 'id', title: 'Id' },
-  { key: 'status', title: 'Status' },
-  { key: 'client_id', displayProp: 'name', title: 'Client' },
-  { key: 'description', title: 'Description' },
-  { key: 'employee_id', displayProp: 'name', title: 'Assigned' },
-]
-
-interface HeaderParam {
-  key: string
-  displayProp?: string | undefined
-  title: string
-}
-
-const tableHeaders = reactive([])
-const tableValues = reactive([])
-
-onBeforeMount(() => {
-  const data = getByType({ type: 'workorders', getParsed: true })
-  const values = data.map((row) => {
-    return workorderTableHeaders.reduce((newRow, header) => {
-      if (header?.displayProp) newRow[header.key] = row[header.key]?.[header.displayProp]
-      else newRow[header.key] = row[header.key]
-      return newRow
-    }, {})
-  })
-
-  workorderTableHeaders.forEach(header => tableHeaders.push(header))
-  values.forEach(row => tableValues.push(row))
-})
 </script>
 
 <template>
@@ -60,13 +37,13 @@ onBeforeMount(() => {
           @enter="search"
         >
           <template #after>
-            <button class="flex" @click="true">
+            <button class="flex" @click="search">
               <Icon class="i-fluent-search-12-regular text-2xl in_out" hover="bg-fg-subtle" />
             </button>
           </template>
         </Input>
 
-        <Button class="text-h4 button-primary" @click="undefined">
+        <Button class="text-h4 button-primary">
           <Icon class="i-fa-solid:plus text-2xl" />
           Work Order
         </Button>
@@ -88,14 +65,28 @@ onBeforeMount(() => {
       <div v-if="error" class="">
         {{ error }}
       </div>
-      <template v-if="tableValues.length">
-        <Table
-          :headers="tableHeaders"
-          :values="tableValues"
-          col-width="workorderTable"
-          class="grid-cols-6"
-        />
-      </template>
+      <div v-for="workorder in workorders" :key="workorder.id">
+        <div class="flex gap-x-2 w-full bg-bg-a border border-bg-d rounded p-[.5rem] ">
+          <div class="">
+            {{ workorder.start_date }}
+          </div>
+          <div class="">
+            {{ workorder.id }}
+          </div>
+          <div class="">
+            {{ workorder.status }}
+          </div>
+          <div class="">
+            {{ getClientById(workorder.client_id)?.name }}
+          </div>
+          <div class="">
+            {{ workorder.description }}
+          </div>
+          <div class="">
+            {{ getEmployeeById(workorder.employee_id)?.name }}
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </template>

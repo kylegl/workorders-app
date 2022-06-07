@@ -9,15 +9,13 @@ export const useClientStore = defineStore('clientList', {
   }),
   getters: {
     mainStore: () => useMainStore(),
-    getClientById: state => id => state.clients.find(entry => entry.id === id),
-    getById: state => id => state.clients.find(entry => entry.id === id),
-
+    // getById: state => id => state.clients.find(entry => entry.id === id),
   },
   actions: {
     async fetchClients() {
       try {
         this.loading = true
-        await this.mainStore.query()
+        this.mainStore.query()
         this.clients = this.mainStore.data?.clients ?? []
         this.loading = false
       }
