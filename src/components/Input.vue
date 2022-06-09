@@ -1,16 +1,18 @@
 <script setup lang="ts">
 interface Props {
-  modelValue: string
+  modelValue?: string
   placeHolderText?: string
   disabled?: boolean
   label?: string
-  type?: string1
+  type?: string
 }
 const { modelValue, placeHolderText, disabled = false, label, type = 'text' } = defineProps<Props>()
 
-const emit = defineEmits(['update:modelValue', 'enter'])
+const emit = defineEmits(['update:modelValue', 'enter', 'focus', 'blur'])
 
 const updateValue = value => emit('update:modelValue', value)
+const handleFocus = () => emit('focus')
+const handleBlur = () => emit('blur')
 
 const enter = () => {
   emit('enter')
@@ -38,8 +40,11 @@ const enter = () => {
         :disabled="disabled"
         @input="updateValue($event.target.value)"
         @keydown.enter="enter"
+        @focus="handleFocus"
+        @blur="handleBlur"
       >
       <slot name="after" />
     </div>
+      <slot name="error" />
   </div>
 </template>

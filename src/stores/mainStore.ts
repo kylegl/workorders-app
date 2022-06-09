@@ -1,18 +1,11 @@
-import { isDate } from 'util/types'
 import { defineStore } from 'pinia'
-import type { ApiResponse, BackendData, Versions } from '../api/apiResponseTypes'
+import type { BackendData, DataTable, DataTableName, DataTableParsed, DataTables, TableRowKeys, Versions } from '~/api/apiResponseTypes'
 import { Mutation, Query } from '~/api/index'
 
-interface GetParams {
-  id?: string | number
-  type: string
-  getParsed?: boolean
-}
-
-const isId = (storeKeys: string[], key: string): string | undefined => {
-  const [,type] = key.match(/^([^_]+)_(id)$/) ?? []
-  const pluralType = `${type}s`
-  return storeKeys.includes(pluralType) ? pluralType : undefined
+// Helper functions
+const isFK = (key: string): DataTableName | undefined => {
+  const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
+  return type ? `${type}s` as DataTableName : undefined
 }
 
 const isDate = (key: string) => /^([^_]+)_(date|at)$/.test(key)
@@ -30,41 +23,37 @@ export const useMainStore = defineStore('main', {
         clients: undefined,
         bids: undefined,
         jobs: undefined,
-      } as Versions,
+      },
     },
     loading: true,
     error: undefined,
-  }),
+  } as RootState),
   getters: {
     getByType(state) {
-      return ({ type, getParsed = false }: GetParams) => {
-        const data = state.data[type]
+      return ({ type, getParsed = false }: GetParams): DataTables => {
+        const data = state.data?.[type] as DataTables
+
         if (!getParsed) return data
-        // TODO Changing this to just return parsed values
-        return data.map(row => this.formatRowData({ row }))
+        return data?.map(row => this.formatRowData({ row }))
       }
     },
-    getStoreDataKeys: state => Object.keys(state.data),
     getById(state) {
       return ({ id, type, getParsed = false }: GetParams) => {
-        const row = state.data[type].find(entry => entry.id === id)
-        return getParsed
+        const row: DataTable = state.data?.[type]?.find((entry: DataTable) => entry.id === id)
+        return getParsed && row
           ? this.formatRowData({ row })
           : row
       }
     },
-    formatRowData(state) {
-      return ({ row }) => {
-        const storeKeys = this.getStoreDataKeys
+    formatRowData() {
+      return ({ row }: FormatRowParams): DataTable | {} => {
+        const rowKeys = Object.keys(row) as TableRowKeys[]
+        const parsedRow: DataTableParsed | {} = rowKeys.reduce<ReduceReturnType>((result, key) => {
+          const isForeignKey: DataTableName | undefined = isFK(key)
 
-        const parsedRow = Object.keys(row).reduce((result, key) => {
-          const type = isId(storeKeys, key)
-
-          if (type) {
-          // TODO fix the bids data. id format is wrong
-            if (type === 'bids') return result
+          if (isForeignKey) {
             const id = row[key]
-            const entry = this.getById({ id, type })
+            const entry = this.getById({ id, type: isForeignKey }) as DataTable
             result[key] = entry
           }
 
@@ -72,7 +61,7 @@ export const useMainStore = defineStore('main', {
           if (isDateType)
             result[key] = row[key] ? parseTimestampToInputFormat(row[key]) : row[key]
 
-          if (!isDateType && !type) result[key] = row[key]
+          if (!isDateType && !isForeignKey) result[key] = row[key]
           return result
         }, {})
         return parsedRow
@@ -81,13 +70,13 @@ export const useMainStore = defineStore('main', {
 
   },
   actions: {
-    async query() {
+    async query(): Promise<void> {
       try {
         this.loading = true
         const res = await Query()
         const isDev = process.env.NODE_ENV === 'development'
 
-        const tableNames = Object.keys(res)
+        const tableNames: DataTableName[] = Object.keys(res) as (keyof typeof res)[]
         tableNames.forEach((key) => {
           this.data[key] = isDev ? res[key] : res[key].data
           this.client.versions[key] = isDev ? '' : res[key].version
@@ -97,7 +86,7 @@ export const useMainStore = defineStore('main', {
         this.error = undefined
       }
       catch (err) {
-        this.error = err
+        this.error = getErrorMessage(err)
         this.loading = false
       }
     },
@@ -107,3 +96,25 @@ export const useMainStore = defineStore('main', {
     },
   },
 })
+
+// Types
+interface GetParams {
+  id?: string
+  type: DataTableName
+  getParsed?: boolean
+}
+
+interface RootState {
+  data: BackendData
+  client: {
+    versions: Versions
+  }
+  loading: boolean
+  error?: string
+}
+
+interface FormatRowParams {
+  row: DataTable
+}
+
+export type ReduceReturnType = Record<TableRowKeys, DataTable> | {}

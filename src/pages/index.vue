@@ -2,8 +2,6 @@
 const { client, data, loading, error } = storeToRefs(useMainStore())
 const { query, getById } = useMainStore()
 
-const result = $ref()
-
 onMounted(() => {
   query()
 })
@@ -11,30 +9,39 @@ onMounted(() => {
 const getMock = () => {
   query()
 }
+const textValue = $ref('')
+const selectedId = $ref('0e124bdc-b3bc-4edb-85c8-6a1dbb73b562')
 
-let test = $ref()
-let test2 = $ref()
+const test = $ref()
+const test2 = $ref()
 
 const go = () => {
-  test = getById({ id: 3, type: 'workorders', getParsed: true })
-  // console.log('id', test.client_id)
-  test2 = getById({ id: test.client_id.id, type: 'clients' })
+
 }
 
 const changeData = () => {
-  test.client_id.name = 'FUCK YOU'
 }
 </script>
 
 <template>
   <div>
     <h1>Home</h1>
-    <div class="border p-4 rounded bg-b-f">
-      {{ test }}
-    </div>
+
+    {{ `text emitted:  ${textValue}` }}
+    {{ `id emitted: ${selectedId}` }}
+    <Datalist
+      v-model:textValue="textValue"
+      v-model:id="selectedId"
+      :list="data.employees"
+      :search-keys="['name', 'email']"
+      type="employees"
+      :show-keys="['name', 'position']"
+      initial-id="0e124bdc-b3bc-4edb-85c8-6a1dbb73b562"
+    />
+
+    <div class="border p-4 rounded bg-b-f" />
     <div class="border p-4 rounded bg-b-f">
       store value
-      {{ test2 }}
       <!-- {{ data?.employees }} -->
     </div>
     <Button @click="getMock">
@@ -54,12 +61,12 @@ const changeData = () => {
     </div>
     <h2>Employees</h2>
     <div class="">
-      {{ data.employees }}
+      <!-- {{ data.employees }} -->
     </div>
 
     <h3>Versions</h3>
     <div class="">
-      {{ client.versions }}
+      <!-- {{ client.versions }} -->
     </div>
   </div>
 </template>

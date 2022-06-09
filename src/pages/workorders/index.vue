@@ -3,21 +3,21 @@ const { data, loading, error } = storeToRefs(useMainStore())
 const { getByType } = useMainStore()
 
 const filters = ['Job', 'Status', 'Team']
-const searchValue = ref('')
+const searchValue = $ref('')
 
 // TODO add suspense logic to await resutls. https://www.trpkovski.com/2021/09/25/suspense-feature-in-vue-3-with-sfc-script-setup/
 const search = () => {
   // eslint-disable-next-line no-console
-  console.log(searchValue.value)
+  console.log(searchValue)
 }
 
 const workorderTableHeaders: HeaderParam[] = [
   { key: 'start_date', title: 'Start Date' },
   { key: 'id', title: 'Id' },
   { key: 'status', title: 'Status' },
-  { key: 'client_id', displayProp: 'name', title: 'Client' },
+  { key: 'FK|client_id', displayProp: 'name', title: 'Client' },
   { key: 'description', title: 'Description' },
-  { key: 'employee_id', displayProp: 'name', title: 'Assigned' },
+  { key: 'FK|employee_id', displayProp: 'name', title: 'Assigned' },
 ]
 
 interface HeaderParam {
@@ -26,8 +26,8 @@ interface HeaderParam {
   title: string
 }
 
-const tableHeaders = reactive([])
-const tableValues = reactive([])
+const tableHeaders = $ref([])
+const tableValues = $ref([])
 
 onBeforeMount(() => {
   const data = getByType({ type: 'workorders', getParsed: true })
@@ -38,7 +38,6 @@ onBeforeMount(() => {
       return newRow
     }, {})
   })
-
   workorderTableHeaders.forEach(header => tableHeaders.push(header))
   values.forEach(row => tableValues.push(row))
 })
@@ -49,7 +48,6 @@ onBeforeMount(() => {
     <h1 class="text-h3">
       Work Orders
     </h1>
-
     <section id="header" class="flex flex-col gap-y-4  w-full">
       <div class="flex justify-between w-full">
         <Input

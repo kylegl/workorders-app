@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { stringify } from 'querystring'
+
+// props
 interface Props {
   type: string
   list: unknown
@@ -8,31 +11,54 @@ interface Props {
   initialId?: string
 }
 const { list, searchKeys, type, showKeys, initialId } = defineProps<Props>()
+// emits
 const emit = defineEmits<{
   (e: 'update:textValue', value: string | number | undefined): void
   (e: 'update:id', value: string | undefined): void
 }>()
 
+const [primaryKey] = showKeys
+
+// store
 const { data } = storeToRefs(useMainStore())
 const { getById } = useMainStore()
 
-let textValue = $ref<string | undefined>('')
+// refs
+let initialValue = $ref<string | number | undefined>('')
+let textValue = $ref<string | number | undefined>('')
 let id = $ref<string | undefined>('')
+let focus = $ref(false)
+let activeIndex = $ref<number | undefined>(undefined)
+let validationError = $ref(false)
 
+// hooks
 onBeforeMount(() => {
   if (initialId) {
     const entry: {} | undefined = getById({ id: initialId, type: 'employees' })
-    textValue = entry?.[showKeys[0]]
+    initialValue = entry?.[primaryKey]
+    textValue = entry?.[primaryKey]
     id = initialId
+
+    // emit initial text value without triggering focus
+    emit('update:textValue', textValue)
   }
 })
 
-watchEffect(() => emit('update:textValue', textValue))
-watchEffect(() => emit('update:id', id))
+onMounted(() => {
+  watch($$(textValue), (textValue, oldValue) => {
+    emit('update:textValue', textValue)
 
-const searchResults = computed(() => {
-  if (!textValue) return list
-  const searchWords = textValue.split(/\+s/)
+    if (textValue !== initialValue)
+      focus = true
+  })
+})
+// computed
+const isDirty = $computed(() => textValue !== initialValue)
+const searchResults = $computed(() => {
+  if (!isDirty)
+    return list
+
+  const searchWords = textValue?.split(/\+s/)
   const searchData = list
 
   const results = searchData.filter((row) => {
@@ -43,35 +69,134 @@ const searchResults = computed(() => {
     })
   })
 
-  return results
+  return results ?? []
 })
 
-let focus = $ref(false)
+const errorMessage = computed(() => 'That doesn\'t exist yet.')
 
-const handleFocus = () => focus = true
-const handleBlur = () => focus = false
-const handleClick = (data) => {
-  id = data?.id
-  textValue = data?.[showKeys[0]]
+// watchers
+watchEffect(() => emit('update:id', id))
+
+// event handlers
+const handleFocus = () => {
+  focus = true
+  initialValue = textValue
+}
+const handleBlur = () => {
+  focus = false
+  checkEntry()
+}
+
+const handleClick = (entry) => {
+  setEntry(entry)
+}
+
+const handleArrowKey = (direction: string) => {
+  // initialize active index
+  if (direction === 'down') {
+    const max = searchResults?.length
+
+    if (activeIndex < max) activeIdx().increment()
+  }
+
+  if (direction === 'up' && (activeIndex > 0)) activeIdx().decrement()
+}
+
+const handleHover = (index: number | undefined) => activeIndex = index
+const handleEnter = () => {
+  console.log('enter', ' active idx', activeIndex)
+
+  if (activeIndex) {
+    const activeResult = searchResults[activeIndex]
+
+    setEntry(activeResult)
+  }
+
+  if (!activeIndex) checkEntry()
+}
+
+const activeIdx = () => {
+  activeIndex = activeIndex ?? 0
+
+  const increment = () => activeIndex++
+  const decrement = () => activeIndex--
+  const clear = () => activeIndex = undefined
+
+  return {
+    increment,
+    decrement,
+    clear,
+  }
+}
+
+const setFocus = (state: boolean) => {
+  focus = state
+
+  if (!state) activeIdx().clear()
+}
+
+const setEntry = (entry: {}): void => {
+  focus = false
+  id = entry?.id
+  textValue = entry?.[primaryKey]
+
+  activeIdx().clear()
+}
+
+const checkEntry = () => {
+  const isEmpty = !textValue
+
+  if (isEmpty && initialValue) {
+    focus = false
+    textValue = initialValue
+  }
+
+  if (textValue) {
+    const match: {} | undefined = list.find(row => row[primaryKey] === textValue)
+
+    if (!match) {
+      validationError = true
+
+      textValue = initialValue ?? ''
+      focus = false
+    }
+
+    if (match) setEntry(match)
+  }
 }
 </script>
 
 <template>
-  <div class="">
+  <div class="flex flex-col gap-y-1">
+    <span>{{ `initial: ${initialValue}` }}</span>
+    <span>{{ `text: ${textValue}` }}</span>
+    <span>{{ `dirty?: ${isDirty}` }}</span>
     <Input
       v-model="textValue"
       :place-holder-text="type"
       @focus="handleFocus"
       @blur="handleBlur"
-    />
+      @keydown.arrow-down="handleArrowKey('down')"
+      @keydown.arrow-up="handleArrowKey('up')"
+      @keydown.escape="handleBlur"
+      @keydown.enter="handleEnter"
+    >
+      <template v-if="validationError" #error>
+        <div class="text-red ">
+          {{ errorMessage }}
+        </div>
+      </template>
+    </Input>
     <ul>
       <template v-if="focus">
-        <li v-for="item in searchResults" :key="item?.id">
+        <li v-for="(item, index) in searchResults" :key="item?.id">
           <div
             class="flex gap-x-2 bg-bg-c border border-bg-b rounded p-2"
-            hover="bg-bg-d"
+            :class="{ 'bg-bg-d': activeIndex === index }"
             in_out
             @mousedown="handleClick(item)"
+            @mouseover="handleHover(index)"
+            @mouseleave="handleHover(undefined)"
           >
             <div v-for="key in showKeys" :key="key">
               <div class="flex gap-x-2">
