@@ -11,6 +11,7 @@ const getMock = () => {
 }
 const textValue = $ref('')
 const selectedId = $ref('0e124bdc-b3bc-4edb-85c8-6a1dbb73b562')
+const employee_id = $ref('0e124bdc-b3bc-4edb-85c8-6a1dbb73b562')
 
 const test = $ref()
 const test2 = $ref()
@@ -27,11 +28,11 @@ const changeData = () => {
   <div>
     <h1>Home</h1>
 
-    {{ `text emitted:  ${textValue}` }}
-    {{ `id emitted: ${selectedId}` }}
+    {{ `id emitted: ${employee_id}` }}
     <Datalist
       v-model:textValue="textValue"
       v-model:id="selectedId"
+      v-model="employee_id"
       :list="data.employees"
       :search-keys="['name', 'email']"
       type="employees"
