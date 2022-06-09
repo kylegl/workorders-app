@@ -8,6 +8,7 @@ specifiers:
   '@unocss/reset': ^0.34.1
   '@vitejs/plugin-vue': ^2.3.3
   '@vue/test-utils': ^2.0.0
+  '@vueuse/components': ^8.6.0
   '@vueuse/core': ^8.5.0
   eslint: ^8.16.0
   jsdom: ^19.0.0
@@ -40,6 +41,7 @@ devDependencies:
   '@unocss/reset': 0.34.1
   '@vitejs/plugin-vue': 2.3.3_vite@2.9.10+vue@3.2.37
   '@vue/test-utils': 2.0.0_vue@3.2.37
+  '@vueuse/components': 8.6.0_vue@3.2.37
   eslint: 8.17.0
   jsdom: 19.0.0
   msw: 0.41.1_typescript@4.7.3
@@ -767,6 +769,17 @@ packages:
       vue: ^3.0.1
     dependencies:
       vue: 3.2.37
+    dev: true
+
+  /@vueuse/components/8.6.0_vue@3.2.37:
+    resolution: {integrity: sha512-TkRCknGsBk/Zuap4YC9MLf+xpopdAkHugSVcSVFbciyBwqr3LlWVeJ4HHlHKGIBNOWyMQqDW0WFy47xfAPd3WA==}
+    dependencies:
+      '@vueuse/core': 8.6.0_vue@3.2.37
+      '@vueuse/shared': 8.6.0_vue@3.2.37
+      vue-demi: 0.13.1_vue@3.2.37
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
     dev: true
 
   /@vueuse/core/8.6.0_vue@3.2.37:

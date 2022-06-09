@@ -9,7 +9,7 @@ let workorder = $ref({} as WorkorderParsed)
 const statusOptions = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']
 
 onBeforeMount(() => {
-  workorder = getById({ id: route.params?.id, type: 'workorders', getParsed: true })
+  workorder = getById({ id: route.params?.id, type: 'workorders' })
 })
 
 let formDisabled = $ref(true)
@@ -40,16 +40,22 @@ const toggleForm = () => {
         <Select
           v-model="workorder.status"
           :options="statusOptions.map(status => ({ value: status, display: status }))"
-          option-display-key=""
         />
       </div>
 
       <div class="flex gap-x-4">
-        <Select
+        <Datalist
+          v-model="workorder['FK|employee_id']"
+          type="employees"
+          :list="data.employees"
+          :search-keys="['name']"
+          :show-keys="['name', 'position']"
+        />
+        <!-- <Select
           v-model="workorder.employee_id.name"
           label="Assigned To"
           :options="data.employees.map(employee => ({ value: employee.id, display: employee.name }))"
-        />
+        /> -->
       </div>
     </div>
 
@@ -59,11 +65,11 @@ const toggleForm = () => {
         <h3 class="text-h4">
           Project Info
         </h3>
-        <Select
+        <!-- <Select
           v-model="workorder.client_id.name"
           label="Client"
           :options="data.clients.map(client => ({ value: client.id, display: client.name }))"
-        />
+        /> -->
         <Input
           v-model="workorder.job_id"
           label="Job Number"
@@ -142,6 +148,7 @@ const toggleForm = () => {
 
     <section class="flex flex-col gap-y-4">
       <!-- <lineItemTable :headers="lineItemTableHeaders" data="getTableValues" /> -->
+      {{ workorder }}
     </section>
   </div>
 </template>

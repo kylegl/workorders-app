@@ -2,6 +2,8 @@
 const { client, data, loading, error } = storeToRefs(useMainStore())
 const { query, getById } = useMainStore()
 
+const { x, y } = useMouse()
+
 onMounted(() => {
   query()
 })
@@ -27,17 +29,14 @@ const changeData = () => {
 <template>
   <div>
     <h1>Home</h1>
-
+    {{x}}, {{y}}
     {{ `id emitted: ${employee_id}` }}
     <Datalist
-      v-model:textValue="textValue"
-      v-model:id="selectedId"
       v-model="employee_id"
       :list="data.employees"
       :search-keys="['name', 'email']"
       type="employees"
       :show-keys="['name', 'position']"
-      initial-id="0e124bdc-b3bc-4edb-85c8-6a1dbb73b562"
     />
 
     <div class="border p-4 rounded bg-b-f" />

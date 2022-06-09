@@ -11,7 +11,10 @@ const { modelValue, placeHolderText, disabled = false, label, type = 'text' } = 
 const emit = defineEmits(['update:modelValue', 'enter', 'focus', 'blur'])
 
 const updateValue = value => emit('update:modelValue', value)
-const handleFocus = () => emit('focus')
+const handleFocus = () => {
+  console.log('focus')
+  emit('focus')
+}
 const handleBlur = () => emit('blur')
 
 const enter = () => {
@@ -45,6 +48,6 @@ const enter = () => {
       >
       <slot name="after" />
     </div>
-      <slot name="error" />
+    <slot name="error" />
   </div>
 </template>

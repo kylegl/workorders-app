@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vOnClickOutside } from '@vueuse/components'
 import type { DataTableName, DataTables, TableRowKeys } from '~/api/apiResponseTypes'
 
 // props
@@ -19,6 +20,14 @@ const emit = defineEmits<{
 
 const [primaryKey] = showKeys
 let id = $ref(modelValue)
+const wrapperRef = $ref(null)
+
+onClickOutside(
+  wrapperRef,
+  (event) => {
+    console.log(event)
+  },
+)
 
 // store
 const { data } = storeToRefs(useMainStore())
@@ -27,7 +36,6 @@ const { getById } = useMainStore()
 // refs
 let initialValue = $ref<string | undefined>('')
 let textValue = $ref<string | undefined>('')
-// let id = $ref<string | undefined>('')
 let focus = $ref(false)
 let activeIndex = $ref<number>(-1)
 let validationError = $ref(false)
@@ -43,6 +51,7 @@ onBeforeMount(() => {
 
 // computed
 const isDirty = $computed(() => textValue !== initialValue)
+const errorMessage = computed(() => 'That doesn\'t exist yet.')
 const searchResults = $computed(() => {
   if (!isDirty)
     return list
@@ -60,8 +69,6 @@ const searchResults = $computed(() => {
 
   return results ?? []
 })
-
-const errorMessage = computed(() => 'That doesn\'t exist yet.')
 
 // helpers
 const activeIdx = () => {
@@ -81,7 +88,10 @@ const activeIdx = () => {
 const setFocus = ({ isFocused, reset }: { isFocused: boolean; reset?: boolean }) => {
   focus = isFocused
 
-  if (isFocused) initialValue = textValue
+  if (isFocused) {
+    initialValue = textValue
+    validationError = false
+  }
 
   if (!isFocused) {
     activeIdx().clear()
@@ -134,16 +144,11 @@ const checkEntry = () => {
 }
 
 // event handlers
-const handleFocus = () => {
-  setFocus({ isFocused: true })
-}
-const handleBlur = () => {
-  checkEntry()
-}
+const handleFocus = () => setFocus({ isFocused: true })
 
-const handleClick = (entry) => {
-  setEntry(entry)
-}
+const handleBlur = () => checkEntry()
+
+const handleClick = entry => setEntry(entry)
 
 const handleArrowKey = (direction: string) => {
   if (direction === 'down') {
@@ -165,45 +170,48 @@ const handleEnter = () => {
 
   if (activeIndex < 0) checkEntry()
 }
+const toggleFocus = () => focus ? handleBlur() : handleFocus()
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-1">
+  <div v-on-click-outside="handleBlur" class="flex flex-col gap-y-1 relative">
     <Input
       v-model="textValue"
       :place-holder-text="type"
       @focus="handleFocus"
-      @blur="handleBlur"
       @keydown.arrow-down="handleArrowKey('down')"
       @keydown.arrow-up="handleArrowKey('up')"
       @keydown.escape="handleBlur"
       @keydown.enter="handleEnter"
     >
+      <template #after>
+        <button>
+          <Icon class="i-fa:chevron-down m-auto" @click="toggleFocus()" />
+        </button>
+      </template>
       <template v-if="validationError" #error>
         <div class="text-red ">
           {{ errorMessage }}
         </div>
       </template>
     </Input>
-    <ul>
-      <template v-if="focus">
+    <template v-if="focus">
+      <ul class="absolute top-full">
         <li v-for="(item, index) in searchResults" :key="item?.id">
           <div
-            class="flex gap-x-2 bg-bg-c border border-bg-b rounded p-2"
+            class="flex gap-x-2 bg-bg-c border border-bg-b rounded p-2 justify-between"
             :class="{ 'bg-bg-d': activeIndex === index }"
             in_out
             @mousedown="handleClick(item)"
             @mouseover="handleHover(index)"
             @mouseleave="handleHover(undefined)"
           >
-            <div v-for="key in showKeys" :key="key">
-              <div class="flex gap-x-2">
-                <span>{{ item[key] }}</span>
-              </div>
+            <div v-for="key in showKeys" :key="key" class="flex item-start min-w-max">
+              {{ item[key] }}
             </div>
           </div>
         </li>
-      </template>
-    </ul>
+      </ul>
+    </template>
   </div>
 </template>
