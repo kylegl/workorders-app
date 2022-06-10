@@ -10,7 +10,6 @@ export const parseTimestampToDate = (timestamp: Date) => {
 }
 
 export const unixToDate = (timestamp: number): Date | string => {
-  console.log('timestamp in conversion fxn', timestamp)
   const instant = Temporal.Instant
     .fromEpochMilliseconds(timestamp)
     .toZonedDateTimeISO('America/Los_Angeles')

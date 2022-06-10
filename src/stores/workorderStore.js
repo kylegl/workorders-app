@@ -151,7 +151,6 @@ export const useWorkorderStore = defineStore('workorderList', {
         result[key] = updatedValue
         return result
       }, {})
-      console.log(res)
       return res
     },
     // getDisplayValues: () => {

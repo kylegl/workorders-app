@@ -4,7 +4,6 @@ const { getByType } = useMainStore()
 
 const employees = computed(() => {
   const result = getByType({ type: 'workorders', getParsed: true })
-  console.log('rest',result)
   return result
 })
 </script>

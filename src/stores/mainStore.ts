@@ -59,7 +59,7 @@ export const useMainStore = defineStore('main', {
 
           const isDateType = isDate(key)
           if (isDateType)
-            result[key] = row[key] ? unixToDate(row[key]) : row[key]
+            result[key] = row[key] ? parseTimestampToDate(row[key]) : row[key]
 
           if (!isDateType && !isForeignKey) result[key] = row[key]
           return result
@@ -69,7 +69,6 @@ export const useMainStore = defineStore('main', {
     },
     getReadableDate() {
       return ({ timestamp, readable }: TimestampParam): Date | string | undefined => {
-        console.log('timestamp', timestamp, 'readable', readable)
         return useConvertSyncRefs(timestamp, readable, unixToDate, dateToUnix)
       }
     },
