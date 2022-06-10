@@ -9,8 +9,10 @@ interface Props {
   modelValue?: string
   searchKeys: TableRowKeys[]
   showKeys: string[]
+  label?: string
+  disabled?: boolean
 }
-const { list, searchKeys, type, modelValue, showKeys } = defineProps<Props>()
+const { list, searchKeys, label, disabled, type, modelValue, showKeys } = defineProps<Props>()
 // emits
 const emit = defineEmits<{
   (e: 'update:textValue', value: string | number | undefined): void
@@ -20,14 +22,6 @@ const emit = defineEmits<{
 
 const [primaryKey] = showKeys
 let id = $ref(modelValue)
-const wrapperRef = $ref(null)
-
-onClickOutside(
-  wrapperRef,
-  (event) => {
-    console.log(event)
-  },
-)
 
 // store
 const { data } = storeToRefs(useMainStore())
@@ -173,9 +167,13 @@ const handleEnter = () => {
 const toggleFocus = () => focus ? handleBlur() : handleFocus()
 </script>
 
+// TODO click needs to be on button not the icon. FIx date parse
+
 <template>
   <div v-on-click-outside="handleBlur" class="flex flex-col gap-y-1 relative">
     <Input
+      :label="label"
+      :disabled="disabled"
       v-model="textValue"
       :place-holder-text="type"
       @focus="handleFocus"
@@ -184,7 +182,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
       @keydown.escape="handleBlur"
       @keydown.enter="handleEnter"
     >
-      <template #after>
+      <template #after v-if="!disabled">
         <button>
           <Icon class="i-fa:chevron-down m-auto" @click="toggleFocus()" />
         </button>
@@ -196,7 +194,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
       </template>
     </Input>
     <template v-if="focus">
-      <ul class="absolute top-full">
+      <ul class="absolute top-full min-w-full max-w-max">
         <li v-for="(item, index) in searchResults" :key="item?.id">
           <div
             class="flex gap-x-2 bg-bg-c border border-bg-b rounded p-2 justify-between"
@@ -204,7 +202,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
             in_out
             @mousedown="handleClick(item)"
             @mouseover="handleHover(index)"
-            @mouseleave="handleHover(undefined)"
+            @mouseleave="handleHover(-1)"
           >
             <div v-for="key in showKeys" :key="key" class="flex item-start min-w-max">
               {{ item[key] }}

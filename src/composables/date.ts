@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 
-export const parseTimestampToDate = (timestamp: string) => {
+export const parseTimestampToDate = (timestamp: Date) => {
   const instant = Temporal.Instant
     .fromEpochMilliseconds(parseInt(timestamp))
     .toZonedDateTimeISO('America/Los_Angeles')
@@ -9,9 +9,10 @@ export const parseTimestampToDate = (timestamp: string) => {
   return `${instant.month}/${instant.day}/${instant.year}`
 }
 
-export const parseTimestampToInputFormat = (timestamp: string) => {
+export const unixToDate = (timestamp: number): Date | string => {
+  console.log('timestamp in conversion fxn', timestamp)
   const instant = Temporal.Instant
-    .fromEpochMilliseconds(parseInt(timestamp))
+    .fromEpochMilliseconds(timestamp)
     .toZonedDateTimeISO('America/Los_Angeles')
     .toPlainDate()
 
@@ -20,4 +21,6 @@ export const parseTimestampToInputFormat = (timestamp: string) => {
 
   return `${instant.year}-${month}-${day}`
 }
+
+export const dateToUnix = (date: Date | string): Date | number | undefined => +new Date(date)
 

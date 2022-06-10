@@ -12,7 +12,6 @@ const emit = defineEmits(['update:modelValue', 'enter', 'focus', 'blur'])
 
 const updateValue = value => emit('update:modelValue', value)
 const handleFocus = () => {
-  console.log('focus')
   emit('focus')
 }
 const handleBlur = () => emit('blur')
