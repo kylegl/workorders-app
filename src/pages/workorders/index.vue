@@ -12,12 +12,12 @@ const search = () => {
 }
 
 const workorderTableHeaders: HeaderParam[] = [
-  { key: 'start_date', title: 'Start Date' },
-  { key: 'id', title: 'Id' },
   { key: 'status', title: 'Status' },
   { key: 'FK|client_id', displayProp: 'name', title: 'Client' },
+  { key: 'FK|job_id', displayProp: 'address', title: 'Job' },
   { key: 'description', title: 'Description' },
   { key: 'FK|employee_id', displayProp: 'name', title: 'Assigned' },
+  { key: 'start_date', title: 'Start Date' },
 ]
 
 interface HeaderParam {
@@ -31,15 +31,20 @@ const tableValues = $ref([])
 
 onBeforeMount(() => {
   const data = getByType({ type: 'workorders', getParsed: true })
-  const values = data.map((row) => {
-    return workorderTableHeaders.reduce((newRow, header) => {
-      if (header?.displayProp) newRow[header.key] = row[header.key]?.[header.displayProp]
-      else newRow[header.key] = row[header.key]
-      return newRow
-    }, {})
-  })
-  workorderTableHeaders.forEach(header => tableHeaders.push(header))
-  values.forEach(row => tableValues.push(row))
+  if (data) {
+    const values = data.map((row) => {
+      const updatedRow = workorderTableHeaders.reduce((newRow, header) => {
+        if (header?.displayProp) newRow[header.key] = row[header.key]?.[header.displayProp]
+        else newRow[header.key] = row[header.key]
+        return newRow
+      }, {})
+
+      updatedRow.id = row.id
+      return updatedRow
+    })
+    workorderTableHeaders.forEach(header => tableHeaders.push(header))
+    values.forEach(row => tableValues.push(row))
+  }
 })
 </script>
 
@@ -59,7 +64,7 @@ onBeforeMount(() => {
         >
           <template #after>
             <button class="flex" @click="true">
-              <Icon class="i-fluent-search-12-regular text-2xl in_out" hover="bg-fg-subtle" />
+              <Icon class="i-fluent-search-12-regular text-2xl in_out m-auto" hover="bg-fg-subtle" />
             </button>
           </template>
         </Input>

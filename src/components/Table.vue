@@ -5,7 +5,7 @@ interface Header {
 }
 interface Props {
   headers: Header[]
-  values: []
+  values: any[]
 }
 
 const { headers, values } = defineProps<Props>()
@@ -30,7 +30,7 @@ const { headers, values } = defineProps<Props>()
         <div
           v-for="header in headers"
           :key="header.title + row.id"
-          class="gap-y-4"
+          class="gap-y-4 line-clamp-3"
         >
           {{
             row[header.key]
@@ -43,6 +43,6 @@ const { headers, values } = defineProps<Props>()
 
 <style>
 .grid {
-  grid-template-columns: 75px 30px 80px 100px auto 100px;
+  grid-template-columns: 80px 100px 100px auto 75px 85px;
 }
 </style>
