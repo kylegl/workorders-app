@@ -3,6 +3,7 @@ import type { WorkorderParsed } from '~/api/apiResponseTypes'
 const { data, loading, error } = storeToRefs(useMainStore())
 const { getById, getReadableDate } = useMainStore()
 const route = useRoute()
+const id = route.params?.id
 
 let workorder = $ref({} as WorkorderParsed)
 
@@ -11,7 +12,7 @@ const billingOptions = ['T&M', 'Fixed']
 const jobTypeOptions = ['Finishing', 'Painting']
 
 onBeforeMount(() => {
-  workorder = getById({ id: route.params?.id, type: 'workorders' })
+  workorder = getById({ id, type: 'workorders' })
 })
 
 let formDisabled = $ref(true)
@@ -142,33 +143,36 @@ onMounted(() => {
       </div>
     </section>
 
-    <div class="flex flex-col gap-y-4 border rounded p-4">
-      <Input
-        v-model="workorder.description"
-        label="Description"
-        :disabled="formDisabled"
-        place-holder-text="Description"
-        type="text"
-      />
-      <Input
-        v-model="workorder.notes"
-        label="Notes"
-        :disabled="formDisabled"
-        place-holder-text="Notes"
-        type="text"
-      />
-      <Input
-        v-model="workorder.parking_info"
-        label="Parking Info"
-        :disabled="formDisabled"
-        place-holder-text="Parking info"
-        type="text"
-      />
-    </div>
-
+    <!-- DESCRIPTION -->
+    <section>
+      <div class="flex flex-col gap-y-4 border rounded p-4">
+        <Input
+          v-model="workorder.description"
+          label="Description"
+          :disabled="formDisabled"
+          place-holder-text="Description"
+          type="text"
+        />
+        <Input
+          v-model="workorder.notes"
+          label="Notes"
+          :disabled="formDisabled"
+          place-holder-text="Notes"
+          type="text"
+        />
+        <Input
+          v-model="workorder.parking_info"
+          label="Parking Info"
+          :disabled="formDisabled"
+          place-holder-text="Parking info"
+          type="text"
+        />
+      </div>
+    </section>
+    
+    <!-- LINE ITEMS -->
     <section class="flex flex-col gap-y-4">
-      <!-- <lineItemTable :headers="lineItemTableHeaders" data="getTableValues" /> -->
-      {{ workorder }}
+      <LineItems :workorderId="id"/>
     </section>
   </div>
 </template>

@@ -45,6 +45,12 @@ export const useMainStore = defineStore('main', {
           : row
       }
     },
+    getByKeyValue(state) {
+      return ({ key, value, type, getParsed = false }: GetKeyParams) => {
+        const results = state.data?.[type]?.filter((entry: DataTable) => entry[key] === value)
+        return results ?? []
+      }
+    },
     formatRowData() {
       return ({ row }: FormatRowParams): DataTable | {} => {
         const rowKeys = Object.keys(row) as TableRowKeys[]
@@ -106,6 +112,13 @@ export const useMainStore = defineStore('main', {
 interface GetParams {
   id?: string
   type: DataTableName
+  getParsed?: boolean
+}
+
+interface GetKeyParams {
+  key?: string
+  type: DataTableName
+  value: string | number | undefined
   getParsed?: boolean
 }
 

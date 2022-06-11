@@ -95,10 +95,15 @@ onBeforeMount(() => {
         <Table
           :headers="tableHeaders"
           :values="tableValues"
-          col-width="workorderTable"
-          class="grid-cols-6"
+          type="workorders"
         />
       </template>
     </section>
   </div>
 </template>
+
+<style>
+.workorder-grid {
+  grid-template-columns: 80px 100px 100px auto 75px 85px;
+}
+</style>
