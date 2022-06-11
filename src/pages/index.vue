@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
 const { client, data, loading, error } = storeToRefs(useMainStore())
 const { query, getById, getReadableDate } = useMainStore()
 
@@ -74,17 +73,13 @@ const content = $ref('')
     <Button @click="changeData">
       change B
     </Button>
-    <div  v-html="content">
-    </div>
-    <div border rounded>
-      <QuillEditor
-        theme="snow"
-        :toolbar="toolbarOptions"
-        text-fg-normal
-        bg-red
-        v-model:content="content"
-        contentType="html"
-      />
+    <div v-html="content" />
+    <div>
+      <Editor v-model:content="content" />
     </div>
   </div>
 </template>
+
+<style>
+
+</style>
