@@ -23,6 +23,7 @@
     "@unocss/reset": "^0.34.1",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vue/test-utils": "^2.0.0",
+    "@vueup/vue-quill": "1.0.0-beta.8",
     "@vueuse/components": "^8.6.0",
     "eslint": "^8.16.0",
     "jsdom": "^19.0.0",

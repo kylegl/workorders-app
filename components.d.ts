@@ -17,7 +17,6 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./src/components/Select.vue')['default']
     Table: typeof import('./src/components/Table.vue')['default']
-    WorkorderCard: typeof import('./src/components/WorkorderCard.vue')['default']
   }
 }
 

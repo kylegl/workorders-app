@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 const { client, data, loading, error } = storeToRefs(useMainStore())
 const { query, getById, getReadableDate } = useMainStore()
 
@@ -16,7 +17,7 @@ const employee_id = $ref('0e124bdc-b3bc-4edb-85c8-6a1dbb73b562')
 
 let A = $ref(1)
 
-let B = $ref('')
+const B = $ref('')
 
 let workorder = $ref()
 
@@ -35,6 +36,14 @@ const go = () => {
 
 const changeData = () => {
 }
+
+const toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],
+  ['link'],
+  [{ list: 'ordered' }, { list: 'bullet' }],
+]
+
+const content = $ref('')
 </script>
 
 <template>
@@ -65,20 +74,17 @@ const changeData = () => {
     <Button @click="changeData">
       change B
     </Button>
-    <div class="">
-      {{ `loading ${loading}` }}
+    <div  v-html="content">
     </div>
-    <div class="">
-      {{ `error ${error}` }}
-    </div>
-    <h2>Employees</h2>
-    <div class="">
-      <!-- {{ data.employees }} -->
-    </div>
-
-    <h3>Versions</h3>
-    <div class="">
-      <!-- {{ client.versions }} -->
+    <div border rounded>
+      <QuillEditor
+        theme="snow"
+        :toolbar="toolbarOptions"
+        text-fg-normal
+        bg-red
+        v-model:content="content"
+        contentType="html"
+      />
     </div>
   </div>
 </template>
