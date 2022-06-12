@@ -105,6 +105,11 @@ export const useMainStore = defineStore('main', {
       const res = await Mutation({ items })
       return res
     },
+    deleteById({ id, type }) {
+      this.data[type] = this.data?.[type].filter(el => el.id !== id)
+
+      console.log(`Delete request for ${type}: ${id}`)
+    },
   },
 })
 

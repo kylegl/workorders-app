@@ -15,7 +15,7 @@ export default defineConfig({
     ['text-h4', 'text-2xl font-semibold tracking-wider'],
     ['text-h5', 'text-lg font-semibold tracking-wider'],
     ['btn-primary', 'px-4 py-1 rounded bg-bg-b cursor-pointer hover:bg-bg-c disabled:cursor-default disabled:bg-bg-d disabled:opacity-50'],
-    ['icon-btn', 'text-[0.9em] inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-teal-600'],
+    ['icon-btn', 'op30 hover:op100'],
   ],
   presets: [
     presetUno(),

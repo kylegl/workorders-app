@@ -169,10 +169,10 @@ onMounted(() => {
         />
       </div>
     </section>
-    
+
     <!-- LINE ITEMS -->
     <section class="flex flex-col gap-y-4">
-      <LineItems :workorderId="id"/>
+      <Tasks :workorder-id="id" />
     </section>
   </div>
 </template>

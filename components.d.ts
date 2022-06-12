@@ -11,14 +11,16 @@ declare module '@vue/runtime-core' {
     Editor: typeof import('./src/components/Editor/Editor.vue')['default']
     Icon: typeof import('./src/components/Icon.vue')['default']
     Input: typeof import('./src/components/Input.vue')['default']
-    LineItem: typeof import('./src/components/LineItem.vue')['default']
-    LineItems: typeof import('./src/components/LineItems.vue')['default']
+    LineItem: typeof import('./src/components/Task/TaskItem.vue')['default']
+    LineItems: typeof import('./src/components/Tasks.vue')['default']
     Nav: typeof import('./src/components/Nav.vue')['default']
     RichTextField: typeof import('./src/components/RichTextField.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./src/components/Select.vue')['default']
     Table: typeof import('./src/components/Table.vue')['default']
+    TaskItem: typeof import('./src/components/Task/TaskItem.vue')['default']
+    Tasks: typeof import('./src/components/Task/Tasks.vue')['default']
   }
 }
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const { client, data, loading, error } = storeToRefs(useMainStore())
-const { query, getById, getReadableDate } = useMainStore()
+const { query, getById, getReadableDate, getByType } = useMainStore()
 
 const { x, y } = useMouse()
 
 onMounted(() => {
-  query()
+  // setTimeout(() => query(), 1000)
 })
 
 const getMock = () => {
@@ -13,6 +13,7 @@ const getMock = () => {
 }
 
 const get = () => {
+  console.log(getById({id: '1', type: 'workorders' }))
 }
 
 const delta = $ref('')
@@ -54,6 +55,8 @@ const initialDelta = { ops: [{ insert: 'list' }, { attributes: { list: 'ordered'
       </div>
     </div>
     <div v-if="html" v-html="html" />
+
+    <div />
   </div>
 </template>
 

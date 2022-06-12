@@ -1,6 +1,11 @@
 <script setup lang="ts">
 const { data, loading, error } = storeToRefs(useMainStore())
-const { getByType } = useMainStore()
+const { getByType, query } = useMainStore()
+const route = useRoute()
+
+watch(() => route.params, () => {
+  if (loading) setTimeout(() => query(), 1000)
+}, { immediate: true })
 
 const filters = ['Job', 'Status', 'Team']
 const searchValue = $ref('')
@@ -9,6 +14,11 @@ const searchValue = $ref('')
 const search = () => {
   // eslint-disable-next-line no-console
   console.log(searchValue)
+}
+interface HeaderParam {
+  key: string
+  displayProp?: string | undefined
+  title: string
 }
 
 const workorderTableHeaders: HeaderParam[] = [
@@ -20,32 +30,20 @@ const workorderTableHeaders: HeaderParam[] = [
   { key: 'start_date', title: 'Start Date' },
 ]
 
-interface HeaderParam {
-  key: string
-  displayProp?: string | undefined
-  title: string
-}
+const workorders = $computed(() => getByType({ type: 'workorders', getParsed: true }) ?? [])
 
-const tableHeaders = $ref([])
-const tableValues = $ref([])
+const tableValues = $computed(() => workorders?.length
+  ? workorders.map((row) => {
+    const updatedRow = workorderTableHeaders.reduce((newRow, header) => {
+      if (header?.displayProp) newRow[header.key] = row[header.key]?.[header.displayProp]
+      else newRow[header.key] = row[header.key]
+      return newRow
+    }, {})
 
-onBeforeMount(() => {
-  const data = getByType({ type: 'workorders', getParsed: true })
-  if (data) {
-    const values = data.map((row) => {
-      const updatedRow = workorderTableHeaders.reduce((newRow, header) => {
-        if (header?.displayProp) newRow[header.key] = row[header.key]?.[header.displayProp]
-        else newRow[header.key] = row[header.key]
-        return newRow
-      }, {})
-
-      updatedRow.id = row.id
-      return updatedRow
-    })
-    workorderTableHeaders.forEach(header => tableHeaders.push(header))
-    values.forEach(row => tableValues.push(row))
-  }
-})
+    updatedRow.id = row.id
+    return updatedRow
+  })
+  : [])
 </script>
 
 <template>
@@ -91,9 +89,9 @@ onBeforeMount(() => {
       <div v-if="error" class="">
         {{ error }}
       </div>
-      <template v-if="tableValues.length">
+      <template v-if="tableValues?.length">
         <Table
-          :headers="tableHeaders"
+          :headers="workorderTableHeaders"
           :values="tableValues"
           type="workorders"
         />
