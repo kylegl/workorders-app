@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { QuillEditor } from '@vueup/vue-quill'
 import routes from 'virtual:generated-pages'
 import { createPinia } from 'pinia'
 import App from './App.vue'
@@ -25,5 +24,4 @@ const router = createRouter({
 })
 app.use(router)
 app.use(createPinia())
-app.component('QuillEditor', QuillEditor)
 app.mount('#app')

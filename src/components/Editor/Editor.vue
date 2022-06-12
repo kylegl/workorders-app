@@ -1,27 +1,39 @@
 <script setup lang="ts">
+import { Delta, QuillEditor } from '@vueup/vue-quill'
 import './vue-quill.snow.css'
 
+const { data } = defineProps<{
+  data: Delta
+}>()
+
 const emit = defineEmits(['update:content'])
-const content = ref('')
+
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
   ['link'],
   [{ list: 'ordered' }, { list: 'bullet' }],
 ]
 
-const updateValue = () => emit('update:content', content)
+const initialContent = new Delta(data)
+
+const delta = $ref<Delta>(
+  initialContent,
+)
+const updateValue = () => emit('update:content', delta)
 </script>
 
 <template>
-  <QuillEditor
-    v-model:content="content"
-    theme="snow"
-    :toolbar="toolbarOptions"
-    content-type="html"
-    rounded-b
-    bg-bg-b
-    @text-change="updateValue"
-  />
+  <div>
+    <QuillEditor
+      v-model:content="delta"
+      content-type="delta"
+      theme="snow"
+      :toolbar="toolbarOptions"
+      rounded-b
+      bg-bg-b
+      @text-change="updateValue"
+    />
+  </div>
 </template>
 
 <style scoped>
@@ -29,3 +41,4 @@ input {
   background-color: #505050;
 }
 </style>
+

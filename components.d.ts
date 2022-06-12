@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     LineItem: typeof import('./src/components/LineItem.vue')['default']
     LineItems: typeof import('./src/components/LineItems.vue')['default']
     Nav: typeof import('./src/components/Nav.vue')['default']
+    RichTextField: typeof import('./src/components/RichTextField.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./src/components/Select.vue')['default']

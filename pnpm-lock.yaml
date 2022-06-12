@@ -16,6 +16,7 @@ specifiers:
   msw: ^0.41.1
   pinia: ^2.0.14
   pnpm: ^7.1.5
+  quill-delta-to-html: ^0.12.1
   short-uuid: ^4.2.0
   typescript: ^4.7.2
   unocss: ^0.34.1
@@ -48,6 +49,7 @@ devDependencies:
   jsdom: 19.0.0
   msw: 0.41.1_typescript@4.7.3
   pnpm: 7.1.9
+  quill-delta-to-html: 0.12.1
   short-uuid: 4.2.0
   typescript: 4.7.3
   unocss: 0.34.1_vite@2.9.10
@@ -3585,6 +3587,12 @@ packages:
 
   /queue-microtask/1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+    dev: true
+
+  /quill-delta-to-html/0.12.1:
+    resolution: {integrity: sha512-QhpeMk9+5ge3HYbL5A0Ewz3pXCsbemqGvIF/kw5D6D4V68AtcUp7yt9xNUkzOk/0IQz43hKy3IkzBzRhLIE+oA==}
+    dependencies:
+      lodash.isequal: 4.5.0
     dev: true
 
   /quill-delta/3.6.3:
