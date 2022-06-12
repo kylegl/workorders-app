@@ -2,8 +2,9 @@
 import { Delta, QuillEditor } from '@vueup/vue-quill'
 import './vue-quill.snow.css'
 
-const { data } = defineProps<{
+const { data, type = 'delta' } = defineProps<{
   data: Delta
+  type?: string | undefined
 }>()
 
 const emit = defineEmits(['update:content'])
@@ -14,23 +15,23 @@ const toolbarOptions = [
   [{ list: 'ordered' }, { list: 'bullet' }],
 ]
 
-const initialContent = new Delta(data)
+const initialContent = type === 'delta' ? new Delta(data) : data ?? ''
 
-const delta = $ref<Delta>(
+const editorContent = $ref<Delta>(
   initialContent,
 )
-const updateValue = () => emit('update:content', delta)
+const updateValue = () => emit('update:content', editorContent)
 </script>
 
 <template>
   <div>
     <QuillEditor
-      v-model:content="delta"
-      content-type="delta"
+      v-model:content="editorContent"
+      :content-type="type"
       theme="snow"
       :toolbar="toolbarOptions"
       rounded-b
-      bg-bg-b
+      bg-bg-f
       @text-change="updateValue"
     />
   </div>

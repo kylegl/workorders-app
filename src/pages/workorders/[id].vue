@@ -33,7 +33,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-4 p-8">
+  <div class="flex flex-col gap-y-4 p-8" relative>
     <div class="flex justify-between">
       <h1 class="text-h3">
         {{ `Work Order #` }}

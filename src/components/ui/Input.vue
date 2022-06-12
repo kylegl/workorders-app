@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  modelValue?: string
+  modelValue?: string | number
   placeHolderText?: string
   disabled?: boolean
   label?: string
@@ -30,12 +30,12 @@ const enter = () => {
     </template>
     <label />
     <div
-      class="flex rounded bg-bg-b border border-fg-subtle gap-x-2 px-[.5rem] in_out max-h-fit"
+      class="flex rounded bg-bg-f border border-fg-subtle gap-x-2 px-[.5rem] in_out max-h-fit"
       focus-within="ring-2 ring-bg-d border-fg-subtle"
     >
       <slot name="before" />
       <input
-        class="w-full p-2 rounded bg-bg-b placeholder:text-fg-subtle in_out focus:outline-none focus:caret-fg-norm"
+        class="w-full p-2 rounded bg-bg-f placeholder:text-fg-subtle in_out focus:outline-none focus:caret-fg-norm"
         :placeholder="placeHolderText"
         :type="type"
         :value="modelValue"

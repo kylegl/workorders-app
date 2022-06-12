@@ -1,6 +1,6 @@
 type Id = string | number
 
-export interface LineItem {
+export interface Task {
   id: Id
   'FK|workorder_id': Id
   description?: string
