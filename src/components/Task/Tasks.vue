@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Task } from '~/types'
 const { workorderId } = defineProps<Props>()
 const { data } = storeToRefs(useMainStore())
 const { getByKeyValue, getByType, deleteById } = useMainStore()
@@ -7,26 +8,38 @@ interface Props {
   workorderId: string
 }
 
-const tasks = computed(() => getByKeyValue({ key: 'workorder_id', value: workorderId, type: 'lineItems' }))
+const tasks = $computed((): Task[] =>
+  getByKeyValue({ key: 'workorder_id', value: workorderId, type: 'lineItems' })
+    ?.sort((a, b) => a.item_number - b.item_number))
 
-const deleteTask = (task) => {
+const deleteTask = (task: Task) => {
   deleteById({ id: task.id, type: 'lineItems' })
 }
 
-const editTask = (task) => {
-  task.description = 'SUCK MY ...'
-}
-
-const headers = [
-  { key: 'completed', title: 'Status' },
-  { key: 'description', title: 'Description' },
-  { key: 'details', title: 'Info' },
-  { key: 'quantity', title: 'Qty' },
-  { key: 'notes', title: 'Notes' },
-  { key: 'hours', title: 'Hrs' },
-]
 const addLineItem = () => {
   console.log('add line item')
+}
+
+let showModal = $ref(false)
+let currentTask = $ref()
+
+const editTask = (task: Task) => {
+  showModal = true
+
+  currentTask = task
+}
+
+const moveTask = (task: Task, delta: 1 | -1) => {
+  const idx = task.item_number - 1
+
+  const targetIdx = idx + delta
+  const otherTask = tasks[targetIdx]
+
+  task.item_number = task.item_number + delta
+  otherTask.item_number = idx + delta
+
+  tasks[targetIdx] = task
+  tasks[idx] = otherTask
 }
 </script>
 
@@ -39,15 +52,19 @@ const addLineItem = () => {
     <!-- EXISTING LINE ITEMS -->
     <section v-if="tasks?.length" flex="~ col" gap2 p4>
       <div v-for="task, idx in tasks" :key="task.id" relative>
-        <TaskItem :data="task" />
+        <TaskItem :data="task" :idx="idx" />
         <div absolute flex="~ col" left="-6" top-0 bottom-0 justify-center>
-          <button i-carbon:caret-up icon-btn />
+          <button v-if="idx" i-carbon:caret-up icon-btn @click="moveTask(task, -1)" />
           <button i-ion:edit icon-btn @click="editTask(task)" />
           <button i-carbon:close icon-btn @click="deleteTask(task)" />
-          <button i-carbon:caret-down icon-btn />
+          <button v-if="idx !== tasks.length - 1" i-carbon:caret-down icon-btn @click="moveTask(task, 1)" />
         </div>
       </div>
     </section>
+
+    <template v-if="showModal">
+      <EditTask :data="currentTask" @close="showModal = false" />
+    </template>
   </div>
 </template>
 
