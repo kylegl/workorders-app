@@ -10,6 +10,7 @@ const toggleComplete = () => {
   data.completed = !data.completed
 }
 
+watchEffect(() => data.item_number = idx + 1)
 </script>
 
 <template>
@@ -20,7 +21,7 @@ const toggleComplete = () => {
   >
     <div flex="~ col">
       <div text-h5>
-        {{`#${data.item_number}`}}
+        {{ `#${data.item_number}` }}
       </div>
       <button
         m-auto text-xl in_out

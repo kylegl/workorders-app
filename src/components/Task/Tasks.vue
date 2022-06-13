@@ -2,7 +2,7 @@
 import type { Task } from '~/types'
 const { workorderId } = defineProps<Props>()
 const { data } = storeToRefs(useMainStore())
-const { getByKeyValue, getByType, deleteById } = useMainStore()
+const { getByKeyValue, getByType, deleteById, addItem } = useMainStore()
 
 interface Props {
   workorderId: string
@@ -17,7 +17,21 @@ const deleteTask = (task: Task) => {
 }
 
 const addLineItem = () => {
-  console.log('add line item')
+  const lineItem = {
+    id: useUid(),
+    workorder_id: workorderId,
+    description: '',
+    details: '',
+    quantity: '',
+    hours: 0,
+    notes: '',
+    item_number: tasks.length + 1,
+    completed: false,
+  }
+
+  addItem({ item: lineItem, type: 'lineItems' })
+  currentTask = lineItem
+  showModal = true
 }
 
 let showModal = $ref(false)
