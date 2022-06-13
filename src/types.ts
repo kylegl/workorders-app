@@ -10,3 +10,8 @@ export interface Task {
   item_number: number
   completed: boolean
 }
+
+export interface Header {
+  key: string
+  title: string
+}

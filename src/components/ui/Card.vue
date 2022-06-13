@@ -3,7 +3,12 @@
 </script>
 
 <template>
-  <div class="flex rounded">
+  <div
+    flex p4
+    bg-2 shadow-md
+    hover="shadow-sm" in_out
+    border="~ base" rounded
+  >
     <slot />
   </div>
 </template>

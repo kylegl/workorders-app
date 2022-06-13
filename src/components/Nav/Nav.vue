@@ -1,0 +1,8 @@
+<template>
+  <div flex items-start w-full gap-x-8 p-4>
+    <NavItem to="/" title="Home" icon="i-carbon:home" />
+    <NavItem to="/workorders" title="Work Orders" icon="i-bx-task" />
+    <NavItem to="/directory" title="Directory" icon="i-akar-icons-people-group" />
+    <DarkSwitcher ml-auto />
+  </div>
+</template>

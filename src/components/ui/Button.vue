@@ -8,8 +8,13 @@ const handleClick = () => emit('click')
 
 <template>
   <button
-    class="flex items-center justify-center gap-x-[.5rem] rounded text-base p-[.5rem] shadow-md border border-fg-subtle"
-    hover="shadow-sm  in_out"
+    flex items-center justify-center gap2 p2
+    border="~ base" rounded
+    bg-bg-j dark:bg-bg-a
+    text-h5
+    shadow-md
+    action-hover
+    hover="shadow-sm"
     @click="handleClick"
     @mouseenter="isHovered(true)"
     @mouseleave="isHovered(false)"

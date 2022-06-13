@@ -15,9 +15,8 @@ watchEffect(() => data.item_number = idx + 1)
 
 <template>
   <div
-    rounded flex justify-between gap-x-2 p-2 h-auto min-h-20
+    flex justify-between gap-x-2 h-auto min-h-20
     relative
-    border="~ bg-d/20"
   >
     <div flex="~ col">
       <div text-h5>
@@ -25,11 +24,11 @@ watchEffect(() => data.item_number = idx + 1)
       </div>
       <button
         m-auto text-xl in_out
-        icon-btn
+
         @click="toggleComplete"
       >
-        <Icon v-if="!data.completed" i-carbon:checkbox />
-        <Icon v-if="data.completed" i-carbon:checkmark text-green />
+        <Icon v-if="!data.completed" i-carbon:checkbox text-2xl />
+        <Icon v-if="data.completed" i-ci:check-bold text-green text-2xl />
       </button>
     </div>
 

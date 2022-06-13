@@ -48,7 +48,7 @@ const tableValues = $computed(() => workorders?.length
 
 <template>
   <div class="flex flex-col gap-y-8 w-full">
-    <h1 class="text-h3">
+    <h1 class="text-h3" op70>
       Work Orders
     </h1>
     <section id="header" class="flex flex-col gap-y-4  w-full">
@@ -62,7 +62,7 @@ const tableValues = $computed(() => workorders?.length
         >
           <template #after>
             <button class="flex" @click="true">
-              <Icon class="i-fluent-search-12-regular text-2xl in_out m-auto" hover="bg-fg-subtle" />
+              <Icon i-fluent-search-12-regular text-2xl in_out m-auto action-hover />
             </button>
           </template>
         </Input>
