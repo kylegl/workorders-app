@@ -31,15 +31,9 @@ const updateValue = () => emit('update:content', editorContent)
       theme="snow"
       :toolbar="toolbarOptions"
       rounded-b
-      bg-bg-f
+      input-base
       @text-change="updateValue"
     />
   </div>
 </template>
-
-<style scoped>
-input {
-  background-color: #505050;
-}
-</style>
 

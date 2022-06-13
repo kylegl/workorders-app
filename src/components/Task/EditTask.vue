@@ -19,12 +19,9 @@ onClickOutside(modal, () => closeModal())
     items-center justify-center
     z-11
   >
-    <div
+    <Card
       ref="modal"
-      bg-bg-a
-      border="~ bg-bg-d" rounded
       flex="~ col" gap4 m16 p4
-      shadow-md
     >
       <div flex justify-between>
         <div text-h4>
@@ -44,19 +41,13 @@ onClickOutside(modal, () => closeModal())
         <div text-h5>
           Hours
         </div>
-        <Input v-model="data.hours" type="number" bg-bg-f />
+        <Input v-model="data.hours" type="number" />
       </div>
-      <button
-        flex justify-center items-center gap2
-        border="~ bg-d/50" m-auto p2 rounded
-        @click="closeModal"
-      >
+      <Button @click="closeModal" m-auto >
         <Icon i-carbon:save text-3xl  icon-btn/>
-        <div text-h5>
           Save
-        </div>
-      </button>
-    </div>
+      </Button>
+    </Card>
   </div>
 </template>
 

@@ -16,9 +16,11 @@ onBeforeMount(() => {
 })
 
 let formDisabled = $ref(true)
+let editIcon = $ref('i-ion:edit')
 
 const toggleForm = () => {
   formDisabled = !formDisabled
+  editIcon = formDisabled ? 'i-ion:edit' : 'i-carbon:save'
 }
 const startDate = $ref('')
 const dueDate = $ref('')
@@ -33,14 +35,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-4 p-8" relative>
-    <div class="flex justify-between">
-      <h1 class="text-h3">
+  <div flex="~ col" gap-y-4 p8 relative>
+    <div flex justify-between>
+      <h1 text-h3>
         {{ `Work Order #` }}
       </h1>
 
-      <Button class="" @click="toggleForm">
-        Edit
+      <Button text-h5 @click="toggleForm">
+        <Icon v-if="formDisabled" :class="editIcon" text-2xl icon-btn />
+        {{ formDisabled ? 'Edit' : 'Save' }}
       </Button>
     </div>
 
@@ -69,8 +72,8 @@ onMounted(() => {
 
     <section class="flex gap-x-4">
       <!-- JOB INFO -->
-      <div class="flex flex-col gap-y-4 w-1/2 border rounded p-4">
-        <h3 class="text-h4">
+      <Card w="1/2" flex="~ col" gap4>
+        <h3 text-h4>
           Project Info
         </h3>
         <Datalist
@@ -105,10 +108,11 @@ onMounted(() => {
           label="Contact"
           :disabled="formDisabled"
         />
-      </div>
+      </Card>
 
       <!-- WORKORDER INFO -->
-      <div class="flex flex-col gap-y-4 w-1/2 border rounded p-4">
+
+      <Card w="1/2" flex="~ col" gap4>
         <h3 class="text-h4">
           Work Order Info
         </h3>
@@ -140,12 +144,12 @@ onMounted(() => {
             :disabled="formDisabled"
           />
         </div>
-      </div>
+      </Card>
     </section>
 
     <!-- DESCRIPTION -->
     <section>
-      <div class="flex flex-col gap-y-4 border rounded p-4">
+      <Card w-full flex="~ col" gap4>
         <Input
           v-model="workorder.description"
           label="Description"
@@ -167,12 +171,10 @@ onMounted(() => {
           place-holder-text="Parking info"
           type="text"
         />
-      </div>
+      </Card>
     </section>
 
     <!-- LINE ITEMS -->
-    <section class="flex flex-col gap-y-4">
-      <Tasks :workorder-id="id" />
-    </section>
+    <Tasks :workorder-id="id" />
   </div>
 </template>

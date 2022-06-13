@@ -58,14 +58,20 @@ const moveTask = (task: Task, delta: 1 | -1) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-4 border rounded p-4 w-full">
-    <Button class="w-32 m-auto" @click="addLineItem">
+  <div flex="~ col" gap4>
+    <div flex justify-between>
+      <h3 text-h3>
+        Line Items
+      </h3>
+    <Button class="w-32" @click="addLineItem">
       <Icon class="i-fa-solid:plus text-2xl" />
     </Button>
+    </div>
+
 
     <!-- EXISTING LINE ITEMS -->
-    <section v-if="tasks?.length" flex="~ col" gap2 p4>
-      <div v-for="task, idx in tasks" :key="task.id" relative>
+    <section v-if="tasks?.length" flex="~ col" gap2 >
+      <Card v-for="task, idx in tasks" :key="task.id" relative>
         <TaskItem :data="task" :idx="idx" />
         <div absolute flex="~ col" left="-6" top-0 bottom-0 justify-center>
           <button v-if="idx" i-carbon:caret-up icon-btn @click="moveTask(task, -1)" />
@@ -73,7 +79,7 @@ const moveTask = (task: Task, delta: 1 | -1) => {
           <button i-carbon:close icon-btn @click="deleteTask(task)" />
           <button v-if="idx !== tasks.length - 1" i-carbon:caret-down icon-btn @click="moveTask(task, 1)" />
         </div>
-      </div>
+      </Card>
     </section>
 
     <template v-if="showModal">

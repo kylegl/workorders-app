@@ -1,10 +1,9 @@
 <template>
   <main
     font-sans
-    text="fg-norm"
-    bg="bg-f"
-    flex
-    flex-col
+    text-norm
+    bg-base
+    flex="~ col"
     min-h-screen
   >
     <Nav

@@ -21,6 +21,7 @@ let focus = $ref(false)
 let activeIndex = $ref<number>(-1)
 let validationError = $ref(false)
 
+watchEffect(() => console.log('active', activeIndex))
 onBeforeMount(() => value = modelValue)
 // computed
 const isDirty = $computed(() => value !== initialValue)
@@ -41,19 +42,19 @@ const searchResults = $computed(() => {
   return results ?? []
 })
 
-const activeIdx = () => {
-  activeIndex = activeIndex ?? 0
-
-  const increment = () => activeIndex++
-  const decrement = () => activeIndex--
-  const clear = () => activeIndex = -1
-
-  return {
-    increment,
-    decrement,
-    clear,
+const activeIdx = $computed((): number => {
+  if (activeIndex < -1) {
+    activeIndex = -1
+    return -1
   }
-}
+
+  if (activeIndex >= list.length) {
+    activeIndex = list.length - 1
+    return list.length - 1
+  }
+
+  return activeIndex
+})
 
 const setFocus = ({ isFocused, reset }: { isFocused: boolean; reset?: boolean }) => {
   focus = isFocused
@@ -64,7 +65,7 @@ const setFocus = ({ isFocused, reset }: { isFocused: boolean; reset?: boolean })
   }
 
   if (!isFocused) {
-    activeIdx().clear()
+    activeIndex = -1
 
     if (reset) value = initialValue ?? ''
   }
@@ -105,6 +106,9 @@ const checkEntry = () => {
     setFocus({ isFocused: false, reset: true })
 }
 
+const isActive = (index: number): boolean => activeIdx === index
+const isLastIdx = (index: number): boolean => searchResults.length - 1 === index
+
 // event handlers
 const handleFocus = () => setFocus({ isFocused: true })
 
@@ -112,25 +116,17 @@ const handleBlur = () => checkEntry()
 
 const handleClick = value => setEntry(value)
 
-const handleArrowKey = (direction: string) => {
-  if (direction === 'down') {
-    const max = searchResults?.length
-
-    if (activeIndex < max) activeIdx().increment()
-  }
-
-  if (direction === 'up' && (activeIndex > -1)) activeIdx().decrement()
+const handleHover = (index: number) => {
+  activeIndex = index
 }
-
-const handleHover = (index: number) => activeIndex = index
 const handleEnter = () => {
-  if (activeIndex > -1) {
-    const activeResult = searchResults[activeIndex]
+  if (activeIdx > -1) {
+    const activeResult = searchResults[activeIdx]
 
     setEntry(activeResult)
   }
 
-  if (activeIndex < 0) checkEntry()
+  if (activeIdx < 0) checkEntry()
 }
 const toggleFocus = () => focus ? handleBlur() : handleFocus()
 </script>
@@ -142,8 +138,8 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
       :label="label"
       :disabled="disabled"
       @focus="handleFocus"
-      @keydown.arrow-down="handleArrowKey('down')"
-      @keydown.arrow-up="handleArrowKey('up')"
+      @keydown.arrow-down="activeIndex++"
+      @keydown.arrow-up="activeIndex--"
       @keydown.escape="handleBlur"
       @keydown.enter="handleEnter"
     >
@@ -153,17 +149,19 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
         </button>
       </template>
       <template v-if="validationError" #error>
-        <div class="text-red ">
+        <div text-red>
           {{ errorMessage }}
         </div>
       </template>
     </Input>
     <template v-if="focus">
-      <ul class="absolute top-full min-w-full max-w-max z-10 list-none">
-        <li v-for="(item, index) in searchResults" :key="item">
+      <ul absolute top-full min-w-full max-w-max z-10 list-none shadow-md>
+        <li v-for="item, index in searchResults" :key="item">
           <div
-            class="flex gap-x-2 bg-bg-c border border-bg-b rounded p-2 justify-between"
-            :class="{ 'bg-bg-d': activeIndex === index }"
+            flex gap-x-2 p-2 justify-between
+            border="~ base"
+            :class="[isActive(index) ? 'bg-base' : 'input-base',
+            isLastIdx(index) ? 'rounded-b' : '']"
             in_out
             @mousedown="handleClick(item)"
             @mouseover="handleHover(index)"

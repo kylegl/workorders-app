@@ -30,12 +30,18 @@ const enter = () => {
     </template>
     <label />
     <div
-      class="flex rounded bg-bg-f border border-fg-subtle gap-x-2 px-[.5rem] in_out max-h-fit"
+      flex gap-x-2 px2 max-h-fit
+      input-base
+      border="~ base" rounded
+      in_out
       focus-within="ring-2 ring-bg-d border-fg-subtle"
     >
       <slot name="before" />
       <input
-        class="w-full p-2 rounded bg-bg-f placeholder:text-fg-subtle in_out focus:outline-none focus:caret-fg-norm"
+        w-full p-2 rounded input-base
+        placeholder:text-subtle
+        in_out
+        class="focus:outline-none focus:caret-fg-subtle dark:focus:caret-fg-subtle-d"
         :placeholder="placeHolderText"
         :type="type"
         :value="modelValue"

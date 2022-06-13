@@ -15,9 +15,8 @@ watchEffect(() => data.item_number = idx + 1)
 
 <template>
   <div
-    rounded flex justify-between gap-x-2 p-2 h-auto min-h-20
+    flex justify-between gap-x-2 h-auto min-h-20
     relative
-    border="~ bg-d/20"
   >
     <div flex="~ col">
       <div text-h5>
