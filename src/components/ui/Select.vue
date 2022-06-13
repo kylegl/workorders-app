@@ -159,7 +159,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
       </template>
     </Input>
     <template v-if="focus">
-      <ul class="absolute top-full min-w-full max-w-max z-10">
+      <ul class="absolute top-full min-w-full max-w-max z-10 list-none">
         <li v-for="(item, index) in searchResults" :key="item">
           <div
             class="flex gap-x-2 bg-bg-c border border-bg-b rounded p-2 justify-between"
