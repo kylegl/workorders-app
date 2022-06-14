@@ -41,6 +41,7 @@ export interface Project extends DataRowBase {
   billing_type: string
   closed_date?: number
 }
+
 export interface ProjectParsed extends Omit<Project, 'FK|client_id' | 'FK|contact_id'> {
   'FK|client_id': Client
   'FK|contact_id'?: Contact

@@ -12,6 +12,7 @@ specifiers:
   '@vueuse/components': ^8.6.0
   '@vueuse/core': ^8.5.0
   eslint: ^8.16.0
+  fuse.js: ^6.6.2
   jsdom: ^19.0.0
   msw: ^0.41.1
   pinia: ^2.0.14
@@ -46,6 +47,7 @@ devDependencies:
   '@vueup/vue-quill': 1.0.0-beta.8_vue@3.2.37
   '@vueuse/components': 8.6.0_vue@3.2.37
   eslint: 8.17.0
+  fuse.js: 6.6.2
   jsdom: 19.0.0
   msw: 0.41.1_typescript@4.7.3
   pnpm: 7.1.9
@@ -2329,6 +2331,11 @@ packages:
 
   /functions-have-names/1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
+    dev: true
+
+  /fuse.js/6.6.2:
+    resolution: {integrity: sha512-cJaJkxCCxC8qIIcPBF9yGxY0W/tVZS3uEISDxhYIdtk8OL93pe+6Zj7LjCqVV4dzbqcriOZ+kQ/NE4RXZHsIGA==}
+    engines: {node: '>=10'}
     dev: true
 
   /get-caller-file/2.0.5:

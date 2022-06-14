@@ -1,0 +1,41 @@
+<script setup lang="ts">
+import Fuse from 'fuse.js'
+const { data, keys } = defineProps<{
+  data: any[]
+  keys: string[]
+}>()
+
+const emit = defineEmits(['update:results'])
+
+const options = {
+  includeScore: true,
+  minMatchCharLength: 2,
+  threshold: 0.3,
+  keys,
+}
+
+const searchValue = $ref('')
+const fuse = new Fuse(data, options)
+const searchResult = $computed(() => {
+  if (searchValue === '') return data
+  return fuse.search(searchValue)?.map(result => result.item)
+})
+</script>
+
+<template>
+  <div>
+    <Input
+      v-model="searchValue"
+      type="text"
+      place-holder-text="Search..."
+      @keydown.enter="emit('update:results', searchResult)"
+      @input="emit('update:results', searchResult)"
+    >
+      <template #after>
+        <button class="flex" @click="true">
+          <Icon i-fluent-search-12-regular text-2xl in_out m-auto action-hover />
+        </button>
+      </template>
+    </Input>
+  </div>
+</template>

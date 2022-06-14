@@ -14,7 +14,7 @@ export default defineConfig({
     'text-h3': 'text-3xl font-semibold tracking-wider',
     'text-h4': 'text-2xl font-semibold tracking-wider',
     'text-h5': 'text-lg font-semibold tracking-wider',
-    'btn-primary': 'px-4 py-1 rounded bg-bg-b cursor-pointer hover:bg-bg-c disabled:cursor-default disabled:bg-bg-d disabled:opacity-50',
+    'btn': 'p2 rounded shadow-md cursor-pointer action-hover disabled:cursor-default disabled:opacity-50 text-h5',
     'icon-btn': 'op40 hover:op100 in_out',
     'bg-base': 'bg-bg-h dark:bg-bg-g',
     'bg-1': 'bg-bg-h dark:bg-bg-g',
@@ -25,6 +25,8 @@ export default defineConfig({
     'action-hover': 'op70 hover:op100 in_out',
     'border-base': 'border-fg-subtle/40 dark:border-fg-subtle-d/40',
     'input-base': 'bg-bg-j  dark:bg-bg-k',
+    'btn-primary': 'bg-bg-j dark:bg-bg-a',
+    'btn-active': 'bg-bg-d dark:bg-bg-c text-fg-norm-d',
   },
   presets: [
     presetUno(),

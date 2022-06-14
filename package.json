@@ -26,6 +26,7 @@
     "@vueup/vue-quill": "1.0.0-beta.8",
     "@vueuse/components": "^8.6.0",
     "eslint": "^8.16.0",
+    "fuse.js": "^6.6.2",
     "jsdom": "^19.0.0",
     "msw": "^0.41.1",
     "pnpm": "^7.1.5",
