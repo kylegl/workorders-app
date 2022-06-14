@@ -46,7 +46,7 @@ export const useMainStore = defineStore('main', {
       }
     },
     getByKeyValue(state) {
-      return ({ key, value, type}: GetKeyParams) => {
+      return ({ key, value, type }: GetKeyParams) => {
         const results = state.data?.[type]?.filter((entry: DataTable) => entry[key] === value)
         return results ?? []
       }
@@ -113,7 +113,7 @@ export const useMainStore = defineStore('main', {
     addItem({ item, type }) {
       this.data[type] = [...this.data?.[type], item]
       console.log(`Add request for ${type}: ${item.id}`)
-    }
+    },
   },
 })
 

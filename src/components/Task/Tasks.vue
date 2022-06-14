@@ -9,7 +9,7 @@ interface Props {
 }
 
 const tasks = $computed((): Task[] =>
-  getByKeyValue({ key: 'workorder_id', value: workorderId, type: 'lineItems' })
+  getByKeyValue({ key: 'FK|workorder_id', value: workorderId, type: 'lineItems' })
     ?.sort((a, b) => a.item_number - b.item_number))
 
 const deleteTask = (task: Task) => {
