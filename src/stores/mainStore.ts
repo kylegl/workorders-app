@@ -101,7 +101,7 @@ export const useMainStore = defineStore('main', {
 
       console.log(`Delete request for ${type}: ${id}`)
     },
-    addItem({ item, type }) {
+    addItem({ item, type }: AddItemParams) {
       this.data[type] = [...this.data?.[type], item]
       console.log(`Add request for ${type}: ${item.id}`)
     },
@@ -109,6 +109,11 @@ export const useMainStore = defineStore('main', {
 })
 
 // Types
+interface AddItemParams {
+  item: Record<string, any>
+  type: DataTableName
+}
+
 interface GetParams {
   id?: string
   type: DataTableName

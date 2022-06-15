@@ -42,8 +42,8 @@ onMounted(() => {
     </div>
 
     <!-- HEADER -->
-    <div class="flex justify-between">
-      <div class="flex gap-x-4">
+    <div flex justify-between z10>
+      <div flex gap4>
         <Select
           v-model="workorder.status"
           label="Status"
@@ -51,7 +51,7 @@ onMounted(() => {
         />
       </div>
 
-      <div class="flex gap-x-4">
+      <div flex gap4>
         <Datalist
           v-model="workorder['FK|employee_id']"
           label="Assigned To"

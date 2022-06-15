@@ -63,8 +63,9 @@ const moveTask = (task: Task, delta: 1 | -1) => {
       <h3 text-h3>
         Line Items
       </h3>
-    <Button class="w-32" @click="addLineItem">
-      <Icon class="i-fa-solid:plus text-2xl" />
+    <Button @click="addLineItem">
+      <Icon i-fa-solid:plus text-2xl />
+      Line Item
     </Button>
     </div>
 

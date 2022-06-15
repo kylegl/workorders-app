@@ -9,6 +9,13 @@ const jobTitle = $computed(() => {
   if (job?.job_name && job?.address) return `${job.job_name} - ${job.address}`
   return job?.job_name ?? job?.address
 })
+
+const addWorkorder = () => {
+  addItem({
+    type: 'workorders',
+    item: createWorkorder(job),
+  })
+}
 </script>
 
 <template>
@@ -54,14 +61,15 @@ const jobTitle = $computed(() => {
 
     <section v-if="workorders.length" flex="~ col" gap4>
       <div flex justify-between items-center>
-        <div text-h4 >
+        <div text-h4>
           Workorders
         </div>
-        <Button w-32 @click="true">
+        <Button @click="createWorkorder">
           <Icon i-fa-solid:plus text-2xl />
+          Work Order
         </Button>
       </div>
-      <div v-for="workorder in workorders" :key="workorder.id" >
+      <div v-for="workorder in workorders" :key="workorder.id">
         <Workorder :workorder="workorder" />
         <div absolute flex="~ col" left="-6" top-0 bottom-0 justify-center gap3>
           <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }">
@@ -71,8 +79,9 @@ const jobTitle = $computed(() => {
         </div>
       </div>
     </section>
-    <Button w-32 m-auto @click="true">
+    <Button  m-auto @click="addWorkorder">
       <Icon i-fa-solid:plus text-2xl />
+      Work Order
     </Button>
   </div>
 </template>
