@@ -170,11 +170,11 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
 // TODO click needs to be on button not the icon. FIx date parse
 
 <template>
-  <div v-on-click-outside="handleBlur" class="flex flex-col gap-y-1 relative">
+  <div v-on-click-outside="handleBlur" flex="~ col" gap1 relative>
     <Input
+      v-model="textValue"
       :label="label"
       :disabled="disabled"
-      v-model="textValue"
       :place-holder-text="type"
       @focus="handleFocus"
       @keydown.arrow-down="handleArrowKey('down')"
@@ -182,29 +182,34 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
       @keydown.escape="handleBlur"
       @keydown.enter="handleEnter"
     >
-      <template #after v-if="!disabled">
+      <template v-if="!disabled" #after>
         <button>
-          <Icon class="i-fa:chevron-down m-auto" @click="toggleFocus()" />
+          <Icon i-fa:chevron-down m-auto @click="toggleFocus()" />
         </button>
       </template>
       <template v-if="validationError" #error>
-        <div class="text-red ">
+        <div text-red>
           {{ errorMessage }}
         </div>
       </template>
     </Input>
     <template v-if="focus">
-      <ul class="absolute top-full min-w-full max-w-max list-none">
+      <ul
+        absolute top-full min-w-full max-w-max
+        border="~ base"
+        list-none
+      >
         <li v-for="(item, index) in searchResults" :key="item?.id">
           <div
-            class="flex gap-x-2 bg-bg-c border border-bg-b rounded p-2 justify-between"
-            :class="{ 'bg-bg-d': activeIndex === index }"
+            flex gap-x-2 bg-2 justify-between p2
+            border="b base"
             in_out
+            :class="{ 'bg-bg-d': activeIndex === index }"
             @mousedown="handleClick(item)"
             @mouseover="handleHover(index)"
             @mouseleave="handleHover(-1)"
           >
-            <div v-for="key in showKeys" :key="key" class="flex item-start min-w-max">
+            <div v-for="key in showKeys" :key="key" flex item-start min-w-max>
               {{ item[key] }}
             </div>
           </div>
