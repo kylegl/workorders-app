@@ -1,14 +1,14 @@
 import { gasMutation, gasQuery } from './gas.js'
 import type { BackendData, Versions } from './apiResponseTypes'
 
-const isGoogle: boolean = import.meta.env.VITE_GOOGLE
-
 const Query = async (): Promise<BackendData> => {
+  const isProd = process.env.NODE_ENV === 'production'
   let res
 
-  if (isGoogle) {
+  if (isProd) {
     const result = await gasQuery()
     res = result
+    console.log('res', res)
   }
 
   const response = await fetch('http://localhost:4000/mock-api')
@@ -22,7 +22,7 @@ const Query = async (): Promise<BackendData> => {
 }
 
 async function Mutation({ items }): Promise<any> {
-  if (isGoogle)
+  if (isProd)
     return gasMutation({ items })
 }
 

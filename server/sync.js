@@ -7,17 +7,39 @@ const syncFromMainDB = () => {
   DBValues.shift()
 
   const DB = new cUseful.Fiddler().setValues(DBValues).getData()
-  const clients = getSheetInterface({ sheetName: 'clients' }).getData()
   const contacts = getSheetInterface({ sheetName: 'contacts' }).getData()
+  const newBids = getSheetInterface({ sheetName: 'bids' }).getData()
 
   const bids = DB.filter(entry => entry.status)
   const jobs = DB.filter(entry => entry.job_id)
+  const clientsDB = new Set(DB.map(entry => entry.company.trim()))
 
-  syncBids({ bids, contacts, clients })
-  syncJobs({ jobs, contacts, clients })
+  const updatedClients = syncClients({ clientsDB })
+
+  syncBids({ bids, contacts, clients: updatedClients })
+  syncJobs({ jobs, contacts, clients: updatedClients, bids: newBids })
 }
 
-const syncJobs = ({ jobs, contacts, clients }) => {
+const syncClients = ({ clientsDB }) => {
+  const clientsInterface = getSheetInterface({ sheetName: 'clients' })
+  const clientsData = clientsInterface.getData()
+  const clientsDBData = Array.from(clientsDB)
+
+  clientsDBData.forEach((client) => {
+    if (!clientsData.find(entry => entry.name === client)) {
+      clientsData.push({
+        id: Utilities.getUuid(),
+        name: client,
+      })
+    }
+  })
+
+  clientsInterface.setData(clientsData)
+  setSheetValues({ sheetInterface: clientsInterface })
+  return clientsData
+}
+
+const syncJobs = ({ jobs, contacts, clients, bids }) => {
   const jobsInterface = getSheetInterface({ sheetName: 'jobs' })
   const jobData = jobsInterface.getData()
   const headers = jobsInterface.getHeaders()
@@ -26,27 +48,30 @@ const syncJobs = ({ jobs, contacts, clients }) => {
 
   const updatedJobs = jobs.map((entry) => {
     const existingEntry = jobData.find(item => item.job_number === entry.job_id)
-    const id = existingEntry?.id ?? Utilities.getUuid()
-    const client_id = existingEntry?.['FK|client_id'] ?? clients.find(client => client.name.trim() === entry.company.trim())?.id
-    const contact_id = existingEntry?.['FK|contact_id'] ?? contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
+    const id = existingEntry?.id || Utilities.getUuid()
+    const client_id = existingEntry?.['FK|client_id'] || clients.find(client => client.name.trim() === entry.company.trim())?.id
+    const contact_id = existingEntry?.['FK|contact_id'] || contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
+    const bid_id = entry?.status ? bids.find(bid => bid.bid_id === entry.bid_id)?.id : undefined
 
     const job = {
       id,
-      client_id,
-      contact_id,
-      billing_type: entry.tm,
-      contract_total: entry.job_total,
-      job_type: entry.finishing,
-      status: entry.job_status,
-      sheet_id: entry.job_sheet_id,
-      closed_date: entry.job_closed_date,
-      job_number: entry.job_id,
+      'FK|client_id': client_id,
+      'FK|contact_id': contact_id,
+      'billing_type': entry.tm,
+      'FK|bid_id': bid_id,
+      'contract_total': entry.job_total,
+      'job_type': entry.finishing,
+      'status': entry.job_status,
+      'sheet_id': entry.job_sheet_id,
+      'closed_date': entry.job_closed_date,
+      'job_number': entry.job_id,
     }
 
     headers.filter(item => ![
       'id',
       'FK|client_id',
       'FK|contact_id',
+      'FK|bid_id',
       'billing_type',
       'contract_total',
       'job_type',
@@ -81,15 +106,15 @@ const syncBids = ({ bids, contacts, clients }) => {
 
   const updatedBids = bids.map((entry) => {
     const existingEntry = bidData.find(item => item.bid_id === entry.bid_id)
-    const id = existingEntry?.id ?? Utilities.getUuid()
-    const client_id = existingEntry?.['FK|client_id'] ?? clients.find(client => client.name.trim() === entry.company.trim())?.id
-    const contact_id = existingEntry?.['FK|contact_id'] ?? contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
+    const id = existingEntry?.id || Utilities.getUuid()
+    const client_id = existingEntry?.['FK|client_id'] || clients.find(client => client.name.trim() === entry.company.trim())?.id
+    const contact_id = existingEntry?.['FK|contact_id'] || contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
 
     const bid = {
       id,
       'FK|client_id': client_id,
       'FK|contact_id': contact_id,
-      billing_type: entry.tm,
+      'billing_type': entry.tm,
     }
 
     headers.filter(item => !['id', 'FK|client_id', 'FK|contact_id', 'billing_type'].includes(item)).forEach((el) => {
