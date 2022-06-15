@@ -50,7 +50,7 @@ const moveTask = (task: Task, delta: 1 | -1) => {
   const otherTask = tasks[targetIdx]
 
   task.item_number = task.item_number + delta
-  otherTask.item_number = idx + delta
+  otherTask.item_number = idx
 
   tasks[targetIdx] = task
   tasks[idx] = otherTask
