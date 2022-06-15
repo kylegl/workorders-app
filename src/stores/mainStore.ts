@@ -65,7 +65,7 @@ export const useMainStore = defineStore('main', {
 
           const isDateType = isDate(key)
           if (isDateType)
-            result[key] = row[key] ? parseTimestampToDate(row[key]) : row[key]
+            result[key] = row[key] ? unixToHumanDate(row[key]) : row[key]
 
           if (!isDateType && !isForeignKey) result[key] = row[key]
           return result

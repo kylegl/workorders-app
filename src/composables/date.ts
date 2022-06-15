@@ -1,8 +1,8 @@
 import { Temporal } from '@js-temporal/polyfill'
 
-export const parseTimestampToDate = (timestamp: Date) => {
+export const unixToHumanDate = (timestamp: number): Date | string => {
   const instant = Temporal.Instant
-    .fromEpochMilliseconds(parseInt(timestamp))
+    .fromEpochMilliseconds(timestamp)
     .toZonedDateTimeISO('America/Los_Angeles')
     .toPlainDate()
 

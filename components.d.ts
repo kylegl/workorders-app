@@ -25,6 +25,7 @@ declare module '@vue/runtime-core' {
     Table: typeof import('./src/components/ui/Table.vue')['default']
     TaskItem: typeof import('./src/components/Task/TaskItem.vue')['default']
     Tasks: typeof import('./src/components/Task/Tasks.vue')['default']
+    Workorder: typeof import('./src/components/ui/Workorder.vue')['default']
   }
 }
 

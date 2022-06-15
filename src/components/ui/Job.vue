@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Job } from '~/types'
 const { job } = defineProps<{ job: Job }>()
-const { data, loading, error } = storeToRefs(useMainStore())
-const { getById } = useMainStore()
 </script>
 
 <template>
@@ -40,7 +38,6 @@ const { getById } = useMainStore()
             {{ job.address }}
           </div>
         </div>
-
       </div>
     </Card>
   </router-link>

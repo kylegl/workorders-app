@@ -21,7 +21,6 @@ let focus = $ref(false)
 let activeIndex = $ref<number>(-1)
 let validationError = $ref(false)
 
-watchEffect(() => console.log('active', activeIndex))
 onBeforeMount(() => value = modelValue)
 // computed
 const isDirty = $computed(() => value !== initialValue)

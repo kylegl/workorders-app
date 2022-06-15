@@ -112,7 +112,7 @@ export const useWorkorderStore = defineStore('workorderList', {
           let updatedValue
 
           if (!this.schema[key].type) updatedValue = value
-          if (this.schema[key].type === 'date') updatedValue = parseTimestampToDate(value)
+          if (this.schema[key].type === 'date') updatedValue = unixToHumanDate(value)
           if (this.schema[key].type === 'id') {
             updatedValue = this.schema[key].store().getById(value)?.[this.schema[key].entryKey]
             key = this.schema[key].key
