@@ -27,8 +27,8 @@ const syncJobs = ({ jobs, contacts, clients }) => {
   const updatedJobs = jobs.map((entry) => {
     const existingEntry = jobData.find(item => item.job_number === entry.job_id)
     const id = existingEntry?.id ?? Utilities.getUuid()
-    const client_id = existingEntry?.client_id ?? clients.find(client => client.name.trim() === entry.company.trim())?.id
-    const contact_id = existingEntry?.contact_id ?? contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
+    const client_id = existingEntry?.['FK|client_id'] ?? clients.find(client => client.name.trim() === entry.company.trim())?.id
+    const contact_id = existingEntry?.['FK|contact_id'] ?? contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
 
     const job = {
       id,
@@ -45,8 +45,8 @@ const syncJobs = ({ jobs, contacts, clients }) => {
 
     headers.filter(item => ![
       'id',
-      'client_id',
-      'contact_id',
+      'FK|client_id',
+      'FK|contact_id',
       'billing_type',
       'contract_total',
       'job_type',
@@ -59,7 +59,7 @@ const syncJobs = ({ jobs, contacts, clients }) => {
       job[el] = entry[el]
     })
 
-    if (!job?.client_id) idErrors.push({ id: job.id, client: entry.company })
+    if (!job?.['FK|client_id']) idErrors.push({ id: job.id, client: entry.company })
 
     return job
   })
@@ -82,21 +82,21 @@ const syncBids = ({ bids, contacts, clients }) => {
   const updatedBids = bids.map((entry) => {
     const existingEntry = bidData.find(item => item.bid_id === entry.bid_id)
     const id = existingEntry?.id ?? Utilities.getUuid()
-    const client_id = existingEntry?.client_id ?? clients.find(client => client.name.trim() === entry.company.trim())?.id
-    const contact_id = existingEntry?.contact_id ?? contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
+    const client_id = existingEntry?.['FK|client_id'] ?? clients.find(client => client.name.trim() === entry.company.trim())?.id
+    const contact_id = existingEntry?.['FK|contact_id'] ?? contacts.find(contact => contact.name.trim() === entry.contact.trim())?.id
 
     const bid = {
       id,
-      client_id,
-      contact_id,
+      'FK|client_id': client_id,
+      'FK|contact_id': contact_id,
       billing_type: entry.tm,
     }
 
-    headers.filter(item => !['id', 'client_id', 'contact_id', 'billing_type'].includes(item)).forEach((el) => {
+    headers.filter(item => !['id', 'FK|client_id', 'FK|contact_id', 'billing_type'].includes(item)).forEach((el) => {
       bid[el] = entry[el]
     })
 
-    if (!bid?.client_id) idErrors.push({ id: bid.id, client: entry.company })
+    if (!bid?.['FK|client_id']) idErrors.push({ id: bid.id, client: entry.company })
 
     return bid
   })
