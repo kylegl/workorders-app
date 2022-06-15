@@ -12,3 +12,7 @@ export const jobSearchKeys = [
   'FK|client_id.name',
 ]
 
+export const workorderStatusOptions = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']
+export const billingOptions = ['T&M', 'Fixed']
+export const jobTypeOptions = ['Finishing', 'Painting']
+

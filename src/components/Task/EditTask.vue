@@ -22,10 +22,12 @@ onClickOutside(modal, () => closeModal())
     <Card
       ref="modal"
       flex="~ col" gap4 m16 p4
+      min-w-100
+      w="1/2"
     >
       <div flex justify-between>
         <div text-h4>
-          {{ `Edit task #${data.item_number}` }}
+          {{ `Edit Line Item #${data.item_number}` }}
         </div>
         <button i-carbon:close text-2xl icon-btn @click="closeModal" />
       </div>

@@ -2,7 +2,7 @@
 import { Delta, QuillEditor } from '@vueup/vue-quill'
 import './vue-quill.snow.css'
 
-const { data, type = 'delta' } = defineProps<{
+const { data, type = 'delta', label } = defineProps<{
   data: Delta
   type?: string | undefined
 }>()

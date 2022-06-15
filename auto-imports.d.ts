@@ -11,6 +11,7 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+  const billingOptions: typeof import('./src/composables/constants')['billingOptions']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -50,6 +51,7 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const jobFilters: typeof import('./src/composables/constants')['jobFilters']
   const jobSearchKeys: typeof import('./src/composables/constants')['jobSearchKeys']
+  const jobTypeOptions: typeof import('./src/composables/constants')['jobTypeOptions']
   const logicAnd: typeof import('@vueuse/core')['logicAnd']
   const logicNot: typeof import('@vueuse/core')['logicNot']
   const logicOr: typeof import('@vueuse/core')['logicOr']
@@ -266,6 +268,7 @@ declare global {
   const watchThrottled: typeof import('@vueuse/core')['watchThrottled']
   const watchWithFilter: typeof import('@vueuse/core')['watchWithFilter']
   const whenever: typeof import('@vueuse/core')['whenever']
+  const workorderStatusOptions: typeof import('./src/composables/constants')['workorderStatusOptions']
 }
 // for vue template auto import
 declare module 'vue' {
@@ -280,6 +283,7 @@ declare module 'vue' {
     EffectScope: typeof import('vue')['EffectScope']
     asyncComputed: typeof import('@vueuse/core')['asyncComputed']
     autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+    billingOptions: typeof import('./src/composables/constants')['billingOptions']
     computed: typeof import('vue')['computed']
     computedAsync: typeof import('@vueuse/core')['computedAsync']
     computedEager: typeof import('@vueuse/core')['computedEager']
@@ -319,6 +323,7 @@ declare module 'vue' {
     isRef: typeof import('vue')['isRef']
     jobFilters: typeof import('./src/composables/constants')['jobFilters']
     jobSearchKeys: typeof import('./src/composables/constants')['jobSearchKeys']
+    jobTypeOptions: typeof import('./src/composables/constants')['jobTypeOptions']
     logicAnd: typeof import('@vueuse/core')['logicAnd']
     logicNot: typeof import('@vueuse/core')['logicNot']
     logicOr: typeof import('@vueuse/core')['logicOr']
@@ -535,5 +540,6 @@ declare module 'vue' {
     watchThrottled: typeof import('@vueuse/core')['watchThrottled']
     watchWithFilter: typeof import('@vueuse/core')['watchWithFilter']
     whenever: typeof import('@vueuse/core')['whenever']
+    workorderStatusOptions: typeof import('./src/composables/constants')['workorderStatusOptions']
   }
 }

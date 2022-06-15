@@ -4,21 +4,22 @@ const { data, loading, error } = storeToRefs(useMainStore())
 const { getById, getReadableDate } = useMainStore()
 const route = useRoute()
 const id = route.params?.id
+const startDate = $ref('')
+const dueDate = $ref('')
 let workorder = $ref({} as WorkorderParsed)
-const statusOptions = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']
-const billingOptions = ['T&M', 'Fixed']
-const jobTypeOptions = ['Finishing', 'Painting']
+let formDisabled = $ref(true)
+let editIcon = $ref('i-ion:edit')
+
+
 onBeforeMount(() => {
   workorder = getById({ id, type: 'workorders' })
 })
-let formDisabled = $ref(true)
-let editIcon = $ref('i-ion:edit')
+
 const toggleForm = () => {
   formDisabled = !formDisabled
   editIcon = formDisabled ? 'i-ion:edit' : 'i-carbon:save'
 }
-const startDate = $ref('')
-const dueDate = $ref('')
+
 onMounted(() => {
   const startDateTimestamp = $toRef(workorder, 'start_date')
   const dueDateTimestamp = $toRef(workorder, 'due_date')
@@ -46,7 +47,7 @@ onMounted(() => {
         <Select
           v-model="workorder.status"
           label="Status"
-          :list="statusOptions"
+          :list="workorderStatusOptions"
         />
       </div>
 
@@ -143,25 +144,51 @@ onMounted(() => {
     <!-- DESCRIPTION -->
     <section>
       <Card w-full flex="~ col" gap4>
-        <Input
-          v-model="workorder.description"
+        <div text-h5>
+          Description
+        </div>
+        <div v-if="formDisabled">
+          {{ workorder.description }}
+        </div>
+        <Editor
+          v-else
+          v-model:content="workorder.description"
+          :data="workorder.description"
           label="Description"
           :disabled="formDisabled"
           place-holder-text="Description"
           type="text"
         />
-        <Input
-          v-model="workorder.notes"
-          label="Notes"
+
+        <div text-h5>
+          Notes
+        </div>
+        <div v-if="formDisabled">
+          {{ workorder.notes }}
+        </div>
+        <Editor
+          v-else
+          v-model:content="workorder.notes"
+          :data="workorder.notes"
+          label="Description"
           :disabled="formDisabled"
-          place-holder-text="Notes"
+          place-holder-text="Description"
           type="text"
         />
-        <Input
-          v-model="workorder.parking_info"
-          label="Parking Info"
+
+        <div text-h5>
+          Parking Info
+        </div>
+        <div v-if="formDisabled">
+          {{ workorder.parking_info }}
+        </div>
+        <Editor
+          v-else
+          v-model:content="workorder.parking_info"
+          :data="workorder.parking_info"
+          label="Description"
           :disabled="formDisabled"
-          place-holder-text="Parking info"
+          place-holder-text="Description"
           type="text"
         />
       </Card>
