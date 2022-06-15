@@ -7,9 +7,10 @@ const { x, y } = useMouse()
 onMounted(() => {
   // setTimeout(() => query(), 1000)
 })
+const test = $computed(() => data)
 
 const getMock = () => {
-  query()
+ test = query()
 }
 
 const get = () => {
@@ -56,7 +57,7 @@ const initialDelta = { ops: [{ insert: 'list' }, { attributes: { list: 'ordered'
     </div>
     <div v-if="html" v-html="html" />
 
-    <div />
+    <div>{{data}}</div>
   </div>
 </template>
 

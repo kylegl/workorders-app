@@ -2,14 +2,6 @@ import { defineStore } from 'pinia'
 import type { BackendData, DataTable, DataTableName, DataTableParsed, DataTables, TableRowKeys, Versions } from '~/api/apiResponseTypes'
 import { Mutation, Query } from '~/api/index'
 
-// Helper functions
-const isFK = (key: string): DataTableName | undefined => {
-  const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
-  return type ? `${type}s` as DataTableName : undefined
-}
-
-const isDate = (key: string) => /^([^_]+)_(date|at)$/.test(key)
-
 export const useMainStore = defineStore('main', {
   state: () => ({
     data: {},
@@ -39,7 +31,7 @@ export const useMainStore = defineStore('main', {
     },
     getById(state) {
       return ({ id, type, getParsed = false }: GetParams) => {
-        const row: DataTable = state.data?.[type]?.find((entry: DataTable) => entry.id === id)
+        const row: DataTable = state.data?.[type]?.find((entry: DataTable) => entry.id.toString() === id?.toString())
         return getParsed && row
           ? this.formatRowData({ row })
           : row
@@ -86,13 +78,12 @@ export const useMainStore = defineStore('main', {
         this.loading = true
         const res = await Query()
         const isDev = process.env.NODE_ENV === 'development'
-
         const tableNames: DataTableName[] = Object.keys(res) as (keyof typeof res)[]
+
         tableNames.forEach((key) => {
           this.data[key] = isDev ? res[key] : res[key].data
           this.client.versions[key] = isDev ? '' : res[key].version
         })
-
         this.loading = false
         this.error = undefined
       }

@@ -1,4 +1,5 @@
 import { useMainStore } from '~/stores/mainStore'
+import { getErrorMessage, isDate, isFK } from '~/composables/utils'
 
 const Provoke = ((ns) => {
   /**
@@ -26,22 +27,52 @@ const Provoke = ((ns) => {
 })({})
 
 const gasQuery = async () => {
-  const mainStore = useMainStore()
+  try {
+    const mainStore = useMainStore()
 
-  const clientVersions = mainStore.client.versions
+    const clientVersions = mainStore.client.versions
 
-  const requests = [
-    createJob({
-      namespace: 'database',
-      tasks: [
-        createTask({ namespace: 'database', action: 'get', params: { clientVersions } }),
-      ],
-    }),
-  ]
+    const requests = [
+      createJob({
+        namespace: 'database',
+        tasks: [
+          createTask({ namespace: 'database', action: 'get', params: { clientVersions } }),
+        ],
+      }),
+    ]
 
-  const res = await serverRequest({ requests })
-  const [[parsedRes]] = JSON.parse(res)
-  return parsedRes
+    const res = await serverRequest({ requests })
+    const [[parsedRes]] = JSON.parse(res)
+
+    let formattedRes = {}
+
+    Object.keys(parsedRes).forEach((key) => {
+      const item = parsedRes[key]
+      if (!item?.data) return item
+
+      const formattedData = item.data.map((row) => {
+        row.id = row.id.toString()
+
+        Object.keys(row).forEach((key) => {
+          if (!row[key]) return
+
+          if (isFK(key)) row[key] = row[key].toString()
+          if (isDate(key)) row[key] = parseInt(row[key])
+        })
+
+        return row
+      })
+
+      formattedRes = {
+        ...formattedRes,
+        [key]: { ...item, data: formattedData },
+      }
+    })
+    return formattedRes
+  }
+  catch (err) {
+    getErrorMessage(err)
+  }
 }
 
 const gasMutation = async ({ items }) => {

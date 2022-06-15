@@ -8,14 +8,15 @@ const Query = async (): Promise<BackendData> => {
   if (isProd) {
     const result = await gasQuery()
     res = result
-    console.log('res', res)
   }
 
-  const response = await fetch('http://localhost:4000/mock-api')
-  if (response.ok) {
-    const result = await response.json()
+  if (!isProd) {
+    const response = await fetch('http://localhost:4000/mock-api')
+    if (response.ok) {
+      const result = await response.json()
 
-    res = result
+      res = result
+    }
   }
 
   return res
