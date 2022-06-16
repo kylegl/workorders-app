@@ -1,5 +1,25 @@
+interface DatabaseController {
+  clientVersions: Versions
+  get(): 
+}
+
+interface DatabaseResponse extends Tables {
+  main: {
+    version: Version
+  }
+}
+
+interface Pack {
+  version: Version
+  name: string
+  id: string | number
+  data: Array<any>
+}
+
+
 class DatabaseController {
-  constructor({ clientVersions }) {
+  clientVersions
+  constructor({ clientVersions }: { clientVersions: Versions }) {
     this.clientVersions = clientVersions
   }
 
@@ -7,7 +27,11 @@ class DatabaseController {
     this.startTransaction()
     const scriptProps = getScriptProps()
 
-    let res = {}
+    let res = {
+      main: {
+        version: undefined,
+      }
+    }
     if (!this.isInSync({ scriptProps })) {
       const tables = this.getTablesThatNeedUpdates({ scriptProps })
       res = this.getTables({ tables })
@@ -23,13 +47,13 @@ class DatabaseController {
     if (this.clientVersions.main === serverVersions.main) return true
     return Object
       .keys(this.clientVersions)
-      .every(item => this.clientVersions[item] === serverVersions[item])
+      .every((item) => this.clientVersions[item as keyof Versions] === serverVersions[item])
   }
 
   getTablesThatNeedUpdates({ scriptProps }) {
     const serverVersions = scriptProps
     return Object.keys(this.clientVersions)
-      .filter(item => this.clientVersions[item] !== serverVersions[item])
+      .filter(item => this.clientVersions[item as keyof Versions] !== serverVersions[item])
       .filter(item => item !== 'main')
   }
 

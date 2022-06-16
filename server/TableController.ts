@@ -1,7 +1,40 @@
-class TableController {
-  constructor({ tableName, data }) {
+interface TableControllerType {
+  tableName: TableName
+  data: Array<any>
+  version: Version
+  add(): TableResponse
+  delete(): TableResponse
+  get(): TableResponse
+  update(): TableResponse
+}
+
+interface TableResponse {
+  data: Object
+  version: string
+  table: string
+}
+
+interface Database {
+  employees: Array<any>
+  contacts: Array<any>
+  clients: Array<any>
+  bids: Array<any>
+  jobs: Array<any>
+  workorders: Array<any>
+  line_items: Array<any>
+}
+
+type TableName = keyof Database
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+class TableController implements TableControllerType {
+  tableName
+  data
+  version
+  constructor({ tableName, data, version }: { tableName: TableName; data: Array<any>; version: Version }) {
     this.tableName = tableName
     this.data = data
+    this.version = version
   }
 
   add() {
@@ -19,7 +52,7 @@ class TableController {
     const Table = this.startTransaction()
 
     this.data.forEach((entry) => {
-      Table.tableInterface.filterRows((row, properties) => row.id !== entry.id)
+      Table.tableInterface.filterRows((row: Object, properties) => row.id !== entry.id)
     })
 
     return this.commitTransaction({ Table })
@@ -29,11 +62,26 @@ class TableController {
     const Table = this.startTransaction()
 
     this.unlock()
-    return Table
+    return { data: Table.data, version: this.version, table: this.tableName }
+  }
+
+  update() {
+    const Table = this.startTransaction()
+
+    this.data.forEach((entry) => {
+      const item = Table.data.find((row: Object, properties) => row.id === entry.id)
+
+      if (item)
+        Table.tableInterface.filterRows((row: Object, properties) => row.id !== entry.id)
+
+      Table.data.push(entry)
+    })
+
+    return this.commitTransaction({ Table })
   }
 
   isLocked() {
-    const prop = getScriptProp({ prop: `${this.tableName}_locked` })
+    return getScriptProp({ prop: `${this.tableName}_locked` })
   }
 
   lock() {

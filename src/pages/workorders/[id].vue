@@ -29,7 +29,7 @@ onMounted(() => {
   getReadableDate({ timestamp: $$(dueDateTimestamp), readable: $$(dueDate) })
 })
 
-// Need to get this setup to update the db
+// TODO Need to get this setup to update the db
 // after this is setup. check update, delete, add, etc. Then pull line items from jobs and bids.
 // after that setup print work order
 // then setup auto sync between this and the db.
