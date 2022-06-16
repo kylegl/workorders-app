@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { BackendData, DataTable, DataTableName, DataTableParsed, DataTables, TableRowKeys, Versions } from '~/api/apiResponseTypes'
 import { Mutation, Query } from '~/api/index'
 
+
 export const useMainStore = defineStore('main', {
   state: () => ({
     data: {},
@@ -104,6 +105,9 @@ export const useMainStore = defineStore('main', {
     addItem({ item, type }: AddItemParams) {
       this.data[type] = [...this.data?.[type], item]
       console.log(`Add request for ${type}: ${item.id}`)
+    },
+    async update({type, data}: UpdateParams) {
+      console.log(`update server for ${type}: ${data}`)
     },
   },
 })

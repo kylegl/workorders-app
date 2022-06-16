@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { client, data, loading, error } = storeToRefs(useMainStore())
-const { query, getById, getReadableDate, getByType } = useMainStore()
+const { query, getById, getReadableDate, getByType, watchState } = useMainStore()
 
 const { x, y } = useMouse()
 
@@ -14,7 +14,7 @@ const getMock = () => {
 }
 
 const get = () => {
-  console.log(getById({id: '1', type: 'workorders' }))
+  // watchState()
 }
 
 const delta = $ref('')

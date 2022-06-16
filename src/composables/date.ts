@@ -22,4 +22,3 @@ export const unixToDate = (timestamp: number): Date | string => {
 }
 
 export const dateToUnix = (date: Date | string): Date | number | undefined => +new Date(date)
-

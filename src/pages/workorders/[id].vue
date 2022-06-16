@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import type { WorkorderParsed } from '~/api/apiResponseTypes'
 const { data, loading, error } = storeToRefs(useMainStore())
-const { getById, getReadableDate } = useMainStore()
+const { getById, getReadableDate, update } = useMainStore()
 const route = useRoute()
 const id = route.params?.id
 const startDate = $ref('')
 const dueDate = $ref('')
-let workorder = $ref({} as WorkorderParsed)
 let formDisabled = $ref(true)
-let editIcon = $ref('i-ion:edit')
+let isSaved = $ref(false)
+const isDirty = $ref(false)
 
+let workorder = getById({ id, type: 'workorders' })
 
-onBeforeMount(() => {
-  workorder = getById({ id, type: 'workorders' })
-})
+const edit = () => {
+  formDisabled = false
+  isSaved = false
+}
 
-const toggleForm = () => {
-  formDisabled = !formDisabled
-  editIcon = formDisabled ? 'i-ion:edit' : 'i-carbon:save'
+const save = () => {
+  formDisabled = true
+  isSaved = true
 }
 
 onMounted(() => {
@@ -25,6 +27,18 @@ onMounted(() => {
   const dueDateTimestamp = $toRef(workorder, 'due_date')
   getReadableDate({ timestamp: $$(startDateTimestamp), readable: $$(startDate) })
   getReadableDate({ timestamp: $$(dueDateTimestamp), readable: $$(dueDate) })
+})
+
+// Need to get this setup to update the db
+// after this is setup. check update, delete, add, etc. Then pull line items from jobs and bids.
+// after that setup print work order
+// then setup auto sync between this and the db.
+const test = () => $$(isDirty).value = true
+
+watchAfterInit($$(workorder), test, { deep: true })
+
+watchEffect(() => {
+  if (isDirty && isSaved) update({ type: 'workorders', data: workorder })
 })
 </script>
 
@@ -35,9 +49,13 @@ onMounted(() => {
         {{ `Work Order #` }}
       </h1>
 
-      <Button text-h5 @click="toggleForm">
-        <Icon v-if="formDisabled" :class="editIcon" text-2xl icon-btn />
-        {{ formDisabled ? 'Edit' : 'Save' }}
+      <Button v-if="formDisabled" text-h5 @click="edit">
+        <Icon i-ion:edit text-2xl icon-btn />
+        edit
+      </Button>
+      <Button v-else text-h5 @click="save">
+        <Icon i-carbon:save text-2xl icon-btn />
+        Save
       </Button>
     </div>
 

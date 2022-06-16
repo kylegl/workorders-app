@@ -44,4 +44,13 @@ export const createWorkorder = (job: Record<string, any>) => {
 
   return workorder
 }
+export function watchAfterInit(source: any, cb: Function, options: WatchWithFilterOptions<false> | undefined = {}) {
+  const { ignoreUpdates } = watchIgnorable(
+    source,
+    cb,
+    options,
+  )
+
+  ignoreUpdates(() => !source.value)
+}
 
