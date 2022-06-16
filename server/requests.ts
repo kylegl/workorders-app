@@ -13,7 +13,7 @@ type Versions = {
 
 interface TaskParams {
   tableName: TableName
-  data: Array<any>
+  data?: Array<any>
   clientVersions: Versions
 }
 
@@ -45,11 +45,9 @@ interface Tables {
 }
 
 const router = (params: TaskParams) => {
-  const table = new TableController({ tableName: params.tableName, data: params.data, version: params.clientVersions[params.tableName] })
   const database = new DatabaseController({ clientVersions: params.clientVersions })
 
   return {
-    table,
     database,
   }
 }
@@ -57,7 +55,11 @@ const router = (params: TaskParams) => {
 const taskHandler = (task: Task) => {
   const { namespace, action, params } = task
 
-  return router(params)[namespace][action]()
+  return router(params)[namespace][action]({
+    tableName: params.tableName,
+    data: params.data,
+    version: params.clientVersions[params.tableName],
+  })
 }
 
 const jobHandler = (req: Request) => {
@@ -68,6 +70,7 @@ const jobHandler = (req: Request) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const requestHandler = (requests: Request[]) => {
+  console.log('server side', requests)
   const res = requests.map((req) => {
     return jobHandler(req)
   })

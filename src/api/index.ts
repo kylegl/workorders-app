@@ -1,8 +1,8 @@
 import { gasMutation, gasQuery } from './gas.js'
 import type { BackendData, Versions } from './apiResponseTypes'
+const isProd = process.env.NODE_ENV === 'production'
 
 const Query = async (): Promise<BackendData> => {
-  const isProd = process.env.NODE_ENV === 'production'
   let res
 
   if (isProd) {

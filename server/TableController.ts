@@ -104,7 +104,8 @@ class TableController implements TableControllerType {
     const { uuid } = setTableVersion({ table: this.tableName })
     setTableVersion({ table: 'main' })
     this.unlock()
-    return { data: Table.data, version: uuid, table: this.tableName }
+    // return { data: Table.data, version: uuid, table: this.tableName }
+    return { ok: true }
   }
 
   getTableInterface() {

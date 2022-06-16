@@ -101,9 +101,16 @@ export const useMainStore = defineStore('main', {
 
       console.log(`Delete request for ${type}: ${id}`)
     },
-    addItem({ item, type }: AddItemParams) {
+    async addItem({ item, type }: AddItemParams) {
       this.data[type] = [...this.data?.[type], item]
-      console.log(`Add request for ${type}: ${item.id}`)
+      const req = {
+        type,
+        data: item,
+        action: 'add',
+        versions: this.client.versions,
+      }
+      const res = await Mutation({ items: [req] })
+      console.log(`Add response:  ${res}}`)
     },
     async update({ type, data }: UpdateParams) {
       const res = await Mutation({ items: [{ type, data, action: 'update' }] })

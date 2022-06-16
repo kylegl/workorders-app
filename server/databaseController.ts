@@ -1,13 +1,10 @@
 interface DatabaseController {
   clientVersions: Versions
-  get(): 
+  get(): Package
+  add(): Package
 }
 
-interface DatabaseResponse extends Tables {
-  main: {
-    version: Version
-  }
-}
+type Package = Record<keyof Tables, Pack>
 
 interface Pack {
   version: Version
@@ -15,7 +12,6 @@ interface Pack {
   id: string | number
   data: Array<any>
 }
-
 
 class DatabaseController {
   clientVersions
@@ -30,7 +26,29 @@ class DatabaseController {
     let res = {
       main: {
         version: undefined,
-      }
+      },
+    }
+    if (!this.isInSync({ scriptProps })) {
+      const tables = this.getTablesThatNeedUpdates({ scriptProps })
+      if (tables.length)
+        res = this.getTables({ tables })
+    }
+
+    res.main = { version: scriptProps.main }
+    return this.commitTransaction({ res })
+  }
+
+  add({ tableName, data, version }) {
+    this.startTransaction()
+    const scriptProps = getScriptProps()
+    const tableController = new TableController({ tableName, data, version })
+    const actionRes = tableController.add()
+    if (!actionRes.ok) console.log('error adding entry')
+
+    let res = {
+      main: {
+        version: undefined,
+      },
     }
     if (!this.isInSync({ scriptProps })) {
       const tables = this.getTablesThatNeedUpdates({ scriptProps })
@@ -47,11 +65,13 @@ class DatabaseController {
     if (this.clientVersions.main === serverVersions.main) return true
     return Object
       .keys(this.clientVersions)
-      .every((item) => this.clientVersions[item as keyof Versions] === serverVersions[item])
+      .every(item => this.clientVersions[item as keyof Versions] === serverVersions[item])
   }
 
   getTablesThatNeedUpdates({ scriptProps }) {
     const serverVersions = scriptProps
+    if (this.clientVersions.main === serverVersions.main) return []
+
     return Object.keys(this.clientVersions)
       .filter(item => this.clientVersions[item as keyof Versions] !== serverVersions[item])
       .filter(item => item !== 'main')

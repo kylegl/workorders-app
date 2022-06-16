@@ -41,7 +41,7 @@ const gasQuery = async () => {
       }),
     ]
 
-    const res = await serverRequest({ requests })
+    const res = await serverRequest(requests)
     const [[parsedRes]] = JSON.parse(res)
 
     let formattedRes = {}
@@ -78,23 +78,27 @@ const gasQuery = async () => {
 const gasMutation = async ({ items }) => {
   const requests = items.map((item) => {
     return createJob({
-      namespace: item.namespace,
+      namespace: 'database',
       tasks: [
         createTask({
-          namespace: item.namespace,
+          namespace: 'database',
           action: item.action,
-          params: item.params,
+          params: {
+            tableName: item.type,
+            data: [item.data],
+            clientVersions: item.versions,
+          },
         }),
       ],
     })
   })
 
-  const res = await serverRequest({ requests })
+  const res = await serverRequest(requests)
   return res
 }
 
-const serverRequest = async ({ requests }) => {
-  return await Provoke.run('requestHandler', { requests })
+const serverRequest = async (requests) => {
+  return await Provoke.run('requestHandler', requests)
 }
 
 const createTask = ({ namespace, action, params }) => {
