@@ -10,7 +10,7 @@ let formDisabled = $ref(true)
 let isSaved = $ref(false)
 const isDirty = $ref(false)
 
-let workorder = getById({ id, type: 'workorders' })
+const workorder = getById({ id, type: 'workorders' })
 
 const edit = () => {
   formDisabled = false
@@ -40,6 +40,8 @@ watchAfterInit($$(workorder), test, { deep: true })
 watchEffect(() => {
   if (isDirty && isSaved) update({ type: 'workorders', data: workorder })
 })
+
+const descriptionHtml = $computed(() => parseDelta(workorder.description))
 </script>
 
 <template>
@@ -165,9 +167,7 @@ watchEffect(() => {
         <div text-h5>
           Description
         </div>
-        <div v-if="formDisabled">
-          {{ workorder.description }}
-        </div>
+        <div v-if="formDisabled" v-html="descriptionHtml" />
         <Editor
           v-else
           v-model:content="workorder.description"
@@ -175,7 +175,6 @@ watchEffect(() => {
           label="Description"
           :disabled="formDisabled"
           place-holder-text="Description"
-          type="text"
         />
 
         <div text-h5>
@@ -191,7 +190,6 @@ watchEffect(() => {
           label="Description"
           :disabled="formDisabled"
           place-holder-text="Description"
-          type="text"
         />
 
         <div text-h5>
@@ -207,7 +205,6 @@ watchEffect(() => {
           label="Description"
           :disabled="formDisabled"
           place-holder-text="Description"
-          type="text"
         />
       </Card>
     </section>

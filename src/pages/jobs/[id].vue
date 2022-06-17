@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { id } = useRoute().params
-const { data } = storeToRefs(useMainStore())
+const { data, loading, error } = storeToRefs(useMainStore())
 const { getByKeyValue, deleteById, addItem, getById } = useMainStore()
 
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))

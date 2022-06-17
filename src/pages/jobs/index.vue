@@ -30,8 +30,18 @@ const filteredJobs = $ref([])
       <Filter v-model:filteredData="filteredJobs" :filter-list="jobFilters" :data="jobs" />
     </section>
 
-    <div v-if="jobs" flex="~ col" gap2>
-      <Job v-for="job in filteredJobs" :key="job?.id" :job="job" />
-    </div>
+    <section>
+      <div v-if="loading">
+        Loading Jobs ...
+      </div>
+      <div v-else-if="error">
+        There was a problem getting the jobs...
+      </div>
+      <div v-else>
+        <div v-if="jobs" flex="~ col" gap2>
+          <Job v-for="job in filteredJobs" :key="job?.id" :job="job" />
+        </div>
+      </div>
+    </section>
   </div>
 </template>

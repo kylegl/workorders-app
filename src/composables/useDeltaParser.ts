@@ -3,6 +3,7 @@ import type Delta from 'quill-delta'
 
 export function parseDelta(delta: Delta) {
   const parser = new QuillDeltaToHtmlConverter(delta?.ops)
-  return parser.convert()
+  const result = parser.convert()
+  return result
 }
 

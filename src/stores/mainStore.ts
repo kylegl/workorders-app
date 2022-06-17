@@ -113,11 +113,21 @@ export const useMainStore = defineStore('main', {
       console.log(`Add response:  ${res}}`)
     },
     async update({ type, data }: UpdateParams) {
-      const res = await Mutation({ items: [{ type, data, action: 'update' }] })
-      console.log(`update server for ${type}: ${data}`)
+      const req = {
+        type,
+        data,
+        action: 'update',
+        versions: this.client.versions,
+      }
+      console.log('pre mutation', req)
+
+      const res = await Mutation({ mutations: [req] })
+      console.log(`update response: ${req}}`)
     },
   },
 })
+// TODO just added the update function. got a response but it did not update the sheet. Double check this.
+// Get delete working. check line-item add/delete etc. refer to other todo
 
 // Types
 interface AddItemParams {

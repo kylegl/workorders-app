@@ -2,7 +2,7 @@
 import { Delta, QuillEditor } from '@vueup/vue-quill'
 import './vue-quill.snow.css'
 
-const { data, type = 'delta', label } = defineProps<{
+const { data, type = 'delta' } = defineProps<{
   data: Delta
   type?: string | undefined
 }>()
@@ -17,6 +17,7 @@ const toolbarOptions = [
 
 const initialContent = type === 'delta' ? new Delta(data) : data ?? ''
 
+console.log('initial editor content', initialContent)
 const editorContent = $ref<Delta>(
   initialContent,
 )

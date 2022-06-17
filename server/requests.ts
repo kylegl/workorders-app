@@ -1,76 +1,56 @@
-interface Router {
-  table: TableControllerType
-  database: Function
-}
-
-type Namespace = keyof Router
-
-type Version = string
-
-type Versions = {
-  [key in keyof Database]: Version
-}
-
-interface TaskParams {
-  tableName: TableName
-  data?: Array<any>
-  clientVersions: Versions
-}
-
 interface Task {
-  namespace: Namespace
-  action: Action
-  params: TaskParams
+  namespace: string
+  action: string
+  params: {
+    tableName: string
+    data: TableData
+    clientVersions: Versions
+  }
 }
 
-interface Request {
-  namespace: Namespace
+type Versions = Record<string, string | undefined>
+
+type RouterResponse = Record<string, DatabaseController>
+
+interface ClientRequest {
+  namespace: keyof RouterResponse
   tasks: Task[]
 }
-
-type Action = keyof Namespace
-
-interface Database extends Tables {
-  main: Version
+const getDatabaseController = (clientVersions: Versions) => {
+  return new DatabaseController({ clientVersions })
 }
 
-interface Tables {
-  employees: Array<any>
-  contacts: Array<any>
-  clients: Array<any>
-  bids: Array<any>
-  jobs: Array<any>
-  workorders: Array<any>
-  line_items: Array<any>
-}
-
-const router = (params: TaskParams) => {
-  const database = new DatabaseController({ clientVersions: params.clientVersions })
+const router = (params: Versions) => {
+  const database = getDatabaseController(params)
 
   return {
     database,
-  }
+  } as RouterResponse
 }
 
 const taskHandler = (task: Task) => {
   const { namespace, action, params } = task
 
-  return router(params)[namespace][action]({
+  const controller = router(params.clientVersions)[namespace]
+
+  const res: DatabaseControllerResponse = controller.add({
     tableName: params.tableName,
-    data: params.data,
     version: params.clientVersions[params.tableName],
+    data: params.data,
   })
+
+  return res as DatabaseControllerResponse
 }
 
-const jobHandler = (req: Request) => {
+const jobHandler = (req: ClientRequest) => {
   return req.tasks.map((task) => {
     return taskHandler(task)
   })
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const requestHandler = (requests: Request[]) => {
-  console.log('server side', requests)
+const requestHandler = (requests: ClientRequest[]) => {
+  console.log('req', requests)
   const res = requests.map((req) => {
     return jobHandler(req)
   })

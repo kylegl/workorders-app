@@ -41,6 +41,7 @@ const gasQuery = async () => {
       }),
     ]
 
+    console.log('gas query', requests)
     const res = await serverRequest(requests)
     const [[parsedRes]] = JSON.parse(res)
 
@@ -75,24 +76,28 @@ const gasQuery = async () => {
   }
 }
 
-const gasMutation = async ({ items }) => {
-  const requests = items.map((item) => {
+const gasMutation = async ({ mutations }) => {
+  const requests = mutations.map((mutation) => {
+    if (mutation?.data)
+      mutation.data = stringifyDeltas(mutation.data)
+
     return createJob({
       namespace: 'database',
       tasks: [
         createTask({
           namespace: 'database',
-          action: item.action,
+          action: mutation.action,
           params: {
-            tableName: item.type,
-            data: [item.data],
-            clientVersions: item.versions,
+            tableName: mutation.type,
+            data: [mutation.data],
+            clientVersions: mutation.versions,
           },
         }),
       ],
     })
   })
 
+  console.log('gas mutation server side', requests)
   const res = await serverRequest(requests)
   return res
 }
@@ -101,12 +106,24 @@ const serverRequest = async (requests) => {
   return await Provoke.run('requestHandler', requests)
 }
 
-const createTask = ({ namespace, action, params }) => {
-  return { namespace, action, params }
-}
+const createTask = ({ namespace, action, params }) => ({ namespace, action, params })
 
 const createJob = ({ namespace, tasks }) => {
   return { namespace, tasks }
+}
+
+const stringifyDeltas = (entry) => {
+  const keys = Object.keys(entry)
+
+  const deltaKeys = ['description', 'notes', 'parking_info', 'details', 'quantity']
+
+  return keys.reduce((result, key) => {
+    if (deltaKeys.includes(key) && entry[key])
+      result[key] = JSON.stringify(entry[key])
+    else result[key] = entry[key]
+
+    return result
+  }, {})
 }
 
 export { Provoke, serverRequest, createTask, createJob, gasQuery, gasMutation }

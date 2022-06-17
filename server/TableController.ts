@@ -1,46 +1,16 @@
-interface TableControllerType {
-  tableName: TableName
-  data: Array<any>
-  version: Version
-  add(): TableResponse
-  delete(): TableResponse
-  get(): TableResponse
-  update(): TableResponse
-}
-
-interface TableResponse {
-  data: Object
-  version: string
-  table: string
-}
-
-interface Database {
-  employees: Array<any>
-  contacts: Array<any>
-  clients: Array<any>
-  bids: Array<any>
-  jobs: Array<any>
-  workorders: Array<any>
-  line_items: Array<any>
-}
-
-type TableName = keyof Database
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-class TableController implements TableControllerType {
+class TableController {
   tableName
-  data
   version
-  constructor({ tableName, data, version }: { tableName: TableName; data: Array<any>; version: Version }) {
+  constructor({ tableName, version }: { tableName: string; version: string | undefined }) {
     this.tableName = tableName
-    this.data = data
     this.version = version
   }
 
-  add() {
+  add(data: TableData) {
     const Table = this.startTransaction()
 
-    this.data.forEach((entry) => {
+    data.forEach((entry) => {
       Table.data.push(entry)
     })
 
@@ -48,11 +18,12 @@ class TableController implements TableControllerType {
     // check queue for any waiting transtactions
   }
 
-  delete() {
+  delete(data: TableData) {
     const Table = this.startTransaction()
 
-    this.data.forEach((entry) => {
-      Table.tableInterface.filterRows((row: Object, properties) => row.id !== entry.id)
+    data.forEach((entry: TableRow) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      Table.tableInterface.filterRows((row: TableRow, properties: any) => row.id !== entry.id)
     })
 
     return this.commitTransaction({ Table })
@@ -65,16 +36,14 @@ class TableController implements TableControllerType {
     return { data: Table.data, version: this.version, table: this.tableName }
   }
 
-  update() {
+  update(data: TableData) {
     const Table = this.startTransaction()
 
-    this.data.forEach((entry) => {
-      const item = Table.data.find((row: Object, properties) => row.id === entry.id)
+    data.forEach((entry) => {
+      const i = Table.data.findIndex((row: TableRow) => row.id === entry.id)
 
-      if (item)
-        Table.tableInterface.filterRows((row: Object, properties) => row.id !== entry.id)
-
-      Table.data.push(entry)
+      if (i !== -1)
+        Table.data[i] = { ...entry }
     })
 
     return this.commitTransaction({ Table })
@@ -93,19 +62,22 @@ class TableController implements TableControllerType {
   }
 
   startTransaction() {
-    wait({ condition: this.isLocked() })
+    wait(this.isLocked())
     this.lock()
 
     return this.getTableInterface()
   }
 
-  commitTransaction({ Table }) {
+  commitTransaction({ Table }: any): TableTransactionResponse {
     Table.setTableValues()
-    const { uuid } = setTableVersion({ table: this.tableName })
+
+    const uuid: string = setTableVersion({ table: this.tableName })
+
     setTableVersion({ table: 'main' })
+
     this.unlock()
-    // return { data: Table.data, version: uuid, table: this.tableName }
-    return { ok: true }
+
+    return { ok: true, data: Table.data, version: uuid, table: this.tableName }
   }
 
   getTableInterface() {
@@ -127,3 +99,108 @@ class TableController implements TableControllerType {
     }
   }
 }
+
+interface Employee {
+  id: string
+  name: string
+  position?: string
+  email?: string
+  phone?: number
+}
+
+interface Workorder {
+  'id': string
+  'FK|client_id': string
+  'FK|employee_id'?: string
+  'FK|contact_id'?: string
+  'FK|job_id'?: string
+  'FK|bid_id'?: string
+  'start_date'?: number
+  'due_date'?: number
+  'description'?: string
+  'parking_info'?: string
+  'notes'?: string
+  'bill_type'?: string
+  'job_type'?: string
+  'created_at'?: number
+  'udpated_at'?: number
+  'closed_at'?: number
+  'status': string
+}
+
+interface Job {
+  'id': string
+  'FK|client_id': string
+  'FK|contact_id'?: string
+  'job_number': number
+  'prevailing_wage': boolean
+  'job_folder_id': string
+  'address'?: string
+  'job_name'?: string
+  'status': string
+  'billing_type': string
+  'closed_date'?: number
+}
+
+interface Bid {
+  'id': string
+  'FK|client_id': string
+  'FK|contact_id'?: string
+  'bid_id': string
+  'prevailing_wage': boolean
+  'bid_folder_id'?: string
+  'address'?: string
+  'job_name'?: string
+  'status': string
+  'billing_type': string
+  'sent_date'?: number
+  'speadsheet_id'?: string
+  'bid_item'?: string
+  'total'?: number
+}
+
+interface Contact {
+  'id': string
+  'name': string
+  'email'?: string
+  'FK|client_id'?: string
+  'phone'?: number
+}
+
+interface Client {
+  id: string
+  name: string
+  email?: string
+  phone?: number
+  address?: string
+}
+
+interface Lineitem {
+  id: string
+  'FK|workorder_id': string
+  'description'?: string
+  'details'?: string
+  'quantity'?: string
+  'hours': number
+  'item_number': number
+  'completed': boolean
+}
+
+type TableRow = Employee | Workorder | Job | Bid | Contact | Client | Lineitem
+
+type TableData =
+  | Employee[]
+  | Contact[]
+  | Client[]
+  | Bid[]
+  | Job[]
+  | Workorder[]
+  | Lineitem[]
+
+interface TableTransactionResponse {
+  ok: boolean
+  data: TableData
+  version: string
+  table: string
+}
+
