@@ -33,7 +33,7 @@ const taskHandler = (task: Task) => {
 
   const controller = router(params.clientVersions)[namespace]
 
-  const res: DatabaseControllerResponse = controller.add({
+  const res: DatabaseControllerResponse = controller[action]({
     tableName: params.tableName,
     version: params.clientVersions[params.tableName],
     data: params.data,
@@ -50,7 +50,7 @@ const jobHandler = (req: ClientRequest) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const requestHandler = (requests: ClientRequest[]) => {
-  console.log('req', requests)
+  console.log('req', JSON.stringify(requests))
   const res = requests.map((req) => {
     return jobHandler(req)
   })

@@ -123,7 +123,7 @@ class DatabaseController {
   }
 
   isLocked(): boolean {
-    return getScriptProp({ prop: 'main_locked' })
+    return JSON.parse(getScriptProp({ prop: 'main_locked' }))
   }
 
   lock() {

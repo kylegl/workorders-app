@@ -10,15 +10,27 @@ import workorders from './data/workorders.json'
 export const handlers = [
   rest.get('/mock-api', (req, res, ctx) => {
     return res(
-      ctx.status(200),
       ctx.json({
-        bids,
-        clients,
-        contacts,
-        employees,
-        jobs,
-        lineItems,
-        workorders,
+        ok: true,
+        data: {
+          bids,
+          clients,
+          contacts,
+          employees,
+          jobs,
+          lineItems,
+          workorders,
+        },
+        versions: {
+          main: 'a',
+          bids: 'b',
+          clients: 'c',
+          contacts: 'd',
+          employees: 'e',
+          jobs: 'f',
+          lineItems: 'g',
+          workorders: 'h',
+        },
       }),
     )
   }),

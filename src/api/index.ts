@@ -1,13 +1,11 @@
 import { gasMutation, gasQuery } from './gas.js'
-import type { BackendData, Versions } from './apiResponseTypes'
+import type { ApiResponse } from '~/types'
 const isProd = process.env.NODE_ENV === 'production'
 
-const Query = async (): Promise<BackendData> => {
-  let res
-
+const Query = async (): Promise<ApiResponse> => {
   if (isProd) {
     const result = await gasQuery()
-    res = result
+    return result
   }
 
   if (!isProd) {
@@ -15,11 +13,9 @@ const Query = async (): Promise<BackendData> => {
     if (response.ok) {
       const result = await response.json()
 
-      res = result
+      return result
     }
   }
-
-  return res
 }
 
 async function Mutation({ items }): Promise<any> {

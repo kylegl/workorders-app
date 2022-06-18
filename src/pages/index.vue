@@ -120,8 +120,8 @@ const initialDelta = { ops: [{ insert: 'list' }, { attributes: { list: 'ordered'
         <Button @click="get">
           Get
         </Button>
-        <Button @click="go">
-          Go
+        <Button @click="false">
+          Parse
         </Button>
         <Button @click="changeData">
           change Data

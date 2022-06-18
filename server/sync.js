@@ -65,6 +65,7 @@ const syncJobs = ({ jobs, contacts, clients, bids }) => {
       'sheet_id': entry.job_sheet_id,
       'closed_date': entry.job_closed_date,
       'job_number': entry.job_id,
+      'prevailing_wage': entry.prevailing_wage !== 'No',
     }
 
     headers.filter(item => ![
@@ -79,6 +80,7 @@ const syncJobs = ({ jobs, contacts, clients, bids }) => {
       'sheet_id',
       'closed_date',
       'job_number',
+      'prevailing_wage',
     ]
       .includes(item)).forEach((el) => {
       job[el] = entry[el]
@@ -115,9 +117,10 @@ const syncBids = ({ bids, contacts, clients }) => {
       'FK|client_id': client_id,
       'FK|contact_id': contact_id,
       'billing_type': entry.tm,
+      'prevailing_wage': entry.prevailing_wage !== 'No',
     }
 
-    headers.filter(item => !['id', 'FK|client_id', 'FK|contact_id', 'billing_type'].includes(item)).forEach((el) => {
+    headers.filter(item => !['id', 'FK|client_id', 'FK|contact_id', 'billing_type', 'prevailing_wage'].includes(item)).forEach((el) => {
       bid[el] = entry[el]
     })
 

@@ -1,5 +1,34 @@
+import { apiResponseValidator } from '~/types'
 import { useMainStore } from '~/stores/mainStore'
-import { getErrorMessage, isDate, isFK } from '~/composables/utils'
+import { getErrorMessage } from '~/composables/utils'
+
+const handleResponse = (rawResponse: string) => {
+  const [[parsedRes]] = JSON.parse(rawResponse)
+
+  const res = apiResponseValidator.parse(parsedRes)
+
+  return res
+}
+
+const createTask = ({ namespace, action, params }) => ({ namespace, action, params })
+
+const createJob = ({ namespace, tasks }) => {
+  return { namespace, tasks }
+}
+
+const stringifyDeltas = (entry) => {
+  const keys = Object.keys(entry)
+
+  const deltaKeys = ['description', 'notes', 'parking_info', 'details', 'quantity']
+
+  return keys.reduce((result, key) => {
+    if (deltaKeys.includes(key) && entry[key])
+      result[key] = JSON.stringify(entry[key])
+    else result[key] = entry[key]
+
+    return result
+  }, {})
+}
 
 const Provoke = ((ns) => {
   /**
@@ -26,6 +55,10 @@ const Provoke = ((ns) => {
   return ns
 })({})
 
+const serverRequest = async (requests) => {
+  return await Provoke.run('requestHandler', requests)
+}
+
 const gasQuery = async () => {
   try {
     const mainStore = useMainStore()
@@ -41,38 +74,12 @@ const gasQuery = async () => {
       }),
     ]
 
-    console.log('gas query', requests)
-    const res = await serverRequest(requests)
-    const [[parsedRes]] = JSON.parse(res)
-
-    let formattedRes = {}
-
-    Object.keys(parsedRes).forEach((key) => {
-      const item = parsedRes[key]
-      if (!item?.data) return item
-
-      const formattedData = item.data.map((row) => {
-        row.id = row.id.toString()
-
-        Object.keys(row).forEach((key) => {
-          if (!row[key]) return
-
-          if (isFK(key)) row[key] = row[key].toString()
-          if (isDate(key)) row[key] = parseInt(row[key])
-        })
-
-        return row
-      })
-
-      formattedRes = {
-        ...formattedRes,
-        [key]: { ...item, data: formattedData },
-      }
-    })
-    return formattedRes
+    const res: string = await serverRequest(requests)
+    return handleResponse(res)
   }
   catch (err) {
-    getErrorMessage(err)
+    const msg = getErrorMessage(err)
+    console.error('error', msg)
   }
 }
 
@@ -98,32 +105,9 @@ const gasMutation = async ({ mutations }) => {
   })
 
   console.log('gas mutation server side', requests)
-  const res = await serverRequest(requests)
-  return res
-}
-
-const serverRequest = async (requests) => {
-  return await Provoke.run('requestHandler', requests)
-}
-
-const createTask = ({ namespace, action, params }) => ({ namespace, action, params })
-
-const createJob = ({ namespace, tasks }) => {
-  return { namespace, tasks }
-}
-
-const stringifyDeltas = (entry) => {
-  const keys = Object.keys(entry)
-
-  const deltaKeys = ['description', 'notes', 'parking_info', 'details', 'quantity']
-
-  return keys.reduce((result, key) => {
-    if (deltaKeys.includes(key) && entry[key])
-      result[key] = JSON.stringify(entry[key])
-    else result[key] = entry[key]
-
-    return result
-  }, {})
+  const rawResponse = await serverRequest(requests)
+  return handleResponse(rawResponse)
 }
 
 export { Provoke, serverRequest, createTask, createJob, gasQuery, gasMutation }
+
