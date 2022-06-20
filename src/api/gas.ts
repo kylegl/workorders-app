@@ -86,8 +86,8 @@ export async function gasQuery(versions: VersionType) {
 
 export async function gasMutation(mutation: MutationType, versions: VersionType, action: string) {
   try {
-    if (mutation?.data)
-      mutation.data = stringifyDeltas(mutation.data)
+    // if (mutation?.data)
+      // mutation.data = stringifyDeltas(mutation.data)
 
     const request = {
       path: `database/${action}`,

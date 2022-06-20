@@ -65,7 +65,7 @@ export const useMainStore = defineStore('main', {
       }
     },
     getReadableDate() {
-      return ({ timestamp, readable }: TimestampParam): Date | string | undefined => {
+      return ({ timestamp, readable }): Date | string | undefined => {
         return useConvertSyncRefs(timestamp, readable, unixToDate, dateToUnix)
       }
     },

@@ -1,6 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill'
 
 export const unixToHumanDate = (timestamp: number): Date | string => {
+  if (!timestamp) return ''
   const instant = Temporal.Instant
     .fromEpochMilliseconds(timestamp)
     .toZonedDateTimeISO('America/Los_Angeles')
@@ -10,6 +11,7 @@ export const unixToHumanDate = (timestamp: number): Date | string => {
 }
 
 export const unixToDate = (timestamp: number): Date | string => {
+  if (!timestamp) return ''
   const instant = Temporal.Instant
     .fromEpochMilliseconds(timestamp)
     .toZonedDateTimeISO('America/Los_Angeles')
