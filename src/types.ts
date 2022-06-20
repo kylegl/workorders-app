@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { string, z } from 'zod'
 
 type Id = string | number
 
@@ -59,92 +59,97 @@ export interface Header {
   key: string
   title: string
 }
+const stringOrUndefined = z.union([z.nullable(z.string()), z.undefined()])
 
-const numberOrString = z.union([z.number(), z.string()])
+const numberOrUndefined = z.union([z.nullable(z.number()), z.undefined()])
+
+const emailOrUndefined = z.union([z.nullable(z.string().email()), z.undefined()])
+
+const numberOrString = z.union([stringOrUndefined, numberOrUndefined])
 
 export const employeeValidator = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email().optional(),
-  phone: numberOrString.optional(),
-  position: z.string().optional(),
+  email: emailOrUndefined,
+  phone: numberOrString,
+  position: stringOrUndefined,
 })
 
 export const workorderValidator = z.object({
   'id': z.string(),
   'FK|client_id': z.string(),
-  'FK|employee_id': z.string().optional(),
-  'FK|contact_id': z.string().optional(),
-  'FK|job_id': z.string().optional(),
-  'FK|bid_id': z.string().optional(),
-  'start_date': numberOrString.optional(),
-  'due_date': numberOrString.optional(),
-  'description': z.string().optional(),
-  'parking_info': z.string().optional(),
-  'notes': z.string().optional(),
-  'bill_type': z.string().optional(),
-  'job_type': z.string().optional(),
-  'created_at': numberOrString.optional(),
-  'udpated_at': numberOrString.optional(),
-  'closed_at': numberOrString.optional(),
+  'FK|employee_id': stringOrUndefined,
+  'FK|contact_id': stringOrUndefined,
+  'FK|job_id': stringOrUndefined,
+  'FK|bid_id': stringOrUndefined,
+  'start_date': numberOrString,
+  'due_date': numberOrString,
+  'description': stringOrUndefined,
+  'parking_info': stringOrUndefined,
+  'notes': stringOrUndefined,
+  'bill_type': stringOrUndefined,
+  'job_type': stringOrUndefined,
+  'created_at': numberOrString,
+  'udpated_at': numberOrString,
+  'closed_at': numberOrString,
   'status': z.string(),
 })
 
 export const jobValidator = z.object({
   'id': z.string(),
   'FK|client_id': z.string(),
-  'FK|contact_id': z.string().optional(),
-  'job_number': z.number(),
+  'FK|contact_id': stringOrUndefined,
+  'job_number': numberOrString,
   'prevailing_wage': z.boolean(),
   'job_folder_id': z.string(),
-  'address': z.string().optional(),
-  'job_name': z.string().optional(),
+  'address': stringOrUndefined,
+  'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
-  'closed_date': numberOrString.optional(),
+  'closed_date': numberOrString,
 })
 
 export const bidValidator = z.object({
   'id': z.string(),
   'FK|client_id': z.string(),
-  'FK|contact_id': z.string().optional(),
+  'FK|contact_id': stringOrUndefined,
   'bid_id': z.string(),
   'prevailing_wage': z.boolean(),
-  'bid_folder_id': z.string().optional(),
-  'address': z.string().optional(),
-  'job_name': z.string().optional(),
+  'bid_folder_id': stringOrUndefined,
+  'address': stringOrUndefined,
+  'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
-  'sent_date': numberOrString.optional(),
-  'speadsheet_id': z.string().optional(),
-  'bid_item': z.string().optional(),
-  'total': numberOrString.optional(),
-  'job_folder_id': z.string().optional(),
-  'closed_date': numberOrString.optional(),
+  'sent_date': numberOrString,
+  'speadsheet_id': stringOrUndefined,
+  'bid_item': stringOrUndefined,
+  'total': numberOrString,
+  'job_folder_id': stringOrUndefined,
+  'closed_date': numberOrString,
 })
 
 export const contactValidator = z.object({
   'id': z.string(),
   'name': z.string(),
-  'email': z.string().optional(),
-  'FK|client_id': z.string().optional(),
-  'phone': numberOrString.optional(),
+  'email': stringOrUndefined,
+  'FK|client_id': stringOrUndefined,
+  'phone': numberOrString,
 })
 
 export const clientValidator = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email().optional(),
-  phone: numberOrString.optional(),
-  address: z.string().optional(),
+  email: emailOrUndefined,
+  phone: numberOrString,
+  address: stringOrUndefined,
 })
 
 export const lineitemValidator = z.object({
   'id': z.string(),
   'FK|workorder_id': z.string(),
-  'description': z.string().optional(),
-  'details': z.string().optional(),
-  'quantity': z.string().optional(),
+  'description': stringOrUndefined,
+  'details': stringOrUndefined,
+  'quantity': numberOrString,
   'hours': z.number(),
   'item_number': z.number(),
   'completed': z.boolean(),
@@ -162,32 +167,19 @@ export const dataTypeValidator = z.object({
 
 export type DataType = z.infer<typeof dataTypeValidator>
 
-export const tableRowValidator = z.union([
-  employeeValidator,
-  workorderValidator,
-  bidValidator,
-  jobValidator,
-  contactValidator,
-  clientValidator,
-  lineitemValidator,
+export const packValidator = z.discriminatedUnion('table', [
+  z.object({ table: z.literal('jobs'), data: z.array(jobValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('bids'), data: z.array(bidValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('contacts'), data: z.array(contactValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('clients'), data: z.array(clientValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('employees'), data: z.array(employeeValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('workorders'), data: z.array(workorderValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('line_items'), data: z.array(lineitemValidator), version: z.string().optional() }),
 ])
-
-const TableNamesEnum = z.enum(['employees', 'workorders', 'jobs', 'bids', 'contacts', 'clients', 'line_items'])
-const VersionNamesEnum = z.enum(['main', 'employees', 'workorders', 'jobs', 'bids', 'contacts', 'clients', 'line_items'])
 
 export const backendDataValidator = z.array(dataTypeValidator)
 
-export const tableDataValidator = z.array(tableRowValidator)
-
 export type BackendData = z.infer<typeof backendDataValidator>
-
-export const packValidator = z.object({
-  id: z.string(),
-  name: z.string(),
-  data: tableDataValidator,
-  sheetId: z.number(),
-  version: z.string(),
-})
 
 export const dataResponseValidator = z.object({
   employees: packValidator.optional(),
@@ -201,16 +193,16 @@ export const dataResponseValidator = z.object({
 
 export type Data = z.infer<typeof dataResponseValidator>
 
-// export const versionValidator = z.record(VersionNamesEnum, z.string().optional())
+// export const versionValidator = z.record(VersionNamesEnum, stringOrUndefined)
 export const versionValidator = z.object({
-  main: z.string().optional(),
-  employees: z.string().optional(),
-  workorders: z.string().optional(),
-  bids: z.string().optional(),
-  jobs: z.string().optional(),
-  contacts: z.string().optional(),
-  clients: z.string().optional(),
-  line_items: z.string().optional(),
+  main: stringOrUndefined,
+  employees: stringOrUndefined,
+  workorders: stringOrUndefined,
+  bids: stringOrUndefined,
+  jobs: stringOrUndefined,
+  contacts: stringOrUndefined,
+  clients: stringOrUndefined,
+  line_items: stringOrUndefined,
 })
 
 export type VersionType = z.infer<typeof versionValidator>
@@ -229,6 +221,10 @@ export type ApiResponse = z.infer<typeof apiResponseValidator>
 
 export type TableKeys = keyof Data
 
+export const tableKeyEnum = z.enum(['jobs', 'bids', 'contacts', 'clients', 'employees', 'workorders', 'line_items'])
+
+export type TableKey = z.infer<typeof tableKeyEnum>
+
 export const storeDataValidator = z.object({
   clients: z.array(clientValidator).optional(),
   employees: z.array(employeeValidator).optional(),
@@ -245,7 +241,7 @@ export const gasTaskValidator = z.object({
   namespace: z.string(),
   action: z.string(),
   params: z.object({
-    tableName: z.string().optional(),
+    tableName: stringOrUndefined,
     data: backendDataValidator.optional(),
     clientVersions: versionValidator,
   }),

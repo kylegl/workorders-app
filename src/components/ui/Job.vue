@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import type { Job } from '~/types'
 const { job } = defineProps<{ job: Job }>()
-console.log('job', job)
 </script>
 
 <template>
   <router-link :to="{ name: 'jobs-id', params: { id: job.id } }" w-full>
     <Card>
       <div flex gap3 min-h-25>
-        <div flex="~ col" justify-between w-28>
+        <div flex="~ col" justify-between w-48 >
           <div flex gap2 items-center text-sm>
             <StatusIndicator :status="job.status" />
           </div>

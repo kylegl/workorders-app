@@ -154,10 +154,8 @@ interface StartTransactionParams {
 
 interface Pack {
   version: string
-  name: string
-  id: string | number
+  table: string
   data: Array<any>
-  sheetId: string
 }
 
 type Packs = Record<string, Pack>

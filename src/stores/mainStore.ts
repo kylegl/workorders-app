@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { Mutation, Query } from '~/api/index'
-import type { Data, DataType, StoreData, TableKeys, Version, VersionKeys } from '~/types'
-import { mutationValidator, storeDataValidator, versionValidator } from '~/types'
+import type { Data, DataType, StoreData, TableKey, TableKeys, Version, VersionKeys } from '~/types'
+import { mutationValidator, versionValidator } from '~/types'
 
 export const useMainStore = defineStore('main', {
   state: (): { data: StoreData; versions: Version; loading: boolean; error: any } => ({
-    data: storeDataValidator.parse({}),
+    data: {},
     versions: versionValidator.parse({
       main: undefined,
       workorders: undefined,
@@ -81,9 +81,9 @@ export const useMainStore = defineStore('main', {
         const { data, versions } = res
 
         if (data) {
-          const tableNames = Object.keys(data) as TableKeys[]
+          const tableNames = Object.keys(data) as TableKey[]
 
-          tableNames.forEach((key: TableKeys) => {
+          tableNames.forEach((key: TableKey) => {
             this.data[key] = data?.[key]?.data
           })
         }

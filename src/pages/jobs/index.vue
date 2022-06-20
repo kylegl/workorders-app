@@ -10,7 +10,7 @@ watch(() => route.params, () => {
 }, { immediate: true })
 
 const rawJobs = $computed((): Job[] => getByType({ type: 'jobs', getParsed: true }) ?? [])
-const jobs = $computed(() => searchResults ?? rawJobs)
+const jobs = $computed(() => searchResults || rawJobs)
 const filteredJobs = $ref([])
 </script>
 

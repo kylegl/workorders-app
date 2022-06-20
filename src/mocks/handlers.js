@@ -14,24 +14,31 @@ export const handlers = [
         ok: true,
         data: {
           bids: {
+            table: 'bids',
             data: bids,
           },
           clients: {
+            table: 'clients',
             data: clients,
           },
           contacts: {
+            table: 'contacts',
             data: contacts,
           },
           employees: {
+            table: 'employees',
             data: employees,
           },
           jobs: {
+            table: 'jobs',
             data: jobs,
           },
-          lineItems: {
+          line_items: {
+            table: 'line_items',
             data: lineItems,
           },
           workorders: {
+            table: 'workorders',
             data: workorders,
           },
         },

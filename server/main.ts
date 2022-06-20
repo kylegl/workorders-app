@@ -26,9 +26,7 @@ const getPack = ({ sheetInterface }) => {
 
   return {
     version: getScriptProp({ prop: sheetName }),
-    name: sheetName,
-    id: sheet.getParent().getId(),
-    sheetId: sheet.getSheetId(),
+    table: sheetName,
     data: sheetInterface.getData(),
   }
 }

@@ -5,9 +5,8 @@ import { getErrorMessage } from '~/composables/utils'
 
 const handleResponse = (rawResponse: string) => {
   const [[parsedRes]] = JSON.parse(rawResponse)
-  console.log('parsed resp', parsedRes)
-  const res = apiResponseValidator.parse(parsedRes)
 
+  const res = apiResponseValidator.parse(parsedRes)
   return res
 }
 
@@ -60,8 +59,6 @@ const serverRequest = async (requests: Array<any>) => {
 
 export async function gasQuery(versions: VersionType) {
   try {
-    console.log('cvs', versions)
-
     const requests = [
       createJob({
         namespace: 'database',
@@ -72,7 +69,6 @@ export async function gasQuery(versions: VersionType) {
     ]
 
     const rawRes: string = await serverRequest(requests)
-    // console.log('gas query response', rawRes)
     const res = handleResponse(rawRes)
     return res
   }
@@ -104,7 +100,6 @@ const gasMutation = async (mutations: MutationType[]) => {
     })
   })
 
-  // console.log('gas mutation server side', requests)
   const rawResponse = await serverRequest(requests)
   return handleResponse(rawResponse)
 }

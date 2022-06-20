@@ -13,7 +13,7 @@ const { filterList, data } = defineProps<{
 
 const emit = defineEmits(['update:filteredData'])
 
-const filters = $ref(filterList.map(filter => ({ ...filter, isActive: false })))
+const filters = $ref(filterList)
 
 const filteredData = $computed(() => {
   const activeFilters = filters.filter(filter => filter.isActive)

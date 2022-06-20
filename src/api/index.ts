@@ -1,5 +1,6 @@
 import { gasMutation, gasQuery } from './gas'
 import type { ApiResponse, VersionType } from '~/types'
+import { apiResponseValidator } from '~/types'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -17,9 +18,8 @@ export async function Query(versions: VersionType) {
       const response = await fetch('http://localhost:4000/mock-api')
       if (response.ok) {
         const result = await response.json()
-        console.log('mock response', result)
 
-        return result as ApiResponse
+        return apiResponseValidator.parse(result)
       }
     }
   }
