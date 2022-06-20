@@ -1,4 +1,4 @@
-import { workorderValidator } from '~/types'
+import { lineitemValidator, workorderValidator } from '~/types'
 
 export const jobFilters = [
   { name: 'Active', key: 'status', value: 'Active', isActive: true },
@@ -18,7 +18,7 @@ export const workorderStatusOptions = ['Upcoming', 'In-progress', 'Completed', '
 export const billingOptions = ['T&M', 'Fixed']
 export const jobTypeOptions = ['Finishing', 'Painting']
 export const newWorkorder = workorderValidator.parse({
-  'id': useUid(),
+  'id': '',
   'FK|job_id': '',
   'FK|bid_id': '',
   'FK|client_id': '',
@@ -34,4 +34,16 @@ export const newWorkorder = workorderValidator.parse({
   'updated_at': null,
   'closed_at': null,
   'status': '',
+})
+
+export const newLineItem = lineitemValidator.parse({
+  id: '',
+  workorder_id: '',
+  description: '',
+  details: '',
+  quantity: '',
+  hours: 0,
+  notes: '',
+  item_number: null,
+  completed: false,
 })

@@ -113,13 +113,14 @@ export const useMainStore = defineStore('main', {
       const res = await Mutation(mutation, this.versions, action)
       return res
     },
-    async deleteById({ id, table }: MutationParams) {
+    async deleteById({ data, table }: MutationParams) {
+      console.log(data)
       if (this.data?.[table])
-        this.data[table] = this.data[table]!.filter((el: DataType) => el.id !== id)
+        this.data[table] = this.data[table]!.filter((el: DataType) => el.id !== data.id)
 
-      const res = await this.mutation(table, 'delete')
+      const res = await this.mutation(table, 'delete', data)
 
-      console.log(`Delete request for ${table}: ${id}, res = ${res}`)
+      // console.log(`Delete request for ${table}: ${id}, res = ${res}`)
     },
     async addItem({ data, table }: MutationParams) {
       if (this.data?.[table])

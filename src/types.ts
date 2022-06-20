@@ -88,8 +88,8 @@ const parseJSON = (val) => {
     return val
   }
 }
-const casteToJSON = z.preprocess(val => parseJSON(val), stringOrDelta)
-const castJSONtoString = z.preprocess(val => JSON.stringify(val), stringOrDelta)
+const casteToJSON = z.preprocess(val => parseJSON(val), stringOrNumberOrDelta)
+const castJSONtoString = z.preprocess(val => JSON.stringify(val), stringOrNumberOrDelta)
 
 export const employeeValidator = z.object({
   id: z.string(),
@@ -210,33 +210,33 @@ export const clientValidator = z.object({
 
 export const incomingLineitemValidator = z.object({
   'id': z.string(),
-  'FK|workorder_id': z.string(),
+  'FK|workorder_id': z.string().optional(),
   'description': casteToJSON,
   'details': casteToJSON,
   'quantity': casteToJSON,
-  'hours': z.number(),
-  'item_number': z.number(),
-  'completed': z.boolean(),
+  'hours': numberOrString,
+  'item_number': numberOrUndefined,
+  'completed': z.boolean().optional(),
 })
 export const lineitemValidator = z.object({
   'id': z.string(),
-  'FK|workorder_id': z.string(),
+  'FK|workorder_id': z.string().optional(),
   'description': stringOrDelta,
   'details': stringOrDelta,
   'quantity': stringOrNumberOrDelta,
-  'hours': z.number(),
-  'item_number': z.number(),
-  'completed': z.boolean(),
+  'hours': numberOrString,
+  'item_number': numberOrUndefined,
+  'completed': z.boolean().optional(),
 })
 export const outgoingLineitemValidator = z.object({
   'id': z.string(),
-  'FK|workorder_id': z.string(),
+  'FK|workorder_id': z.string().optional(),
   'description': castJSONtoString,
   'details': castJSONtoString,
   'quantity': castJSONtoString,
-  'hours': z.number(),
-  'item_number': z.number(),
-  'completed': z.boolean(),
+  'hours': numberOrString,
+  'item_number': numberOrUndefined,
+  'completed': z.boolean().optional(),
 })
 
 export const versionValidator = z.object({

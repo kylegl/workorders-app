@@ -1,5 +1,5 @@
 import type { DataTableName, ErrorWithMessage } from '~/api/apiResponseTypes'
-import { workorderValidator } from '~/types'
+import { lineitemValidator, workorderValidator } from '~/types'
 
 export function isFK(key: string): DataTableName | undefined {
   const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
@@ -36,6 +36,8 @@ export const getErrorMessage = (error: unknown) => {
 
 export const createWorkorder = (job: Record<string, any>) => {
   const workorder = newWorkorder
+  workorder.id = useUid()
+
   if (job) {
     workorder['FK|job_id'] = job.id
     workorder['FK|bid_id'] = job['FK|bid_id']?.id
@@ -45,6 +47,19 @@ export const createWorkorder = (job: Record<string, any>) => {
 
   return workorderValidator.parse(workorder)
 }
+
+export function createLineItem(workorderId: string, tasks: Array<TaskType>) {
+  console.log('task', tasks)
+  let lineitem = newLineItem
+  if (workorderId) {
+    lineitem.id = useUid()
+    lineitem['FK|workorder_id'] = workorderId
+    lineitem.item_number = tasks.length + 1
+  }
+  console.log('lineitem', lineitem)
+  return lineitemValidator.parse(lineitem)
+}
+
 export function watchAfterInit(source: any, cb: Function, options: WatchWithFilterOptions<false> | undefined = {}) {
   const { ignoreUpdates } = watchIgnorable(
     source,

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { Task } from '~/types'
-
 const { data } = defineProps<{
   data: Task
 }>()
 const emit = defineEmits(['close'])
 const richTextFields = $computed(() => Object.keys(data).filter(key => ['description', 'details', 'quantity', 'notes'].includes(key)))
+
+
 const closeModal = () => emit('close')
 
 const modal = ref<HTMLDivElement>()

@@ -205,6 +205,6 @@ const descriptionHtml = $computed(() => parseDelta(workorder.description))
     </section>
 
     <!-- LINE ITEMS -->
-    <Tasks :workorder-id="id" />
+    <Tasks :workorder-id="workorder?.id" />
   </div>
 </template>

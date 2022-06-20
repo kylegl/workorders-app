@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import type { LineItem } from '~/types'
-
 const { data, idx } = defineProps<{
   data: LineItem
   idx: number
 }>()
+let isSaved = $ref(false)
+const isDirty = $ref(false)
+
 
 const toggleComplete = () => {
   data.completed = !data.completed
 }
 
 watchEffect(() => data.item_number = idx + 1)
+
+const test = () => $$(isDirty).value = true
+
+watchAfterInit($$(data), test, { deep: true })
+
+watchEffect(() => {
+  if (isDirty && isSaved) update({ table: 'line_items', data })
+})
 </script>
 
 <template>

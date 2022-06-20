@@ -3,39 +3,32 @@ import type { Task } from '~/types'
 const { workorderId } = defineProps<Props>()
 const { data } = storeToRefs(useMainStore())
 const { getByKeyValue, getByType, deleteById, addItem } = useMainStore()
-
 interface Props {
   workorderId: string
 }
+let showModal = $ref(false)
+let currentTask = $ref()
 
 const tasks = $computed((): Task[] =>
-  getByKeyValue({ key: 'FK|workorder_id', value: workorderId, type: 'lineItems' })
+  getByKeyValue({ key: 'FK|workorder_id', value: workorderId, type: 'line_items' })
     ?.sort((a, b) => a.item_number - b.item_number))
 
 const deleteTask = (task: Task) => {
-  deleteById({ id: task.id, type: 'lineItems' })
+  console.log('task', task)
+  deleteById({ data: task, table: 'line_items' })
 }
 
 const addLineItem = () => {
-  const lineItem = {
-    id: useUid(),
-    workorder_id: workorderId,
-    description: '',
-    details: '',
-    quantity: '',
-    hours: 0,
-    notes: '',
-    item_number: tasks.length + 1,
-    completed: false,
-  }
+  const lineItem = createLineItem(workorderId, tasks)
 
-  addItem({ item: lineItem, type: 'lineItems' })
+  addItem({
+    table: 'line_items',
+    data: lineItem,
+  })
+
   currentTask = lineItem
   showModal = true
 }
-
-let showModal = $ref(false)
-let currentTask = $ref()
 
 const editTask = (task: Task) => {
   showModal = true
@@ -63,15 +56,14 @@ const moveTask = (task: Task, delta: 1 | -1) => {
       <h3 text-h3>
         Line Items
       </h3>
-    <Button @click="addLineItem">
-      <Icon i-fa-solid:plus text-2xl />
-      Line Item
-    </Button>
+      <Button @click="addLineItem">
+        <Icon i-fa-solid:plus text-2xl />
+        Line Item
+      </Button>
     </div>
 
-
     <!-- EXISTING LINE ITEMS -->
-    <section v-if="tasks?.length" flex="~ col" gap2 >
+    <section v-if="tasks?.length" flex="~ col" gap2>
       <Card v-for="task, idx in tasks" :key="task.id" relative>
         <TaskItem :data="task" :idx="idx" />
         <div absolute flex="~ col" left="-6" top-0 bottom-0 justify-center>
