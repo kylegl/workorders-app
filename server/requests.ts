@@ -20,6 +20,7 @@ interface ClientRequest {
 const router = () => {
   return {
     database: (versions: Versions) => new DatabaseController({ clientVersions: versions }),
+    drive: (fileId) => SpreadsheetApp.openById(fileId),
   }
 }
 

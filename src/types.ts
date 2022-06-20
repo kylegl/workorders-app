@@ -170,6 +170,7 @@ export const jobValidator = z.object({
   'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
+  'start_date': numberOrString,
   'closed_date': numberOrString,
 })
 

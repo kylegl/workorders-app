@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const { id } = useRoute().params
 const { data, loading, error } = storeToRefs(useMainStore())
-const { getByKeyValue, deleteById, addItem, getById } = useMainStore()
+const { getByKeyValue, deleteById, addItem, getById, getReadableDate } = useMainStore()
+
 
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))
 const workorders = $computed(() => getByKeyValue({ key: 'FK|job_id', value: id, type: 'workorders', getParsed: true }))
@@ -9,6 +10,8 @@ const jobTitle = $computed(() => {
   if (job?.job_name && job?.address) return `${job.job_name} - ${job.address}`
   return job?.job_name ?? job?.address
 })
+const startDate = $computed(()=> unixToHumanDate(job?.start_date))
+
 
 const addWorkorder = () => {
   addItem({
@@ -16,6 +19,8 @@ const addWorkorder = () => {
     data: createWorkorder(job),
   })
 }
+
+const test = $computed(() => durationBoolean(job?.start_date))
 
 </script>
 
@@ -49,12 +54,15 @@ const addWorkorder = () => {
         </div>
       </Card>
 
+      {{test}}
       <div flex="~ col" gap2 w="1/2">
         <StatusIndicator :status="job.status" max-w-fit ml-auto />
-        <div v-if="job.status === 'Upcoming' && job.start_date" flex text-base>
-          Start Date:
+        <div v-if="job.status === 'Upcoming' && job.start_date" flex="~ col" text-base ml-auto>
           <div>
-            {{ job.start_date }}
+            Start Date:
+          </div>
+          <div text-h5>
+            {{ startDate }}
           </div>
         </div>
       </div>
@@ -80,7 +88,7 @@ const addWorkorder = () => {
         </div>
       </div>
     </section>
-    <Button  m-auto @click="addWorkorder">
+    <Button m-auto @click="addWorkorder">
       <Icon i-fa-solid:plus text-2xl />
       Work Order
     </Button>

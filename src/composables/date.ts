@@ -24,3 +24,21 @@ export const unixToDate = (timestamp: number): Date | string => {
 }
 
 export const dateToUnix = (date: Date | string): Date | number | undefined => +new Date(date)
+
+export const durationBoolean = (timestamp): boolean => {
+  if (!timestamp) return false
+  const start = Temporal.Instant
+    .fromEpochMilliseconds(timestamp)
+    .toZonedDateTimeISO('America/Los_Angeles')
+    .toPlainDate()
+
+  const now = Temporal.Instant
+    .fromEpochMilliseconds(+new Date())
+    .toZonedDateTimeISO('America/Los_Angeles')
+    .toPlainDate()
+
+  const timeUntil = start.until(now, { largestUnit: 'days' })
+  const duration = Temporal.Duration.from(timeUntil).total({ unit: 'days' })
+  const withinOneWeek = duration < 0 && duration > -7
+  return withinOneWeek
+}
