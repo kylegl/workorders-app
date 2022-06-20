@@ -71,13 +71,13 @@ class DatabaseController {
     const versions = this.getVersions(serverVersions)
 
     if (this.clientVersions.main === serverVersions.main)
-      return { data: [], versions }
+      return { data: {}, versions }
 
     const tables = Object.keys(this.clientVersions)
       .filter(item => this.clientVersions[item] !== serverVersions[item])
       .filter(item => item !== 'main')
 
-    const data = tables.length ? this.getTables(tables) : []
+    const data = tables.length ? this.getTables(tables) : {}
 
     return { data, versions }
   }

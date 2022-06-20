@@ -150,15 +150,24 @@ export const lineitemValidator = z.object({
   'completed': z.boolean(),
 })
 
-export const backendDataValidator = z.union([
-  z.array(employeeValidator),
-  z.array(workorderValidator),
-  z.array(bidValidator),
-  z.array(jobValidator),
-  z.array(contactValidator),
-  z.array(clientValidator),
-  z.array(lineitemValidator),
-])
+export const dataTypeValidator = z.object({
+  employees: employeeValidator,
+  workorders: workorderValidator,
+  bids: bidValidator,
+  jobs: jobValidator,
+  contacts: contactValidator,
+  clients: clientValidator,
+  line_items: lineitemValidator,
+})
+
+export type DataType = z.infer<typeof dataTypeValidator>
+
+const TableNamesEnum = z.enum(['employees', 'workorders', 'jobs', 'bids', 'contacts', 'clients', 'line_items'])
+const VersionNamesEnum = z.enum(['main','employees', 'workorders', 'jobs', 'bids', 'contacts', 'clients', 'line_items'])
+
+export const backendDataValidator = z.array(dataTypeValidator)
+
+export type BackendData = z.infer<typeof backendDataValidator>
 
 export const packValidator = z.object({
   id: z.string(),
@@ -168,31 +177,62 @@ export const packValidator = z.object({
   version: z.string(),
 })
 
-export const dataValidator = z.object({
-  employees: packValidator.optional(),
-  workorders: packValidator.optional(),
-  bids: packValidator.optional(),
-  jobs: packValidator.optional(),
-  contacts: packValidator.optional(),
-  clients: packValidator.optional(),
-  line_items: packValidator.optional(),
-})
+export const dataValidator = z.record(TableNamesEnum, packValidator.optional())
 
-export const versionValidator = z.object({
-  main: z.string(),
-  clients: z.string(),
-  employees: z.string(),
-  workorders: z.string(),
-  jobs: z.string(),
-  bids: z.string(),
-  contacts: z.string(),
-  line_items: z.string(),
-})
+export type Data = z.infer<typeof dataValidator>
+
+export const versionValidator = z.record(VersionNamesEnum, z.string().optional())
+
+export type Version = z.infer<typeof versionValidator>
+
+export type VersionKeys = keyof Version
 
 export const apiResponseValidator = z.object({
   ok: z.boolean(),
-  data: dataValidator,
+  data: dataValidator.optional(),
+  versions: versionValidator.optional(),
+})
+
+export type ApiResponse = z.infer<typeof apiResponseValidator>
+
+export type TableKeys = keyof Data
+
+export const storeDataValidator = z.object({
+  clients: z.array(clientValidator).optional(),
+  employees: z.array(employeeValidator).optional(),
+  workorders: z.array(workorderValidator).optional(),
+  bids: z.array(bidValidator).optional(),
+  jobs: z.array(jobValidator).optional(),
+  contacts: z.array(contactValidator).optional(),
+  line_items: z.array(lineitemValidator).optional(),
+})
+
+export type StoreData = z.infer<typeof storeDataValidator>
+
+export const gasTaskValidator = z.object({
+  namespace: z.string(),
+  action: z.string(),
+  params: z.object({
+    tableName: z.string().optional(),
+    data: backendDataValidator.optional(),
+    clientVersions: versionValidator,
+  }),
+})
+
+export type GasTaskType = z.infer<typeof gasTaskValidator>
+
+export const gasJobValidator = z.object({
+  namespace: z.string(),
+  tasks: z.array(gasTaskValidator),
+})
+
+export type GasJobType = z.infer<typeof gasJobValidator>
+
+export const mutationValidator = z.object({
+  table: z.string(),
+  action: z.string(),
+  data: dataTypeValidator.optional(),
   versions: versionValidator,
 })
 
-export type ApiResponse = z.infer<typeof gasResponseValidator>
+export type MutationType = z.infer<typeof mutationValidator>

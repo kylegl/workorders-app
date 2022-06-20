@@ -1,4 +1,5 @@
-import { apiResponseValidator } from '~/types'
+import type { Data, GasJobType, GasTaskType, MutationType } from '~/types'
+import { apiResponseValidator, gasJobValidator, gasTaskValidator } from '~/types'
 import { useMainStore } from '~/stores/mainStore'
 import { getErrorMessage } from '~/composables/utils'
 
@@ -10,13 +11,11 @@ const handleResponse = (rawResponse: string) => {
   return res
 }
 
-const createTask = ({ namespace, action, params }) => ({ namespace, action, params })
+const createTask = ({ namespace, action, params }: GasTaskType) => gasTaskValidator.parse({ namespace, action, params })
 
-const createJob = ({ namespace, tasks }) => {
-  return { namespace, tasks }
-}
+const createJob = ({ namespace, tasks }: GasJobType) => gasJobValidator.parse({ namespace, tasks })
 
-const stringifyDeltas = (entry) => {
+const stringifyDeltas = (entry: Data) => {
   const keys = Object.keys(entry)
 
   const deltaKeys = ['description', 'notes', 'parking_info', 'details', 'quantity']
@@ -55,15 +54,16 @@ const Provoke = ((ns) => {
   return ns
 })({})
 
-const serverRequest = async (requests) => {
+const serverRequest = async (requests: Array<any>) => {
   return await Provoke.run('requestHandler', requests)
 }
 
-const gasQuery = async () => {
+export async function gasQuery() {
   try {
     const mainStore = useMainStore()
 
-    const clientVersions = mainStore.client.versions
+    const clientVersions = mainStore.versions
+    console.log('cvs', clientVersions)
 
     const requests = [
       createJob({
@@ -74,16 +74,19 @@ const gasQuery = async () => {
       }),
     ]
 
-    const res: string = await serverRequest(requests)
-    return handleResponse(res)
+    const rawRes: string = await serverRequest(requests)
+    console.log('gas query server side', rawRes)
+    const res = handleResponse(rawRes)
+    return res
   }
   catch (err) {
     const msg = getErrorMessage(err)
     console.error('error', msg)
+    return { ok: false, data: undefined, versions: undefined }
   }
 }
 
-const gasMutation = async ({ mutations }) => {
+const gasMutation = async (mutations: MutationType[]) => {
   const requests = mutations.map((mutation) => {
     if (mutation?.data)
       mutation.data = stringifyDeltas(mutation.data)
@@ -95,7 +98,7 @@ const gasMutation = async ({ mutations }) => {
           namespace: 'database',
           action: mutation.action,
           params: {
-            tableName: mutation.type,
+            tableName: mutation.table,
             data: [mutation.data],
             clientVersions: mutation.versions,
           },
@@ -109,5 +112,6 @@ const gasMutation = async ({ mutations }) => {
   return handleResponse(rawResponse)
 }
 
-export { Provoke, serverRequest, createTask, createJob, gasQuery, gasMutation }
+export { Provoke, serverRequest, createTask, createJob, gasMutation }
 
+// TODO check why the clientVersions are not being sent from client to server
