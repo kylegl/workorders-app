@@ -3,15 +3,13 @@ const { id } = useRoute().params
 const { data, loading, error } = storeToRefs(useMainStore())
 const { getByKeyValue, deleteById, addItem, getById, getReadableDate } = useMainStore()
 
-
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))
 const workorders = $computed(() => getByKeyValue({ key: 'FK|job_id', value: id, type: 'workorders', getParsed: true }))
 const jobTitle = $computed(() => {
   if (job?.job_name && job?.address) return `${job.job_name} - ${job.address}`
   return job?.job_name ?? job?.address
 })
-const startDate = $computed(()=> unixToHumanDate(job?.start_date))
-
+const startDate = $computed(() => unixToHumanDate(job?.start_date))
 
 const addWorkorder = () => {
   addItem({
@@ -21,7 +19,6 @@ const addWorkorder = () => {
 }
 
 const test = $computed(() => durationBoolean(job?.start_date))
-
 </script>
 
 <template>
@@ -54,7 +51,6 @@ const test = $computed(() => durationBoolean(job?.start_date))
         </div>
       </Card>
 
-      {{test}}
       <div flex="~ col" gap2 w="1/2">
         <StatusIndicator :status="job.status" max-w-fit ml-auto />
         <div v-if="job.status === 'Upcoming' && job.start_date" flex="~ col" text-base ml-auto>

@@ -4,7 +4,7 @@ const { data, loading, error } = storeToRefs(useMainStore())
 const { getByType, query } = useMainStore()
 const route = useRoute()
 const searchResults = $ref<Job[]>()
- 
+
 watch(() => route.params, () => {
   if (loading) setTimeout(() => query(), 1000)
 }, { immediate: true })

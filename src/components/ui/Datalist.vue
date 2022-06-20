@@ -195,23 +195,29 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
     </Input>
     <template v-if="focus">
       <ul
-        absolute top-full min-w-full max-w-max
+        absolute top-full min-w-full
         border="~ base"
         list-none
       >
-        <li v-for="(item, index) in searchResults" :key="item?.id">
+        <li
+          v-for="(item, index) in searchResults" :key="item?.id"
+          flex bg-2 border="b base"
+          in_out
+        >
           <div
-            flex gap-x-2 bg-2 justify-between p2
-            border="b base"
-            in_out
+            v-for="key in showKeys" :key="key"
             :class="{ 'bg-bg-d': activeIndex === index }"
             @mousedown="handleClick(item)"
             @mouseover="handleHover(index)"
             @mouseleave="handleHover(-1)"
+            p2 w-full
           >
-            <div v-for="key in showKeys" :key="key" flex item-start min-w-max>
+            <template v-if="item[key]">
+            <div pr-5>
               {{ item[key] }}
+
             </div>
+            </template>
           </div>
         </li>
       </ul>

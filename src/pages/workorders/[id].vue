@@ -47,7 +47,7 @@ const descriptionHtml = $computed(() => parseDelta(workorder.description))
   <div flex="~ col" gap-y-4 p8 relative>
     <div flex justify-between>
       <h1 text-h3>
-        {{ `Work Order #` }}
+        {{ `Work Order` }}
       </h1>
       <!--  -->
       <Button v-if="formDisabled" text-h5 @click="edit">
