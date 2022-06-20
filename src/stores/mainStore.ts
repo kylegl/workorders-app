@@ -75,7 +75,7 @@ export const useMainStore = defineStore('main', {
     async query(): Promise<void> {
       try {
         this.loading = true
-        const res = await Query()
+        const res = await Query(this.versions)
         if (!res?.ok) throw new Error('No response from API')
 
         const { data, versions } = res

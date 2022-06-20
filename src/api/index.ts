@@ -1,11 +1,12 @@
-import { gasMutation, gasQuery } from './gas.js'
-import type { ApiResponse } from '~/types'
+import { gasMutation, gasQuery } from './gas'
+import type { ApiResponse, VersionType } from '~/types'
+
 const isProd = process.env.NODE_ENV === 'production'
 
-export async function Query() {
+export async function Query(versions: VersionType) {
   try {
     if (isProd) {
-      const result = await gasQuery()
+      const result = await gasQuery(versions)
       if (!result)
         throw new Error('No response from API')
 
@@ -16,6 +17,7 @@ export async function Query() {
       const response = await fetch('http://localhost:4000/mock-api')
       if (response.ok) {
         const result = await response.json()
+        console.log('mock response', result)
 
         return result as ApiResponse
       }

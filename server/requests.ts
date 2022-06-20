@@ -81,5 +81,5 @@ const requestHandler = (requests: ClientRequest[]) => {
 //     },
 //   ]
 
-//   console.log('res', requestHandler({ requests }))
+//   console.log('res', requestHandler( requests ))
 // }

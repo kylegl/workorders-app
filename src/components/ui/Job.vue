@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Job } from '~/types'
 const { job } = defineProps<{ job: Job }>()
+console.log('job', job)
 </script>
 
 <template>

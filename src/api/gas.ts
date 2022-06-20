@@ -1,11 +1,11 @@
-import type { Data, GasJobType, GasTaskType, MutationType } from '~/types'
+import type { Data, GasJobType, GasTaskType, MutationType, VersionType } from '~/types'
 import { apiResponseValidator, gasJobValidator, gasTaskValidator } from '~/types'
 import { useMainStore } from '~/stores/mainStore'
 import { getErrorMessage } from '~/composables/utils'
 
 const handleResponse = (rawResponse: string) => {
   const [[parsedRes]] = JSON.parse(rawResponse)
-
+  console.log('parsed resp', parsedRes)
   const res = apiResponseValidator.parse(parsedRes)
 
   return res
@@ -58,24 +58,21 @@ const serverRequest = async (requests: Array<any>) => {
   return await Provoke.run('requestHandler', requests)
 }
 
-export async function gasQuery() {
+export async function gasQuery(versions: VersionType) {
   try {
-    const mainStore = useMainStore()
-
-    const clientVersions = mainStore.versions
-    console.log('cvs', clientVersions)
+    console.log('cvs', versions)
 
     const requests = [
       createJob({
         namespace: 'database',
         tasks: [
-          createTask({ namespace: 'database', action: 'get', params: { clientVersions } }),
+          createTask({ namespace: 'database', action: 'get', params: { clientVersions: versions } }),
         ],
       }),
     ]
 
     const rawRes: string = await serverRequest(requests)
-    console.log('gas query server side', rawRes)
+    // console.log('gas query response', rawRes)
     const res = handleResponse(rawRes)
     return res
   }
@@ -107,7 +104,7 @@ const gasMutation = async (mutations: MutationType[]) => {
     })
   })
 
-  console.log('gas mutation server side', requests)
+  // console.log('gas mutation server side', requests)
   const rawResponse = await serverRequest(requests)
   return handleResponse(rawResponse)
 }

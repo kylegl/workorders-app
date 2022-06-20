@@ -13,13 +13,27 @@ export const handlers = [
       ctx.json({
         ok: true,
         data: {
-          bids,
-          clients,
-          contacts,
-          employees,
-          jobs,
-          lineItems,
-          workorders,
+          bids: {
+            data: bids,
+          },
+          clients: {
+            data: clients,
+          },
+          contacts: {
+            data: contacts,
+          },
+          employees: {
+            data: employees,
+          },
+          jobs: {
+            data: jobs,
+          },
+          lineItems: {
+            data: lineItems,
+          },
+          workorders: {
+            data: workorders,
+          },
         },
         versions: {
           main: 'a',
