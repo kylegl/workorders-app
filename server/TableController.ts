@@ -1,18 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class TableController {
-  tableName
+  table
   version
-  constructor({ tableName, version }: { tableName: string; version: string | undefined }) {
-    this.tableName = tableName
+  constructor({ table, version }: { table: string; version: string | undefined }) {
+    this.table = table
     this.version = version
   }
 
   add(data: TableData) {
     const Table = this.startTransaction()
 
-    data.forEach((entry) => {
-      Table.data.push(entry)
-    })
+    Table.data.push(data)
 
     return this.commitTransaction({ Table })
     // check queue for any waiting transtactions
@@ -21,10 +19,8 @@ class TableController {
   delete(data: TableData) {
     const Table = this.startTransaction()
 
-    data.forEach((entry: TableRow) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Table.tableInterface.filterRows((row: TableRow, properties: any) => row.id !== entry.id)
-    })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Table.tableInterface.filterRows((row: TableRow, properties: any) => row.id !== data.id)
 
     return this.commitTransaction({ Table })
   }
@@ -33,32 +29,30 @@ class TableController {
     const Table = this.startTransaction()
 
     this.unlock()
-    return { data: Table.data, version: this.version, table: this.tableName }
+    return { data: Table.data, version: this.version, table: this.table }
   }
 
   update(data: TableData) {
     const Table = this.startTransaction()
 
-    data.forEach((entry) => {
-      const i = Table.data.findIndex((row: TableRow) => row.id === entry.id)
+    const i = Table.data.findIndex((row: TableRow) => row.id === data.id)
 
-      if (i !== -1)
-        Table.data[i] = { ...entry }
-    })
+    if (i !== -1)
+      Table.data[i] = { ...data }
 
     return this.commitTransaction({ Table })
   }
 
   isLocked() {
-    return getScriptProp({ prop: `${this.tableName}_locked` })
+    return JSON.parse(getScriptProp({ prop: `${this.table}_locked` }))
   }
 
   lock() {
-    setScriptProp({ key: `${this.tableName}_locked`, value: true })
+    setScriptProp({ key: `${this.table}_locked`, value: true })
   }
 
   unlock() {
-    setScriptProp({ key: `${this.tableName}_locked`, value: false })
+    setScriptProp({ key: `${this.table}_locked`, value: false })
   }
 
   startTransaction() {
@@ -71,22 +65,22 @@ class TableController {
   commitTransaction({ Table }: any): TableTransactionResponse {
     Table.setTableValues()
 
-    const uuid: string = setTableVersion({ table: this.tableName })
+    const uuid: string = setTableVersion({ table: this.table })
 
     setTableVersion({ table: 'main' })
 
     this.unlock()
 
-    // const formatData = Table.data.map(row => ({ ...row, type: this.tableName }))
+    // const formatData = Table.data.map(row => ({ ...row, type: this.table }))
 
-    return { ok: true, data: Table.data, version: uuid, table: this.tableName }
+    return { ok: true, data: Table.data, version: uuid, table: this.table }
   }
 
   getTableInterface() {
-    const tableInterface = getSheetInterface({ sheetName: this.tableName })
+    const tableInterface = getSheetInterface({ sheetName: this.table })
 
     return {
-      version: getScriptProp({ prop: this.tableName }),
+      version: getScriptProp({ prop: this.table }),
       data: tableInterface.getData(),
       setTableValues: () => {
         const outputRange = tableInterface.getRange()

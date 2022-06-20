@@ -1,4 +1,4 @@
-import { string, z } from 'zod'
+import { z } from 'zod'
 
 type Id = string | number
 
@@ -67,12 +67,56 @@ const emailOrUndefined = z.union([z.nullable(z.string().email()), z.undefined()]
 
 const numberOrString = z.union([stringOrUndefined, numberOrUndefined])
 
+export const deltaValidator = z.object({
+  ops: z.array(z.object({
+    insert: z.string().optional(),
+    attributes: z.object({
+      list: z.string(),
+    }).optional(),
+  })),
+})
+
+export const stringOrDelta = z.union([stringOrUndefined, deltaValidator])
+export const stringOrNumberOrDelta = z.union([numberOrString, deltaValidator])
+
+
+const parseJSON = (val) => {
+  try {
+    return JSON.parse(val)
+  }
+  catch (e) {
+    return val
+  }
+}
+const casteToJSON = z.preprocess(val => parseJSON(val), stringOrDelta)
+const castJSONtoString = z.preprocess(val => JSON.stringify(val), stringOrDelta)
+
 export const employeeValidator = z.object({
   id: z.string(),
   name: z.string(),
   email: emailOrUndefined,
   phone: numberOrString,
   position: stringOrUndefined,
+})
+
+export const incomingWorkorderValidator = z.object({
+  'id': z.string(),
+  'FK|client_id': z.string(),
+  'FK|employee_id': stringOrUndefined,
+  'FK|contact_id': stringOrUndefined,
+  'FK|job_id': stringOrUndefined,
+  'FK|bid_id': stringOrUndefined,
+  'start_date': numberOrString,
+  'due_date': numberOrString,
+  'description': casteToJSON,
+  'parking_info': casteToJSON,
+  'notes': casteToJSON,
+  'bill_type': stringOrUndefined,
+  'job_type': stringOrUndefined,
+  'created_at': numberOrString,
+  'udpated_at': numberOrString,
+  'closed_at': numberOrString,
+  'status': z.string(),
 })
 
 export const workorderValidator = z.object({
@@ -84,9 +128,29 @@ export const workorderValidator = z.object({
   'FK|bid_id': stringOrUndefined,
   'start_date': numberOrString,
   'due_date': numberOrString,
-  'description': stringOrUndefined,
-  'parking_info': stringOrUndefined,
-  'notes': stringOrUndefined,
+  'description': stringOrDelta,
+  'parking_info': stringOrDelta,
+  'notes': stringOrDelta,
+  'bill_type': stringOrUndefined,
+  'job_type': stringOrUndefined,
+  'created_at': numberOrString,
+  'udpated_at': numberOrString,
+  'closed_at': numberOrString,
+  'status': z.string(),
+})
+
+export const outgoingWorkorderValidator = z.object({
+  'id': z.string(),
+  'FK|client_id': z.string(),
+  'FK|employee_id': stringOrUndefined,
+  'FK|contact_id': stringOrUndefined,
+  'FK|job_id': stringOrUndefined,
+  'FK|bid_id': stringOrUndefined,
+  'start_date': numberOrString,
+  'due_date': numberOrString,
+  'description': castJSONtoString,
+  'parking_info': castJSONtoString,
+  'notes': castJSONtoString,
   'bill_type': stringOrUndefined,
   'job_type': stringOrUndefined,
   'created_at': numberOrString,
@@ -144,56 +208,37 @@ export const clientValidator = z.object({
   address: stringOrUndefined,
 })
 
+export const incomingLineitemValidator = z.object({
+  'id': z.string(),
+  'FK|workorder_id': z.string(),
+  'description': casteToJSON,
+  'details': casteToJSON,
+  'quantity': casteToJSON,
+  'hours': z.number(),
+  'item_number': z.number(),
+  'completed': z.boolean(),
+})
 export const lineitemValidator = z.object({
   'id': z.string(),
   'FK|workorder_id': z.string(),
-  'description': stringOrUndefined,
-  'details': stringOrUndefined,
-  'quantity': numberOrString,
+  'description': stringOrDelta,
+  'details': stringOrDelta,
+  'quantity': stringOrNumberOrDelta,
+  'hours': z.number(),
+  'item_number': z.number(),
+  'completed': z.boolean(),
+})
+export const outgoingLineitemValidator = z.object({
+  'id': z.string(),
+  'FK|workorder_id': z.string(),
+  'description': castJSONtoString,
+  'details': castJSONtoString,
+  'quantity': castJSONtoString,
   'hours': z.number(),
   'item_number': z.number(),
   'completed': z.boolean(),
 })
 
-export const dataTypeValidator = z.object({
-  employees: employeeValidator,
-  workorders: workorderValidator,
-  bids: bidValidator,
-  jobs: jobValidator,
-  contacts: contactValidator,
-  clients: clientValidator,
-  line_items: lineitemValidator,
-})
-
-export type DataType = z.infer<typeof dataTypeValidator>
-
-export const packValidator = z.discriminatedUnion('table', [
-  z.object({ table: z.literal('jobs'), data: z.array(jobValidator), version: z.string().optional() }),
-  z.object({ table: z.literal('bids'), data: z.array(bidValidator), version: z.string().optional() }),
-  z.object({ table: z.literal('contacts'), data: z.array(contactValidator), version: z.string().optional() }),
-  z.object({ table: z.literal('clients'), data: z.array(clientValidator), version: z.string().optional() }),
-  z.object({ table: z.literal('employees'), data: z.array(employeeValidator), version: z.string().optional() }),
-  z.object({ table: z.literal('workorders'), data: z.array(workorderValidator), version: z.string().optional() }),
-  z.object({ table: z.literal('line_items'), data: z.array(lineitemValidator), version: z.string().optional() }),
-])
-
-export const backendDataValidator = z.array(dataTypeValidator)
-
-export type BackendData = z.infer<typeof backendDataValidator>
-
-export const dataResponseValidator = z.object({
-  employees: packValidator.optional(),
-  workorders: packValidator.optional(),
-  bids: packValidator.optional(),
-  jobs: packValidator.optional(),
-  contacts: packValidator.optional(),
-  clients: packValidator.optional(),
-  line_items: packValidator.optional(),
-})
-
-export type Data = z.infer<typeof dataResponseValidator>
-
-// export const versionValidator = z.record(VersionNamesEnum, stringOrUndefined)
 export const versionValidator = z.object({
   main: stringOrUndefined,
   employees: stringOrUndefined,
@@ -211,6 +256,38 @@ export type Version = z.infer<typeof versionValidator>
 
 export type VersionKeys = keyof Version
 
+export const packValidator = z.discriminatedUnion('table', [
+  z.object({ table: z.literal('jobs'), data: z.array(jobValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('bids'), data: z.array(bidValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('contacts'), data: z.array(contactValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('clients'), data: z.array(clientValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('employees'), data: z.array(employeeValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('workorders'), data: z.array(incomingWorkorderValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('line_items'), data: z.array(incomingLineitemValidator), version: z.string().optional() }),
+])
+
+export const mutationValidator = z.discriminatedUnion('table', [
+  z.object({ table: z.literal('jobs'), data: jobValidator }),
+  z.object({ table: z.literal('bids'), data: bidValidator }),
+  z.object({ table: z.literal('contacts'), data: contactValidator }),
+  z.object({ table: z.literal('clients'), data: clientValidator }),
+  z.object({ table: z.literal('employees'), data: employeeValidator }),
+  z.object({ table: z.literal('workorders'), data: outgoingWorkorderValidator }),
+  z.object({ table: z.literal('line_items'), data: outgoingLineitemValidator }),
+])
+
+export const dataResponseValidator = z.object({
+  employees: packValidator.optional(),
+  workorders: packValidator.optional(),
+  bids: packValidator.optional(),
+  jobs: packValidator.optional(),
+  contacts: packValidator.optional(),
+  clients: packValidator.optional(),
+  line_items: packValidator.optional(),
+})
+
+export type Data = z.infer<typeof dataResponseValidator>
+
 export const apiResponseValidator = z.object({
   ok: z.boolean(),
   data: dataResponseValidator.optional(),
@@ -218,8 +295,6 @@ export const apiResponseValidator = z.object({
 })
 
 export type ApiResponse = z.infer<typeof apiResponseValidator>
-
-export type TableKeys = keyof Data
 
 export const tableKeyEnum = z.enum(['jobs', 'bids', 'contacts', 'clients', 'employees', 'workorders', 'line_items'])
 
@@ -237,31 +312,48 @@ export const storeDataValidator = z.object({
 
 export type StoreData = z.infer<typeof storeDataValidator>
 
-export const gasTaskValidator = z.object({
-  namespace: z.string(),
-  action: z.string(),
-  params: z.object({
-    tableName: stringOrUndefined,
-    data: backendDataValidator.optional(),
-    clientVersions: versionValidator,
-  }),
-})
-
-export type GasTaskType = z.infer<typeof gasTaskValidator>
-
-export const gasJobValidator = z.object({
-  namespace: z.string(),
-  tasks: z.array(gasTaskValidator),
-})
-
-export type GasJobType = z.infer<typeof gasJobValidator>
-
-export const mutationValidator = z.object({
-  table: z.string(),
-  action: z.string(),
-  data: dataTypeValidator.optional(),
-  versions: versionValidator,
-})
-
 export type MutationType = z.infer<typeof mutationValidator>
+
+export const requestValidator = z.object({
+  method: z.string(),
+  body: z.string(),
+})
+
+export type RequestType = z.infer<typeof requestValidator>
+
+export const TableRow = z.union([
+  clientValidator,
+  employeeValidator,
+  workorderValidator,
+  bidValidator,
+  jobValidator,
+  contactValidator,
+  lineitemValidator,
+])
+
+export type TableRowType = z.infer<typeof TableRow>
+
+export const dataTypeValidator = z.object({
+  employees: employeeValidator,
+  workorders: workorderValidator,
+  bids: bidValidator,
+  jobs: jobValidator,
+  contacts: contactValidator,
+  clients: clientValidator,
+  line_items: lineitemValidator,
+})
+
+export type DataType = z.infer<typeof dataTypeValidator>
+
+
+// const test = {
+//   ops: [
+//     { insert: 'Some description here\nThis is a list' },
+//     { attributes: { list: 'ordered' }, insert: '\n' },
+//     { insert: 'of' },
+//     { attributes: { list: 'ordered' }, insert: '\n' },
+//     { insert: 'stuff' },
+//     { attributes: { list: 'ordered' }, insert: '\n' },
+//     { insert: '\n' }],
+// }
 

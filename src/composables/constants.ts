@@ -1,3 +1,5 @@
+import { workorderValidator } from '~/types'
+
 export const jobFilters = [
   { name: 'Active', key: 'status', value: 'Active', isActive: true },
   { name: 'Upcoming', key: 'status', value: 'Upcoming', isActive: true },
@@ -15,7 +17,7 @@ export const jobSearchKeys = [
 export const workorderStatusOptions = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']
 export const billingOptions = ['T&M', 'Fixed']
 export const jobTypeOptions = ['Finishing', 'Painting']
-export const newWorkorder = {
+export const newWorkorder = workorderValidator.parse({
   'id': useUid(),
   'FK|job_id': '',
   'FK|bid_id': '',
@@ -32,5 +34,4 @@ export const newWorkorder = {
   'updated_at': null,
   'closed_at': null,
   'status': '',
-}
-
+})

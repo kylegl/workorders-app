@@ -1,5 +1,5 @@
 import { gasMutation, gasQuery } from './gas'
-import type { ApiResponse, VersionType } from '~/types'
+import type { ApiResponse, MutationType, VersionType } from '~/types'
 import { apiResponseValidator } from '~/types'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -30,10 +30,10 @@ export async function Query(versions: VersionType) {
   }
 }
 
-export async function Mutation(mutations: Array<any>): Promise<any> {
+export async function Mutation(mutation: MutationType, versions: VersionType, action: string): Promise<any> {
   try {
     if (isProd)
-      return gasMutation(mutations)
+      return gasMutation(mutation, versions, action)
   }
   catch (err) {
     const msg = getErrorMessage(err)

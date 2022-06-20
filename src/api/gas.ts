@@ -1,18 +1,13 @@
-import type { Data, GasJobType, GasTaskType, MutationType, VersionType } from '~/types'
-import { apiResponseValidator, gasJobValidator, gasTaskValidator } from '~/types'
-import { useMainStore } from '~/stores/mainStore'
+import type { Data, MutationType, RequestType, VersionType } from '~/types'
+import { apiResponseValidator } from '~/types'
 import { getErrorMessage } from '~/composables/utils'
 
 const handleResponse = (rawResponse: string) => {
-  const [[parsedRes]] = JSON.parse(rawResponse)
-
+  const parsedRes = JSON.parse(rawResponse)
+  console.log('parsedRes', parsedRes)
   const res = apiResponseValidator.parse(parsedRes)
   return res
 }
-
-const createTask = ({ namespace, action, params }: GasTaskType) => gasTaskValidator.parse({ namespace, action, params })
-
-const createJob = ({ namespace, tasks }: GasJobType) => gasJobValidator.parse({ namespace, tasks })
 
 const stringifyDeltas = (entry: Data) => {
   const keys = Object.keys(entry)
@@ -22,6 +17,19 @@ const stringifyDeltas = (entry: Data) => {
   return keys.reduce((result, key) => {
     if (deltaKeys.includes(key) && entry[key])
       result[key] = JSON.stringify(entry[key])
+    else result[key] = entry[key]
+
+    return result
+  }, {})
+}
+const parseDeltas = (entry: Data) => {
+  const keys = Object.keys(entry)
+
+  const deltaKeys = ['description', 'notes', 'parking_info', 'details', 'quantity']
+
+  return keys.reduce((result, key) => {
+    if (deltaKeys.includes(key) && entry[key])
+      result[key] = JSON.parse(entry[key])
     else result[key] = entry[key]
 
     return result
@@ -53,22 +61,19 @@ const Provoke = ((ns) => {
   return ns
 })({})
 
-const serverRequest = async (requests: Array<any>) => {
-  return await Provoke.run('requestHandler', requests)
+const serverRequest = async (request: RequestType) => {
+  return await Provoke.run('requestHandler', request)
 }
 
 export async function gasQuery(versions: VersionType) {
   try {
-    const requests = [
-      createJob({
-        namespace: 'database',
-        tasks: [
-          createTask({ namespace: 'database', action: 'get', params: { clientVersions: versions } }),
-        ],
-      }),
-    ]
+    const request = {
+      path: 'database/get',
+      method: 'GET',
+      cache: versions,
+    }
 
-    const rawRes: string = await serverRequest(requests)
+    const rawRes: string = await serverRequest(request)
     const res = handleResponse(rawRes)
     return res
   }
@@ -79,31 +84,25 @@ export async function gasQuery(versions: VersionType) {
   }
 }
 
-const gasMutation = async (mutations: MutationType[]) => {
-  const requests = mutations.map((mutation) => {
+export async function gasMutation(mutation: MutationType, versions: VersionType, action: string) {
+  try {
     if (mutation?.data)
       mutation.data = stringifyDeltas(mutation.data)
 
-    return createJob({
-      namespace: 'database',
-      tasks: [
-        createTask({
-          namespace: 'database',
-          action: mutation.action,
-          params: {
-            tableName: mutation.table,
-            data: [mutation.data],
-            clientVersions: mutation.versions,
-          },
-        }),
-      ],
-    })
-  })
+    const request = {
+      path: `database/${action}`,
+      method: 'POST',
+      body: JSON.stringify(mutation),
+      cache: versions,
+    }
 
-  const rawResponse = await serverRequest(requests)
-  return handleResponse(rawResponse)
+    const rawResponse = await serverRequest(request)
+    return handleResponse(rawResponse)
+  }
+  catch (err) {
+    const msg = getErrorMessage(err)
+    console.error('error', msg)
+    return { ok: false, data: undefined, versions: undefined }
+  }
 }
 
-export { Provoke, serverRequest, createTask, createJob, gasMutation }
-
-// TODO check why the clientVersions are not being sent from client to server

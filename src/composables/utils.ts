@@ -1,4 +1,5 @@
 import type { DataTableName, ErrorWithMessage } from '~/api/apiResponseTypes'
+import { workorderValidator } from '~/types'
 
 export function isFK(key: string): DataTableName | undefined {
   const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
@@ -42,7 +43,7 @@ export const createWorkorder = (job: Record<string, any>) => {
     workorder['FK|contact_id'] = job['FK|contact_id']?.id
   }
 
-  return workorder
+  return workorderValidator.parse(workorder)
 }
 export function watchAfterInit(source: any, cb: Function, options: WatchWithFilterOptions<false> | undefined = {}) {
   const { ignoreUpdates } = watchIgnorable(

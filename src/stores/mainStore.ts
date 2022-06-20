@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { Mutation, Query } from '~/api/index'
-import type { Data, DataType, StoreData, TableKey, TableKeys, Version, VersionKeys } from '~/types'
+import type { Data, DataType, StoreData, TableKey, Version, VersionKeys } from '~/types'
 import { mutationValidator, versionValidator } from '~/types'
 
 export const useMainStore = defineStore('main', {
@@ -104,15 +104,13 @@ export const useMainStore = defineStore('main', {
         this.loading = false
       }
     },
-    async mutation(table: string, action: string, data?: DataType) {
+    async mutation(table: string, action: string, data?: TableRow) {
       const mutation = mutationValidator.parse({
         table,
-        action,
         data,
-        versions: this.versions,
       })
 
-      const res = await Mutation([mutation])
+      const res = await Mutation(mutation, this.versions, action)
       return res
     },
     async deleteById({ id, table }: MutationParams) {
@@ -123,21 +121,21 @@ export const useMainStore = defineStore('main', {
 
       console.log(`Delete request for ${table}: ${id}, res = ${res}`)
     },
-    async addItem({ item, table }: MutationParams) {
+    async addItem({ data, table }: MutationParams) {
       if (this.data?.[table])
-        this.data[table] = [...this.data[table], item]
+        this.data[table] = [...this.data[table], data]
 
-      const res = await this.mutation(table, 'add', item)
+      const res = await this.mutation(table, 'add', data)
       console.log(`Add response:  ${res}}, res = ${res}`)
     },
-    async update({ item, table }: MutationParams) {
+    async update({ data, table }: MutationParams) {
       if (this.data?.[table]) {
-        let entry = this.data[table]!.find((el: DataType) => el.id === item.id)
+        let entry = this.data[table]!.find((el: DataType) => el.id === data.id)
         if (entry)
-          entry = { ...item }
+          entry = { ...data }
       }
 
-      const res = await this.mutation(table, 'update', item)
+      const res = await this.mutation(table, 'update', data)
       console.log(`update response: ${res}}`)
     },
   },
@@ -146,6 +144,6 @@ export const useMainStore = defineStore('main', {
 // Types
 interface MutationParams {
   id?: string
-  item?: DataType
-  table: TableKeys
+  data?: TableRow | undefined
+  table: TableKey
 }

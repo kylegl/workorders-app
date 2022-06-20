@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { WorkorderParsed } from '~/api/apiResponseTypes'
 const { data, loading, error } = storeToRefs(useMainStore())
 const { getById, getReadableDate, update } = useMainStore()
 const route = useRoute()
@@ -10,7 +9,7 @@ let formDisabled = $ref(true)
 let isSaved = $ref(false)
 const isDirty = $ref(false)
 
-const workorder = getById({ id, type: 'workorders' })
+const workorder = $computed(() => getById({ id, type: 'workorders' }))
 
 const edit = () => {
   formDisabled = false
@@ -38,7 +37,7 @@ const test = () => $$(isDirty).value = true
 watchAfterInit($$(workorder), test, { deep: true })
 
 watchEffect(() => {
-  if (isDirty && isSaved) update({ type: 'workorders', data: workorder })
+  if (isDirty && isSaved) update({ table: 'workorders', data: workorder })
 })
 
 const descriptionHtml = $computed(() => parseDelta(workorder.description))
@@ -50,7 +49,7 @@ const descriptionHtml = $computed(() => parseDelta(workorder.description))
       <h1 text-h3>
         {{ `Work Order #` }}
       </h1>
-
+      <!--  -->
       <Button v-if="formDisabled" text-h5 @click="edit">
         <Icon i-ion:edit text-2xl icon-btn />
         edit
@@ -180,9 +179,7 @@ const descriptionHtml = $computed(() => parseDelta(workorder.description))
         <div text-h5>
           Notes
         </div>
-        <div v-if="formDisabled">
-          {{ workorder.notes }}
-        </div>
+        <div v-if="formDisabled" v-html="parseDelta(workorder.notes)" />
         <Editor
           v-else
           v-model:content="workorder.notes"
@@ -195,9 +192,7 @@ const descriptionHtml = $computed(() => parseDelta(workorder.description))
         <div text-h5>
           Parking Info
         </div>
-        <div v-if="formDisabled">
-          {{ workorder.parking_info }}
-        </div>
+        <div v-if="formDisabled" v-html="parseDelta(workorder.parking_info)" />
         <Editor
           v-else
           v-model:content="workorder.parking_info"

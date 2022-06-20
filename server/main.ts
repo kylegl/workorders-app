@@ -77,6 +77,8 @@ const setCacheProps = ({ props }) => {
   }
 }
 
+const setScriptProps = props => scriptPropService().setProperties(props)
+
 // HELPER
 const isEmptyObject = ({ obj }) => JSON.stringify(obj) === '{}'
 
@@ -116,4 +118,18 @@ const addDataToDocsTable = ({ list, table }) => {
     row = table.appendTableRow()
     entry.forEach(value => row.appendTableCell(value))
   })
+}
+
+const unlockAll = () => {
+  const props = getScriptProps()
+  const unlockedProps = { ...props }
+
+  Object.keys(props).forEach((key) => {
+    const isLock = key.endsWith('_locked')
+
+    if (isLock)
+      unlockedProps[key] = false
+  })
+
+  setScriptProps(unlockedProps)
 }

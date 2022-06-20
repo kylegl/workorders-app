@@ -145,15 +145,6 @@ interface LineItemParsed extends Omit<LineItem, 'FK|workorder_id'> {
   completed: boolean
 }
 
-export interface BackendData extends DataRowBase {
-  employees: Employee[]
-  contacts: Contact[]
-  clients: Client[]
-  bids: Bid[]
-  jobs: Job[]
-  workorders: Workorder[]
-  lineItems: LineItem[]
-}
 
 export type DataTableParsed =
 Employee
@@ -208,8 +199,6 @@ export interface Versions {
 export const FindFxn = <T extends DataRowBase>(arg: T[]) => {
   return arg.find((e: T) => e.id === '1')
 }
-
-export type DataTableName = keyof BackendData
 
 export interface ErrorWithMessage {
   message: string

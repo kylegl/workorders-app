@@ -16,17 +16,17 @@ class DatabaseController {
     }
   }
 
-  add({ tableName, data, version }: MutateParams) {
+  add({ table, data }: MutateParams) {
     try {
-      const tableController = this.startTransaction({ tableName, version })
+      const tableController = this.startTransaction({ table })
 
       if (!tableController)
-        throw new Error(`table ${tableName} not found`)
+        throw new Error(`table ${table} not found`)
 
       const actionRes = tableController!.add(data)
 
       if (!actionRes.ok)
-        throw new Error(`error adding entry: ${data} to table ${tableName}`)
+        throw new Error(`error adding entry: ${data} to table ${table}`)
 
       return this.commitTransaction(true)
     }
@@ -35,13 +35,13 @@ class DatabaseController {
     }
   }
 
-  update({ tableName, data, version }: MutateParams) {
+  update({ table, data }: MutateParams) {
     try {
-      const tableController = this.startTransaction({ tableName, version })
+      const tableController = this.startTransaction({ table })
       const actionRes = tableController!.update(data)
 
       if (!actionRes.ok)
-        throw new Error(`error updating entry: ${data} to table ${tableName}`)
+        throw new Error(`error updating entry: ${data} to table ${table}`)
 
       return this.commitTransaction(true)
     }
@@ -50,13 +50,13 @@ class DatabaseController {
     }
   }
 
-  delete({ tableName, data, version }: MutateParams) {
+  delete({ table, data }: MutateParams) {
     try {
-      const tableController = this.startTransaction({ tableName, version })
+      const tableController = this.startTransaction({ table })
       const actionRes = tableController!.delete(data)
 
       if (!actionRes.ok)
-        throw new Error(`error deleting entry: ${data} to table ${tableName}`)
+        throw new Error(`error deleting entry: ${data} to table ${table}`)
 
       return this.commitTransaction(true)
     }
@@ -101,11 +101,12 @@ class DatabaseController {
     }, {})
   }
 
-  startTransaction({ tableName, version }: StartTransactionParams = {}) {
+  startTransaction({ table }: StartTransactionParams = {}) {
     wait(this.isLocked())
     this.lock()
+    const version = this.clientVersions[table]
 
-    return tableName ? new TableController({ tableName, version }) : undefined
+    return table ? new TableController({ table, version }) : undefined
   }
 
   commitTransaction(ok: boolean) {
@@ -136,7 +137,7 @@ class DatabaseController {
 
   errorHandler(err: any) {
   // eslint-disable-next-line no-console
-    console.trace(err)
+    console.error(err)
     return this.commitTransaction(false)
   }
 }
@@ -148,7 +149,7 @@ interface DatabaseControllerResponse {
 }
 
 interface StartTransactionParams {
-  tableName?: string
+  table?: string
   version?: string | undefined
 }
 
@@ -161,7 +162,7 @@ interface Pack {
 type Packs = Record<string, Pack>
 
 interface MutateParams {
-  tableName: string
+  table: string
   data: TableData
   version: string | undefined
 }

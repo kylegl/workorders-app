@@ -12,8 +12,8 @@ const jobTitle = $computed(() => {
 
 const addWorkorder = () => {
   addItem({
-    type: 'workorders',
-    item: createWorkorder(job),
+    table: 'workorders',
+    data: createWorkorder(job),
   })
 }
 </script>
