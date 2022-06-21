@@ -23,6 +23,7 @@ export const newWorkorder = workorderValidator.parse({
   'FK|bid_id': '',
   'FK|client_id': '',
   'FK|contact_id': '',
+  'FK|employee_id': '',
   'start_date': null,
   'due_date': null,
   'description': '',
@@ -33,7 +34,7 @@ export const newWorkorder = workorderValidator.parse({
   'created_at': +new Date(),
   'updated_at': null,
   'closed_at': null,
-  'status': '',
+  'status': 'Upcoming',
 })
 
 export const newLineItem = lineitemValidator.parse({

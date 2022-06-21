@@ -218,6 +218,7 @@ export const incomingLineitemValidator = z.object({
   'hours': numberOrString,
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
+  'notes': casteToJSON,
 })
 export const lineitemValidator = z.object({
   'id': z.string(),
@@ -228,7 +229,11 @@ export const lineitemValidator = z.object({
   'hours': numberOrString,
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
+  'notes': stringOrDelta,
 })
+
+export type Lineitem = z.infer<typeof lineitemValidator>
+
 export const outgoingLineitemValidator = z.object({
   'id': z.string(),
   'FK|workorder_id': z.string().optional(),
@@ -238,6 +243,7 @@ export const outgoingLineitemValidator = z.object({
   'hours': numberOrString,
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
+  'notes': castJSONtoString,
 })
 
 export const versionValidator = z.object({
@@ -346,6 +352,9 @@ export const dataTypeValidator = z.object({
 
 export type DataType = z.infer<typeof dataTypeValidator>
 
+export interface ErrorWithMessage {
+  message: string
+}
 
 // const test = {
 //   ops: [

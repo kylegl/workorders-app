@@ -136,6 +136,7 @@ export const useMainStore = defineStore('main', {
           entry = { ...data }
       }
 
+      console.log('update item')
       const res = await this.mutation(table, 'update', data)
       console.log(`update response: ${res}}`)
     },

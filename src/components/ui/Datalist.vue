@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components'
-import type { DataTableName, DataTables, TableRowKeys } from '~/api/apiResponseTypes'
 
 // props
 interface Props {

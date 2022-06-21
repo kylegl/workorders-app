@@ -1,9 +1,13 @@
-import type { DataTableName, ErrorWithMessage } from '~/api/apiResponseTypes'
+import type { WatchWithFilterOptions } from '@vueuse/core'
+import type { WatchCallback } from 'vue'
+import { ReactiveVariable } from 'vue/macros'
+import { newLineItem } from '~/composables/constants'
+import type { ErrorWithMessage, Lineitem, TableKey } from '~/types'
 import { lineitemValidator, workorderValidator } from '~/types'
 
-export function isFK(key: string): DataTableName | undefined {
+export function isFK(key: string): TableKey | undefined {
   const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
-  return type ? `${type}s` as DataTableName : undefined
+  return type ? `${type}s` as TableKey : undefined
 }
 
 export function isDate(key: string) { /^([^_]+)_(date|at)$/.test(key) }
@@ -48,19 +52,18 @@ export const createWorkorder = (job: Record<string, any>) => {
   return workorderValidator.parse(workorder)
 }
 
-export function createLineItem(workorderId: string, tasks: Array<TaskType>) {
-  console.log('task', tasks)
-  let lineitem = newLineItem
+export function createLineItem(workorderId: string, tasks: Array<Lineitem>) {
+  const lineitem = newLineItem
+
   if (workorderId) {
-    lineitem.id = useUid()
+    newLineItem.id = useUid()
     lineitem['FK|workorder_id'] = workorderId
     lineitem.item_number = tasks.length + 1
   }
-  console.log('lineitem', lineitem)
   return lineitemValidator.parse(lineitem)
 }
 
-export function watchAfterInit(source: any, cb: Function, options: WatchWithFilterOptions<false> | undefined = {}) {
+export function watchAfterInit(source: any, cb: WatchCallback, options: WatchWithFilterOptions<false> | undefined = {}) {
   const { ignoreUpdates } = watchIgnorable(
     source,
     cb,
@@ -70,3 +73,8 @@ export function watchAfterInit(source: any, cb: Function, options: WatchWithFilt
   ignoreUpdates(() => !source.value)
 }
 
+export function collectDirt(source, trash) {
+  const makeDirty = () => trash.value = true
+
+  watchAfterInit(source, makeDirty, { deep: true })
+}

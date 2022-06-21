@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import type { Task } from '~/types'
-const { data } = defineProps<{
-  data: Task
+const { task } = defineProps<{
+  task: Lineitem
 }>()
 const emit = defineEmits(['close'])
-const richTextFields = $computed(() => Object.keys(data).filter(key => ['description', 'details', 'quantity', 'notes'].includes(key)))
+const richTextFields = $computed(() => Object.keys(task).filter(key => ['description', 'details', 'quantity', 'notes'].includes(key)))
 
-
-const closeModal = () => emit('close')
+const closeModal = (isSaved?: boolean) => emit('close', isSaved)
 
 const modal = ref<HTMLDivElement>()
-onClickOutside(modal, () => closeModal())
+onClickOutside(modal, () => closeModal(false))
 </script>
 
 <template>
@@ -28,27 +26,27 @@ onClickOutside(modal, () => closeModal())
     >
       <div flex justify-between>
         <div text-h4>
-          {{ `Edit Line Item #${data.item_number}` }}
+          {{ `Edit Line Item #${task.item_number}` }}
         </div>
-        <button i-carbon:close text-2xl icon-btn @click="closeModal" />
+        <button i-carbon:close text-2xl icon-btn @click="closeModal(false)" />
       </div>
       <div v-for="key in richTextFields" :key="key">
         <div capitalize text-h5>
           {{ key }}
         </div>
         <div>
-          <Editor v-model:content="data[key]" :data="data[key]" type="text" />
+          <Editor v-model:content="task[key]" :data="task[key]" />
         </div>
       </div>
       <div mr-auto>
         <div text-h5>
           Hours
         </div>
-        <Input v-model="data.hours" type="number" />
+        <Input v-model="task.hours" type="number" />
       </div>
-      <Button @click="closeModal" m-auto >
-        <Icon i-carbon:save text-3xl  icon-btn/>
-          Save
+      <Button m-auto @click="closeModal(true)">
+        <Icon i-carbon:save text-3xl icon-btn />
+        Save
       </Button>
     </Card>
   </div>
