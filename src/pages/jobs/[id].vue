@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { id } = useRoute().params
 const { data, loading, error } = storeToRefs(useMainStore())
-const { getByKeyValue, deleteById, addItem, getById, getReadableDate } = useMainStore()
+const { getByKeyValue, deleteById, addItem, getById } = useMainStore()
 
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))
 const workorders = $computed(() => getByKeyValue({ key: 'FK|job_id', value: id, type: 'workorders', getParsed: true }))
@@ -17,8 +17,6 @@ const addWorkorder = () => {
     data: createWorkorder(job),
   })
 }
-
-const test = $computed(() => durationBoolean(job?.start_date))
 </script>
 
 <template>

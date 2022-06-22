@@ -1,3 +1,17 @@
+<script setup lang="ts">
+const { loading } = storeToRefs(useMainStore())
+const { query } = useMainStore()
+
+if (process.env.NODE_ENV === 'production')
+  query()
+
+if (process.env.NODE_ENV === 'development') {
+  onMounted(() => {
+    if (loading) setTimeout(() => query(), 1000)
+  })
+}
+</script>
+
 <template>
   <main
     font-sans

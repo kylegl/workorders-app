@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import type { Job } from '~/types'
 const { data, loading, error } = storeToRefs(useMainStore())
-const { getByType, query } = useMainStore()
-const route = useRoute()
+const { getByType } = useMainStore()
 const searchResults = $ref<Job[]>()
 
-watch(() => route.params, () => {
-  if (loading) setTimeout(() => query(), 1000)
-}, { immediate: true })
-
 const rawJobs = $computed((): Job[] => getByType({ type: 'jobs', getParsed: true }) ?? [])
-const jobs = $computed(() => searchResults || rawJobs)
+const jobs = $computed(() => searchResults?.length ? searchResults : rawJobs)
 const filteredJobs = $ref([])
 </script>
 
