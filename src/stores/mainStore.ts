@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { Mutation, Query } from '~/api/index'
-import type { Data, DataType, StoreData, TableKey, Version, VersionKeys } from '~/types'
+import type { Data, DataType, StoreData, TableKey, TableRowType, Version, VersionKeys } from '~/types'
 import { mutationValidator, versionValidator } from '~/types'
 
 export const useMainStore = defineStore('main', {
@@ -146,6 +146,6 @@ export const useMainStore = defineStore('main', {
 // Types
 interface MutationParams {
   id?: string
-  data?: TableRow | undefined
+  data?: TableRowType
   table: TableKey
 }

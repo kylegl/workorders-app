@@ -79,7 +79,6 @@ export const deltaValidator = z.object({
 export const stringOrDelta = z.union([stringOrUndefined, deltaValidator])
 export const stringOrNumberOrDelta = z.union([numberOrString, deltaValidator])
 
-
 const parseJSON = (val) => {
   try {
     return JSON.parse(val)
@@ -355,6 +354,20 @@ export type DataType = z.infer<typeof dataTypeValidator>
 export interface ErrorWithMessage {
   message: string
 }
+
+export const dirtValidator = z.tuple([
+  z.string(),
+  z.boolean(),
+])
+
+export type Dirt = z.infer<typeof dirtValidator>
+
+export const moveValidator = z.object({
+  task: lineitemValidator,
+  delta: z.number(),
+})
+
+export type Move = z.infer<typeof moveValidator>
 
 // const test = {
 //   ops: [

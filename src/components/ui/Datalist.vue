@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components'
+import { TableKey, TableRowType } from '~/types';
 
 // props
 interface Props {
-  type: DataTableName
-  list: DataTables
+  type: TableKey
+  list: TableRowType[]
   modelValue?: string
-  searchKeys: TableRowKeys[]
+  searchKeys: TableKey[]
   showKeys: string[]
   label?: string
   disabled?: boolean
@@ -52,9 +53,9 @@ const searchResults = $computed(() => {
   const searchWords = textValue?.split(/\+s/)
   const searchData = list
 
-  const results = searchData.filter((row) => {
+  const results = searchData.filter((row: TableRowType) => {
     return searchWords?.every((word) => {
-      return searchKeys.some((key) => {
+      return searchKeys.some((key: TableKey) => {
         return row[key].includes(word)
       })
     })
