@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Employee, Workorder, WorkorderType } from '~/types'
-import { useWoStore } from '~/stores/wo/woStore'
+import { useWoStore } from '~/stores/wo/useWoStore'
 const { workorder } = defineProps<{ workorder: WorkorderType }>()
 const { data } = storeToRefs(useMainStore())
 const { getById } = useMainStore()

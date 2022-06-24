@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWoStore } from '~/stores/wo/woStore'
+import { useWoStore } from '~/stores/wo/useWoStore'
 
 const { wo, state } = storeToRefs(useWoStore())
 const { saveWo, editWo } = useWoStore()
@@ -28,6 +28,6 @@ const { saveWo, editWo } = useWoStore()
 
     <WorkorderInfo />
 
-    <Tasks :data="tasks" />
+    <Tasks />
   </div>
 </template>

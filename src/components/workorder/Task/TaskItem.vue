@@ -1,53 +1,52 @@
 <script setup lang="ts">
-import type { Lineitem } from '~/types'
-
-const { task, idx, listLength, disabled, saved } = defineProps<{
-  task: Lineitem
+import type { Lineitem, Move } from '~/types'
+import { useTaskStore } from '~/stores/tasks/useTaskStore'
+import { useWoStore } from '~/stores/wo/useWoStore'
+const props = defineProps<{
+  id: string
   idx: number
   listLength: number
-  disabled: boolean
-  saved: boolean
+  data: Lineitem
 }>()
-const emit = defineEmits(['move', 'dirty'])
-const { data } = storeToRefs(useMainStore())
-const { update, deleteById } = useMainStore()
-let showModal = $ref(false)
-let isSaved = $ref(false)
-let isDirty = $ref(false)
+const emit = defineEmits<{
+  (e: 'move', value: Move): void
+}>()
+const { deleteById, update } = useMainStore()
+const { state } = storeToRefs(useWoStore())
+const { editTask } = useTaskStore()
+const task = $computed(() => props.data)
 
 const moveTask = (task: Lineitem, delta: number) => emit('move', { task, delta })
-const deleteTask = (task: Lineitem) => deleteById({ data: task, table: 'line_items' })
-const editTask = () => showModal = true
-
-const handleClose = (saved: boolean) => {
-  showModal = false
-  isSaved = saved
-}
+const deleteTask = () => deleteById({ data: task, table: 'line_items' })
 
 const toggleComplete = () => {
-  isSaved = true
   task.completed = !task.completed
+  update({ data: task, table: 'line_items' })
 }
 
-watchEffect(() => task.item_number = idx + 1)
-watchEffect(() => emit('dirty', isDirty))
-
-collectDirt($$(task), $$(isDirty))
-
 watchEffect(() => {
-  const isUpdate = (isDirty && (isSaved || saved))
-  if (isUpdate) {
-    update({ table: 'line_items', data: task })
-    isDirty = false
-    isSaved = false
-  }
+  task.item_number = props.idx + 1
+})
+const pos = $computed(() => {
+  const listLength = props.listLength
+  if (listLength === 1) return 'single'
+
+  return props.idx === listLength - 1
+    ? 'last'
+    : props.idx === 0 ? 'first' : 'middle'
 })
 
-const pos = $computed(() => idx === listLength - 1 ? 'last' : idx === 0 ? 'first' : 'middle')
+const upArrow = $computed(() => {
+  return !state.value.disabled ? !!(pos === 'middle' || pos === 'last') : false
+})
+const downArrow = $computed(() => {
+  return !state.value.disabled ? !!(pos === 'middle' || pos === 'first') : false
+})
 </script>
 
 <template>
   <Card
+    v-if="task"
     relative
   >
     <div
@@ -103,14 +102,11 @@ const pos = $computed(() => idx === listLength - 1 ? 'last' : idx === 0 ? 'first
         </div>
       </div>
     </div>
-    <div absolute flex="~ col" left="-6" top-0 bottom-0 justify-center>
-      <button v-if="pos !== 'first' && !disabled" i-carbon:caret-up icon-btn @click="moveTask(task, -1)" />
-      <button i-ion:edit icon-btn @click="editTask()" />
-      <button i-carbon:close icon-btn @click="deleteTask(task)" />
-      <button v-if="pos !== 'last' && !disabled" i-carbon:caret-down icon-btn @click="moveTask(task, 1)" />
+    <div absolute flex="~ col" gap1 left="-6" top-0 bottom-0 justify-center>
+      <button v-if="upArrow" i-carbon:caret-up icon-btn @click="moveTask(task, -1)" />
+      <button i-ion:edit icon-btn @click="editTask" />
+      <button i-carbon:trash-can icon-btn @click="deleteTask" />
+      <button v-if="downArrow" i-carbon:caret-down icon-btn @click="moveTask(task, 1)" />
     </div>
-    <template v-if="showModal">
-      <EditTask :task="task" @close="handleClose" />
-    </template>
   </Card>
 </template>
