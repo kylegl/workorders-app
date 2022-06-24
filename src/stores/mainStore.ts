@@ -115,7 +115,6 @@ export const useMainStore = defineStore('main', {
       return res
     },
     async deleteById({ data, table }: MutationParams) {
-      console.log(data)
       if (this.data?.[table])
         this.data[table] = this.data[table]!.filter((el: DataType) => el.id !== data.id)
 
@@ -125,21 +124,18 @@ export const useMainStore = defineStore('main', {
     },
     async addItem({ data, table }: MutationParams) {
       if (this.data?.[table])
-        this.data[table] = [...this.data[table], data]
+        this.data[table]?.push(data)
 
       const res = await this.mutation(table, 'add', data)
-      console.log(`Add response:  ${res}}, res = ${res}`)
     },
     async update({ data, table }: MutationParams) {
       if (this.data?.[table]) {
         let entry = this.data[table]!.find((el: DataType) => el.id === data.id)
         if (entry)
-          entry = { ...data }
+          Object.keys(entry).forEach(key => entry[key] = data[key])
       }
 
-      console.log('update item')
       const res = await this.mutation(table, 'update', data)
-      console.log(`update response: ${res}}`)
     },
   },
 })

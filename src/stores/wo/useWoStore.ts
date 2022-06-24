@@ -32,7 +32,6 @@ export const useWoStore = defineStore('woStore', () => {
       const isExisting = main.data.workorders?.find(entry => entry.id === wo.id)
       const deRefWo = deRef(wo)
       if (isExisting)
-        // Object.keys(deRefWo).forEach(key => isExisting[key] = deRefWo[key])
         main.update({ data: deRefWo, table: 'workorders' })
 
       if (!isExisting)
