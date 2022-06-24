@@ -38,7 +38,6 @@ export const useTaskStore = defineStore('taskStore', () => {
       if (!isExisting)
         main.addItem({ data: unrefTask, table: 'line_items' })
 
-      console.log('save task')
       taskState.showModal = false
     }
     catch (err) {

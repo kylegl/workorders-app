@@ -16,16 +16,13 @@ export const useWoStore = defineStore('woStore', () => {
   function createWo(job: JobParsedType) {
     state.disabled = false
     Object.keys(newWorkorder).forEach(key => wo[key] = newWorkorder[key])
-
     wo.id = useUid()
-
     if (job) {
       wo['FK|job_id'] = job.id
-      wo['FK|bid_id'] = job['FK|bid_id'].id
+      wo['FK|bid_id'] = job['FK|bid_id']?.id
       wo['FK|client_id'] = job['FK|client_id'].id
-      wo['FK|contact_id'] = job['FK|contact_id'].id
+      wo['FK|contact_id'] = job['FK|contact_id']?.id
     }
-
     const params = { id: wo.id }
     router.push({ name: 'workorders-id', params })
   }
@@ -41,7 +38,6 @@ export const useWoStore = defineStore('woStore', () => {
       if (!isExisting)
         main.addItem({ data: deRefWo, table: 'workorders' })
 
-      console.log('save wo')
       state.disabled = true
       state.saved = true
       state.dirty = false

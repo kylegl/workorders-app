@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components'
-import { TableKey, TableRowType } from '~/types';
+import type { TableKey, TableRowType } from '~/types'
 
 // props
 interface Props {
@@ -38,8 +38,8 @@ let validationError = $ref(false)
 onBeforeMount(() => {
   if (id) {
     const entry = getById({ id, type })
-    initialValue = entry?.[primaryKey]
-    textValue = entry?.[primaryKey]
+    initialValue = getDisplayStr(entry, showKeys)
+    textValue = initialValue
   }
 })
 
@@ -94,12 +94,14 @@ const setFocus = ({ isFocused, reset }: { isFocused: boolean; reset?: boolean })
   }
 }
 
-const setEntry = (entry: {}): void => {
+const getDisplayStr = (entry: TableRowType, showKeys: Array<string>) => showKeys.map(key => entry[key]).filter(Boolean).join(' | ')
+
+const setEntry = (entry: TableRowType): void => {
   try {
     id = entry?.id
 
     if (id) {
-      textValue = entry?.[primaryKey]
+      textValue = getDisplayStr(entry, showKeys)
       initialValue = textValue
       emit('update:modelValue', id)
     }
@@ -142,7 +144,9 @@ const handleFocus = () => setFocus({ isFocused: true })
 
 const handleBlur = () => checkEntry()
 
-const handleClick = entry => setEntry(entry)
+const handleClick = (entry) => {
+  setEntry(entry)
+}
 
 const handleArrowKey = (direction: string) => {
   if (direction === 'down') {
@@ -201,22 +205,19 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
       >
         <li
           v-for="(item, index) in searchResults" :key="item?.id"
-          flex bg-2 border="b base"
-          in_out
+          flex border="b base"
+          in_out w-full p2
+          :class="[activeIndex === index ? 'bg-bg-d' : 'bg-2']"
+          @mousedown="handleClick(item)" @mouseover="handleHover(index)"
+          @mouseleave="handleHover(-1)"
         >
           <div
             v-for="key in showKeys" :key="key"
-            :class="{ 'bg-bg-d': activeIndex === index }"
-            @mousedown="handleClick(item)"
-            @mouseover="handleHover(index)"
-            @mouseleave="handleHover(-1)"
-            p2 w-full
           >
             <template v-if="item[key]">
-            <div pr-5>
-              {{ item[key] }}
-
-            </div>
+              <div pr-5>
+                {{ item[key] }}
+              </div>
             </template>
           </div>
         </li>
