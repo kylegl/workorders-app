@@ -1,24 +1,27 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
-const { data, keys } = defineProps<{
+const { data, keys, initial } = defineProps<{
   data: any[]
   keys: string[]
+  initial?: string
 }>()
 
 const emit = defineEmits(['update:results'])
 
 const options = {
-  includeScore: true,
-  minMatchCharLength: 2,
+  minMatchCharLength: 1,
   threshold: 0.3,
   keys,
 }
 
 const searchValue = $ref('')
-const fuse = new Fuse(data, options)
+const fuse = $computed(() => new Fuse(data, options))
 const searchResult = $computed(() => {
   if (searchValue === '') return data
-  return fuse.search(searchValue)?.map(result => result.item)
+  return fuse.search(searchValue)
+    ?.map((result) => {
+      return result.item
+    })
 })
 </script>
 

@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import type { Task } from '~/types'
-
-const { data } = defineProps<{
-  data: Task
-}>()
-const emit = defineEmits(['close'])
-const richTextFields = $computed(() => Object.keys(data).filter(key => ['description', 'details', 'quantity', 'notes'].includes(key)))
-const closeModal = () => emit('close')
+import { useTaskStore } from '~/stores/tasks/useTaskStore'
+const { task } = storeToRefs(useTaskStore())
+const { addTask, closeModal } = useTaskStore()
+const richTextFields = ['description', 'details', 'quantity', 'notes']
 
 const modal = ref<HTMLDivElement>()
 onClickOutside(modal, () => closeModal())
@@ -22,30 +18,32 @@ onClickOutside(modal, () => closeModal())
     <Card
       ref="modal"
       flex="~ col" gap4 m16 p4
+      min-w-100
+      w="1/2"
     >
       <div flex justify-between>
         <div text-h4>
-          {{ `Edit task #${data.item_number}` }}
+          {{ `Edit Line Item #${task?.item_number}` }}
         </div>
-        <button i-carbon:close text-2xl icon-btn @click="closeModal" />
+        <button i-carbon:close text-2xl icon-btn @click="closeModal()" />
       </div>
       <div v-for="key in richTextFields" :key="key">
         <div capitalize text-h5>
           {{ key }}
         </div>
         <div>
-          <Editor v-model:content="data[key]" :data="data[key]" type="text" />
+          <Editor v-model:content="task[key]" :data="task[key]" />
         </div>
       </div>
       <div mr-auto>
         <div text-h5>
           Hours
         </div>
-        <Input v-model="data.hours" type="number" />
+        <Input v-model="task.hours" type="number" />
       </div>
-      <Button @click="closeModal" m-auto >
-        <Icon i-carbon:save text-3xl  icon-btn/>
-          Save
+      <Button m-auto @click="addTask">
+        <Icon i-fa-solid:plus text-2xl icon-btn />
+        Add
       </Button>
     </Card>
   </div>

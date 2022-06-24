@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components'
-import type { DataTableName, DataTables, TableRowKeys } from '~/api/apiResponseTypes'
-
+import Fuse from 'fuse.js'
+import type { TableKey, TableRowType } from '~/types'
 // props
 interface Props {
-  type: DataTableName
-  list: DataTables
+  type: TableKey
+  list: TableRowType[]
   modelValue?: string
-  searchKeys: TableRowKeys[]
+  searchKeys: TableKey[]
   showKeys: string[]
   label?: string
   disabled?: boolean
@@ -38,31 +38,31 @@ let validationError = $ref(false)
 onBeforeMount(() => {
   if (id) {
     const entry = getById({ id, type })
-    initialValue = entry?.[primaryKey]
-    textValue = entry?.[primaryKey]
+    initialValue = getDisplayStr(entry, showKeys)
+    textValue = initialValue
   }
 })
 
 // computed
 const isDirty = $computed(() => textValue !== initialValue)
 const errorMessage = computed(() => 'That doesn\'t exist yet.')
-const searchResults = $computed(() => {
-  if (!isDirty)
-    return list
+// const searchResults = $computed(() => {
+//   if (!isDirty)
+//     return list
 
-  const searchWords = textValue?.split(/\+s/)
-  const searchData = list
+//   const searchWords = textValue?.split(/\+s/)
+//   const searchData = list
 
-  const results = searchData.filter((row) => {
-    return searchWords?.every((word) => {
-      return searchKeys.some((key) => {
-        return row[key].includes(word)
-      })
-    })
-  })
+//   const results = searchData.filter((row: TableRowType) => {
+//     return searchWords?.every((word) => {
+//       return searchKeys.some((key: TableKey) => {
+//         return row[key].includes(word)
+//       })
+//     })
+//   })
 
-  return results ?? []
-})
+//   return results ?? []
+// })
 
 // helpers
 const activeIdx = () => {
@@ -94,12 +94,14 @@ const setFocus = ({ isFocused, reset }: { isFocused: boolean; reset?: boolean })
   }
 }
 
-const setEntry = (entry: {}): void => {
+const getDisplayStr = (entry: TableRowType, showKeys: Array<string>) => showKeys.map(key => entry[key]).filter(Boolean).join(' | ')
+
+const setEntry = (entry: TableRowType): void => {
   try {
     id = entry?.id
 
     if (id) {
-      textValue = entry?.[primaryKey]
+      textValue = getDisplayStr(entry, showKeys)
       initialValue = textValue
       emit('update:modelValue', id)
     }
@@ -142,7 +144,9 @@ const handleFocus = () => setFocus({ isFocused: true })
 
 const handleBlur = () => checkEntry()
 
-const handleClick = entry => setEntry(entry)
+const handleClick = (entry) => {
+  setEntry(entry)
+}
 
 const handleArrowKey = (direction: string) => {
   if (direction === 'down') {
@@ -165,6 +169,20 @@ const handleEnter = () => {
   if (activeIndex < 0) checkEntry()
 }
 const toggleFocus = () => focus ? handleBlur() : handleFocus()
+
+const options = {
+  minMatchCharLength: 1,
+  threshold: 0.3,
+  keys: searchKeys,
+}
+const fuse = $computed(() => new Fuse(list, options))
+const searchResults = $computed(() => {
+  if (textValue === '') return list
+  return fuse.search(textValue)
+    ?.map((result) => {
+      return result.item
+    })
+})
 </script>
 
 // TODO click needs to be on button not the icon. FIx date parse
@@ -195,23 +213,26 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
     </Input>
     <template v-if="focus">
       <ul
-        absolute top-full min-w-full max-w-max
+        absolute top-full min-w-full
         border="~ base"
         list-none
       >
-        <li v-for="(item, index) in searchResults" :key="item?.id">
+        <li
+          v-for="(item, index) in searchResults" :key="item?.id"
+          flex border="b base"
+          in_out w-full p2
+          :class="[activeIndex === index ? 'bg-bg-d' : 'bg-2']"
+          @mousedown="handleClick(item)" @mouseover="handleHover(index)"
+          @mouseleave="handleHover(-1)"
+        >
           <div
-            flex gap-x-2 bg-2 justify-between p2
-            border="b base"
-            in_out
-            :class="{ 'bg-bg-d': activeIndex === index }"
-            @mousedown="handleClick(item)"
-            @mouseover="handleHover(index)"
-            @mouseleave="handleHover(-1)"
+            v-for="key in showKeys" :key="key"
           >
-            <div v-for="key in showKeys" :key="key" flex item-start min-w-max>
-              {{ item[key] }}
-            </div>
+            <template v-if="item?.[key]">
+              <div pr-5>
+                {{ item[key] }}
+              </div>
+            </template>
           </div>
         </li>
       </ul>

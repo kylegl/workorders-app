@@ -1,37 +1,36 @@
 import { defineStore } from 'pinia'
-import type { BackendData, DataTable, DataTableName, DataTableParsed, DataTables, TableRowKeys, Versions } from '~/api/apiResponseTypes'
 import { Mutation, Query } from '~/api/index'
+import type { Data, DataType, StoreData, TableKey, TableRowType, Version, VersionKeys } from '~/types'
+import { mutationValidator, versionValidator } from '~/types'
 
 export const useMainStore = defineStore('main', {
-  state: () => ({
+  state: (): { data: StoreData; versions: Version; loading: boolean; error: any } => ({
     data: {},
-    client: {
-      versions: {
-        main: undefined,
-        workorders: undefined,
-        line_items: undefined,
-        contacts: undefined,
-        employees: undefined,
-        clients: undefined,
-        bids: undefined,
-        jobs: undefined,
-      },
-    },
+    versions: versionValidator.parse({
+      main: undefined,
+      workorders: undefined,
+      line_items: undefined,
+      contacts: undefined,
+      employees: undefined,
+      clients: undefined,
+      bids: undefined,
+      jobs: undefined,
+    }),
     loading: true,
     error: undefined,
-  } as RootState),
+  }),
   getters: {
     getByType(state) {
-      return ({ type, getParsed = false }: GetParams): DataTables => {
-        const data = state.data?.[type] as DataTables
+      return ({ type, getParsed = false }) => {
+        const data = state.data?.[type as keyof Data]
 
         if (!getParsed) return data
         return data?.map(row => this.formatRowData({ row }))
       }
     },
     getById(state) {
-      return ({ id, type, getParsed = false }: GetParams) => {
-        const row: DataTable = state.data?.[type]?.find((entry: DataTable) => entry.id.toString() === id?.toString())
+      return ({ id, type, getParsed = false }) => {
+        const row = state.data?.[type as keyof Data]?.find(entry => entry.id.toString() === id?.toString())
         return getParsed && row
           ? this.formatRowData({ row })
           : row
@@ -39,7 +38,8 @@ export const useMainStore = defineStore('main', {
     },
     getByKeyValue(state) {
       return ({ key, value, type }: GetKeyParams) => {
-        const results = state.data?.[type]?.filter((entry: DataTable) => entry[key] === value)
+        console.log('getByKeyValue', key, value, type)
+        const results = state.data?.[type]?.filter((entry: TableRowType) => entry[key] === value)
         return results ?? []
       }
     },
@@ -66,7 +66,7 @@ export const useMainStore = defineStore('main', {
       }
     },
     getReadableDate() {
-      return ({ timestamp, readable }: TimestampParam): Date | string | undefined => {
+      return ({ timestamp, readable }): Date | string | undefined => {
         return useConvertSyncRefs(timestamp, readable, unixToDate, dateToUnix)
       }
     },
@@ -76,14 +76,27 @@ export const useMainStore = defineStore('main', {
     async query(): Promise<void> {
       try {
         this.loading = true
-        const res = await Query()
-        const isDev = process.env.NODE_ENV === 'development'
-        const tableNames: DataTableName[] = Object.keys(res) as (keyof typeof res)[]
+        const res = await Query(this.versions)
+        if (!res?.ok) throw new Error('No response from API')
 
-        tableNames.forEach((key) => {
-          this.data[key] = isDev ? res[key] : res[key].data
-          this.client.versions[key] = isDev ? '' : res[key].version
-        })
+        const { data, versions } = res
+
+        if (data) {
+          const tableNames = Object.keys(data) as TableKey[]
+
+          tableNames.forEach((key: TableKey) => {
+            this.data[key] = data?.[key]?.data
+          })
+        }
+
+        if (versions) {
+          const versionNames = Object.keys(versions) as VersionKeys[]
+
+          versionNames.forEach((key) => {
+            this.versions[key] = versions?.[key]
+          })
+        }
+
         this.loading = false
         this.error = undefined
       }
@@ -92,52 +105,44 @@ export const useMainStore = defineStore('main', {
         this.loading = false
       }
     },
-    async mutation({ items }) {
-      const res = await Mutation({ items })
+    async mutation(table: string, action: string, data?: TableRow) {
+      const mutation = mutationValidator.parse({
+        table,
+        data,
+      })
+
+      const res = await Mutation(mutation, this.versions, action)
       return res
     },
-    deleteById({ id, type }) {
-      this.data[type] = this.data?.[type].filter(el => el.id !== id)
+    async deleteById({ data, table }: MutationParams) {
+      if (this.data?.[table])
+        this.data[table] = this.data[table]!.filter((el: DataType) => el.id !== data.id)
 
-      console.log(`Delete request for ${type}: ${id}`)
+      const res = await this.mutation(table, 'delete', data)
+
+      // console.log(`Delete request for ${table}: ${id}, res = ${res}`)
     },
-    addItem({ item, type }) {
-      this.data[type] = [...this.data?.[type], item]
-      console.log(`Add request for ${type}: ${item.id}`)
+    async addItem({ data, table }: MutationParams) {
+      if (this.data?.[table])
+        this.data[table]?.push(data)
+
+      const res = await this.mutation(table, 'add', data)
+    },
+    async update({ data, table }: MutationParams) {
+      if (this.data?.[table]) {
+        let entry = this.data[table]!.find((el: DataType) => el.id === data.id)
+        if (entry)
+          Object.keys(entry).forEach(key => entry[key] = data[key])
+      }
+
+      const res = await this.mutation(table, 'update', data)
     },
   },
 })
 
 // Types
-interface GetParams {
+interface MutationParams {
   id?: string
-  type: DataTableName
-  getParsed?: boolean
-}
-
-interface GetKeyParams {
-  key?: string
-  type: DataTableName
-  value: string | number | undefined
-  getParsed?: boolean
-}
-
-interface RootState {
-  data: BackendData
-  client: {
-    versions: Versions
-  }
-  loading: boolean
-  error?: string
-}
-
-interface FormatRowParams {
-  row: DataTable
-}
-
-export type ReduceReturnType = Record<TableRowKeys, DataTable> | {}
-
-interface TimestampParam {
-  timestamp: number | undefined
-  readable: Date | string | undefined
+  data?: TableRowType
+  table: TableKey
 }

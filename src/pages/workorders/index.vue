@@ -1,11 +1,6 @@
 <script setup lang="ts">
 const { data, loading, error } = storeToRefs(useMainStore())
 const { getByType, query } = useMainStore()
-const route = useRoute()
-
-watch(() => route.params, () => {
-  if (loading) setTimeout(() => query(), 1000)
-}, { immediate: true })
 
 const filters = ['Job', 'Status', 'Team']
 const searchValue = $ref('')

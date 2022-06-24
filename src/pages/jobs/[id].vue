@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useWoStore } from '~/stores/wo/useWoStore'
+
 const { id } = useRoute().params
-const { data } = storeToRefs(useMainStore())
-const { getByKeyValue, deleteById, addItem, getById } = useMainStore()
+const { getByKeyValue, deleteById, getById } = useMainStore()
+const { wo } = storeToRefs(useWoStore())
+const { createWo } = useWoStore()
 
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))
 const workorders = $computed(() => getByKeyValue({ key: 'FK|job_id', value: id, type: 'workorders', getParsed: true }))
@@ -9,6 +12,7 @@ const jobTitle = $computed(() => {
   if (job?.job_name && job?.address) return `${job.job_name} - ${job.address}`
   return job?.job_name ?? job?.address
 })
+const startDate = $computed(() => unixToHumanDate(job?.start_date))
 </script>
 
 <template>
@@ -43,10 +47,12 @@ const jobTitle = $computed(() => {
 
       <div flex="~ col" gap2 w="1/2">
         <StatusIndicator :status="job.status" max-w-fit ml-auto />
-        <div v-if="job.status === 'Upcoming' && job.start_date" flex text-base>
-          Start Date:
+        <div v-if="job.status === 'Upcoming' && job.start_date" flex="~ col" text-base ml-auto>
           <div>
-            {{ job.start_date }}
+            Start Date:
+          </div>
+          <div text-h5>
+            {{ startDate }}
           </div>
         </div>
       </div>
@@ -54,14 +60,15 @@ const jobTitle = $computed(() => {
 
     <section v-if="workorders.length" flex="~ col" gap4>
       <div flex justify-between items-center>
-        <div text-h4 >
+        <div text-h4>
           Workorders
         </div>
-        <Button w-32 @click="true">
+        <Button @click="createWo(job)">
           <Icon i-fa-solid:plus text-2xl />
+          Work Order
         </Button>
       </div>
-      <div v-for="workorder in workorders" :key="workorder.id" >
+      <div v-for="workorder in workorders" :key="workorder.id">
         <Workorder :workorder="workorder" />
         <div absolute flex="~ col" left="-6" top-0 bottom-0 justify-center gap3>
           <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }">
@@ -71,8 +78,9 @@ const jobTitle = $computed(() => {
         </div>
       </div>
     </section>
-    <Button w-32 m-auto @click="true">
+    <Button m-auto @click="createWo(job)">
       <Icon i-fa-solid:plus text-2xl />
+      Work Order
     </Button>
   </div>
 </template>

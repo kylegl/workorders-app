@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import type { Employee, Workorder } from '~/types'
-const { workorder } = defineProps<{ workorder: Workorder }>()
+import type { Employee, Workorder, WorkorderType } from '~/types'
+import { useWoStore } from '~/stores/wo/useWoStore'
+const { workorder } = defineProps<{ workorder: WorkorderType }>()
 const { data } = storeToRefs(useMainStore())
 const { getById } = useMainStore()
+const { wo } = storeToRefs(useWoStore())
+const { loadWo } = useWoStore()
+
 const startDate = $computed(() => {
   if (workorder?.start_date) return unixToHumanDate(workorder.start_date)
 })
@@ -14,7 +18,7 @@ const employee = $computed((): Employee => getById({ id: workorder['FK|employee_
 
 <template>
   <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }" w-full>
-    <Card>
+    <Card @click="loadWo(workorder.id)">
       <div flex gap3>
         <div flex gap2 items-center text-sm>
           <div flex="~ col" gap2 justify-between>

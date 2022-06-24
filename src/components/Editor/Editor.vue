@@ -17,9 +17,7 @@ const toolbarOptions = [
 
 const initialContent = type === 'delta' ? new Delta(data) : data ?? ''
 
-const editorContent = $ref<Delta>(
-  initialContent,
-)
+const editorContent = $ref(initialContent)
 const updateValue = () => emit('update:content', editorContent)
 </script>
 

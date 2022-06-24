@@ -1,16 +1,22 @@
+interface SheetInterfaceParams {
+  id?: string
+  sheetName: string
+}
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const packer = ({ table }) => {
   const sheetInterface = getSheetInterface({ sheetName: table })
   return getPack({ sheetInterface })
 }
 
 // GETTER
-const getSS = ({ id }) => id
+const getSS = ({ id }: { id?: string } = {}) => id
   ? SpreadsheetApp.openById(id)
   : SpreadsheetApp.openById('1J5E6F62xI6_eE_DNbkqn_I5yJHXnGpXsfg5kjOvgyV8')
 
-const getSheet = ({ id, sheetName }) => getSS({ id }).getSheetByName(sheetName)
+const getSheet = ({ id, sheetName }: SheetInterfaceParams) => getSS({ id }).getSheetByName(sheetName)
 
-const getSheetInterface = ({ id, sheetName }) => {
+const getSheetInterface = ({ id, sheetName }: SheetInterfaceParams) => {
   return new cUseful.Fiddler(getSheet({ id, sheetName }))
 }
 
@@ -20,9 +26,7 @@ const getPack = ({ sheetInterface }) => {
 
   return {
     version: getScriptProp({ prop: sheetName }),
-    name: sheetName,
-    id: sheet.getParent().getId(),
-    sheetId: sheet.getSheetId(),
+    table: sheetName,
     data: sheetInterface.getData(),
   }
 }
@@ -57,11 +61,13 @@ const setScriptProp = ({ key, value }) => {
     .setProperty(key, value)
 }
 
-const setTableVersion = ({ table }) => {
-  const uuid = getUuid()
-  const prop = setScriptProp({ key: table, value: uuid })
+type UuidType = string
 
-  return { table, uuid }
+const setTableVersion = ({ table }) => {
+  const uuid: UuidType = getUuid()
+  setScriptProp({ key: table, value: uuid })
+
+  return uuid
 }
 // ex. {props: {someKey: value, someOtherKey: value}}
 const setCacheProps = ({ props }) => {
@@ -70,6 +76,8 @@ const setCacheProps = ({ props }) => {
     Cache().put(prop, props[prop])
   }
 }
+
+const setScriptProps = props => scriptPropService().setProperties(props)
 
 // HELPER
 const isEmptyObject = ({ obj }) => JSON.stringify(obj) === '{}'
@@ -80,7 +88,7 @@ const isStringObject = value => /^[{\[].*[}\]]$/g.test(value)
 
 const stringify = value => JSON.stringify(value)
 
-const wait = ({ condtion }) => {
+const wait = (condtion: boolean): void => {
   // eslint-disable-next-line no-unmodified-loop-condition
   while (condtion)
     Utilities.sleep(500)
@@ -110,4 +118,18 @@ const addDataToDocsTable = ({ list, table }) => {
     row = table.appendTableRow()
     entry.forEach(value => row.appendTableCell(value))
   })
+}
+
+const unlockAll = () => {
+  const props = getScriptProps()
+  const unlockedProps = { ...props }
+
+  Object.keys(props).forEach((key) => {
+    const isLock = key.endsWith('_locked')
+
+    if (isLock)
+      unlockedProps[key] = false
+  })
+
+  setScriptProps(unlockedProps)
 }

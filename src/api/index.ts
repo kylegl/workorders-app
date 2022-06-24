@@ -1,30 +1,44 @@
-import { gasMutation, gasQuery } from './gas.js'
-import type { BackendData, Versions } from './apiResponseTypes'
+import { gasMutation, gasQuery } from './gas'
+import type { ApiResponse, MutationType, VersionType } from '~/types'
+import { apiResponseValidator } from '~/types'
 
-const Query = async (): Promise<BackendData> => {
-  const isProd = process.env.NODE_ENV === 'production'
-  let res
+const isProd = process.env.NODE_ENV === 'production'
 
-  if (isProd) {
-    const result = await gasQuery()
-    res = result
-  }
+export async function Query(versions: VersionType) {
+  try {
+    if (isProd) {
+      const result = await gasQuery(versions)
+      if (!result)
+        throw new Error('No response from API')
 
-  if (!isProd) {
-    const response = await fetch('http://localhost:4000/mock-api')
-    if (response.ok) {
-      const result = await response.json()
+      return result as ApiResponse
+    }
 
-      res = result
+    if (!isProd) {
+      const response = await fetch('http://localhost:4000/mock-api')
+      if (response.ok) {
+        const result = await response.json()
+
+        return apiResponseValidator.parse(result)
+      }
     }
   }
-
-  return res
+  catch (err) {
+    const msg = getErrorMessage(err)
+    console.error('error', msg)
+    return { ok: false, data: undefined, versions: undefined } as ApiResponse
+  }
 }
 
-async function Mutation({ items }): Promise<any> {
-  if (isProd)
-    return gasMutation({ items })
+export async function Mutation(mutation: MutationType, versions: VersionType, action: string): Promise<any> {
+  try {
+    if (isProd)
+      return gasMutation(mutation, versions, action)
+  }
+  catch (err) {
+    const msg = getErrorMessage(err)
+    console.error('error', msg)
+    return { ok: false, data: undefined, versions: undefined }
+  }
 }
 
-export { Query, Mutation }
