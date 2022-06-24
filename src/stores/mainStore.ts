@@ -38,7 +38,8 @@ export const useMainStore = defineStore('main', {
     },
     getByKeyValue(state) {
       return ({ key, value, type }: GetKeyParams) => {
-        const results = state.data?.[type]?.filter((entry: DataTable) => entry[key] === value)
+        console.log('getByKeyValue', key, value, type)
+        const results = state.data?.[type]?.filter((entry: TableRowType) => entry[key] === value)
         return results ?? []
       }
     },

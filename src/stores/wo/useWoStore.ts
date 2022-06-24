@@ -40,6 +40,7 @@ export const useWoStore = defineStore('woStore', () => {
       if (!isExisting)
         main.addItem({ data: deRefWo, table: 'workorders' })
 
+      console.log('save wo')
       state.disabled = true
       state.saved = true
       state.dirty = false

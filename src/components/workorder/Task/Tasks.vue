@@ -1,42 +1,28 @@
 <script setup lang="ts">
-import type { Task } from '~/types'
-const { workorderId, disabled, saved } = defineProps<{ workorderId: string; disabled: boolean; saved: boolean }>()
-const emit = defineEmits(['dirty'])
+import type { Lineitem, Move } from '~/types'
+import { useWoStore } from '~/stores/wo/useWoStore'
+import { useTaskStore } from '~/stores/tasks/useTaskStore'
 const { data } = storeToRefs(useMainStore())
-const { getByKeyValue, addItem } = useMainStore()
+const { getByKeyValue } = useMainStore()
+const { wo, state } = storeToRefs(useWoStore())
+const { task, taskState } = storeToRefs(useTaskStore())
+const { createTask } = useTaskStore()
 
-const tasks = $computed((): Task[] =>
-  getByKeyValue({ key: 'FK|workorder_id', value: workorderId, type: 'line_items' })
-    ?.sort((a: Task, b: Task) => a.item_number - b.item_number))
+const tasks = $computed(() => getByKeyValue({ key: 'FK|workorder_id', value: wo.value.id, type: 'line_items' })
+  .sort((a: Lineitem, b: Lineitem) => a.item_number! - b.item_number!))
 
-const addTask = () => {
-  const lineItem = createLineItem(workorderId, tasks)
+const moveTask = (move: Move) => {
+  const idx = move.task.item_number! - 1
 
-  addItem({
-    table: 'line_items',
-    data: lineItem,
-  })
-}
-
-const moveTask = (task: Task, delta: 1 | -1) => {
-  const idx = task.item_number - 1
-
-  const targetIdx = idx + delta
+  const targetIdx = idx + move.delta
   const otherTask = tasks[targetIdx]
 
-  task.item_number = task.item_number + delta
+  move.task.item_number = move.task.item_number! + move.delta
   otherTask.item_number = idx
 
-  tasks[targetIdx] = task
+  tasks[targetIdx] = move.task
   tasks[idx] = otherTask
 }
-let isDirty = $ref(0)
-const handleDirt = (dirt) => {
-  if (dirt) isDirty++
-  else isDirty--
-}
-
-watchEffect(() => emit('dirty', isDirty))
 </script>
 
 <template>
@@ -45,7 +31,7 @@ watchEffect(() => emit('dirty', isDirty))
       <h3 text-h3>
         Line Items
       </h3>
-      <Button @click="addTask">
+      <Button @click="createTask(tasks?.length + 1)">
         <Icon i-fa-solid:plus text-2xl />
         Line Item
       </Button>
@@ -53,13 +39,15 @@ watchEffect(() => emit('dirty', isDirty))
 
     <section v-if="tasks?.length" flex="~ col" gap2>
       <TaskItem
-        v-for="task, idx in tasks" :key="task.id"
-        :task="task" :idx="idx" :list-length="tasks.length"
-        :disabled="disabled"
-        :saved="saved"
-        @move="moveTask($event.task, $event.delta)"
-        @dirty="handleDirt"
+        v-for="tsk, idx in tasks" :id="tsk.id"
+        :key="tsk.id" :idx="idx" :list-length="tasks.length"
+        :data="tsk"
+        @move="moveTask"
       />
     </section>
+
+    <template v-if="taskState.showModal">
+      <EditTask :task="task" />
+    </template>
   </div>
 </template>

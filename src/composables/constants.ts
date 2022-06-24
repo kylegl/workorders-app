@@ -14,6 +14,5 @@ export const jobSearchKeys = [
   'FK|client_id.name',
 ]
 
-
 export const billingOptions = ['T&M', 'Fixed']
 export const jobTypeOptions = ['Finishing', 'Painting']
