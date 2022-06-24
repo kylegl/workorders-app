@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useWoStore } from '~/stores/wo/woStore'
+
 const { id } = useRoute().params
-const { data, loading, error } = storeToRefs(useMainStore())
-const { getByKeyValue, deleteById, addItem, getById } = useMainStore()
+const { getByKeyValue, deleteById, getById } = useMainStore()
+const { wo } = storeToRefs(useWoStore())
+const { createWo } = useWoStore()
 
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))
 const workorders = $computed(() => getByKeyValue({ key: 'FK|job_id', value: id, type: 'workorders', getParsed: true }))
@@ -10,13 +13,6 @@ const jobTitle = $computed(() => {
   return job?.job_name ?? job?.address
 })
 const startDate = $computed(() => unixToHumanDate(job?.start_date))
-
-const addWorkorder = () => {
-  addItem({
-    table: 'workorders',
-    data: createWorkorder(job),
-  })
-}
 </script>
 
 <template>
@@ -67,7 +63,7 @@ const addWorkorder = () => {
         <div text-h4>
           Workorders
         </div>
-        <Button @click="createWorkorder">
+        <Button @click="createWo(job)">
           <Icon i-fa-solid:plus text-2xl />
           Work Order
         </Button>
@@ -82,7 +78,7 @@ const addWorkorder = () => {
         </div>
       </div>
     </section>
-    <Button m-auto @click="addWorkorder">
+    <Button m-auto @click="createWo(job)">
       <Icon i-fa-solid:plus text-2xl />
       Work Order
     </Button>

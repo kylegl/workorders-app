@@ -1,13 +1,6 @@
 <script setup lang="ts">
-const props = defineProps<{
-  workorder: Workorder
-  disabled: boolean
-  saved: boolean
-}>()
-const emit = defineEmits<{
-  (e: 'update:isDirty', value: string | undefined): void
-}>()
-const wo = useVModel(props, 'workorder', emit)
+import { useWoStore } from '~/stores/wo/woStore'
+const { wo, state } = useWoStore()
 </script>
 
 <template>
@@ -17,17 +10,17 @@ const wo = useVModel(props, 'workorder', emit)
     </h3>
 
     <ClientPicker
-      v-model:id="wo['FK|client_id']" :disabled="disabled" :saved="saved"
+      v-model:id="wo['FK|client_id']" :disabled="state.disabled"
       z3
     />
 
     <JobPicker
-      v-model:id="wo['FK|job_id']" :disabled="disabled" :saved="saved"
+      v-model:id="wo['FK|job_id']" :disabled="state.disabled"
       z2
     />
 
     <ContactPicker
-      v-model:id="wo['FK|contact_id']" :disabled="disabled" :saved="saved"
+      v-model:id="wo['FK|contact_id']" :disabled="state.disabled"
       z1
     />
   </Card>

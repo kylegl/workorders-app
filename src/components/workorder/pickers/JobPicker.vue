@@ -1,15 +1,11 @@
 <script setup lang="ts">
-const props = defineProps<{ id: string; disabled: boolean; saved: boolean }>()
+const props = defineProps<{ id: string; disabled: boolean }>()
 const emit = defineEmits<{
   (e: 'update:id', value: string | undefined): void
-  (e: 'update:isDirty', value: boolean): void
 }>()
-const { data, loading, error } = storeToRefs(useMainStore())
-const isDirty = $ref(false)
+const { data } = storeToRefs(useMainStore())
 
 const jobId = useVModel(props, 'id', emit)
-
-watchEffect(() => emit('update:isDirty', isDirty))
 </script>
 
 <template>

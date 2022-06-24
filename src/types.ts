@@ -1,3 +1,4 @@
+import { type } from 'os'
 import { z } from 'zod'
 
 type Id = string | number
@@ -138,6 +139,8 @@ export const workorderValidator = z.object({
   'status': z.string(),
 })
 
+export type WorkorderType = z.infer<typeof workorderValidator>
+
 export const outgoingWorkorderValidator = z.object({
   'id': z.string(),
   'FK|client_id': z.string(),
@@ -162,6 +165,7 @@ export const jobValidator = z.object({
   'id': z.string(),
   'FK|client_id': z.string(),
   'FK|contact_id': stringOrUndefined,
+  'FK|bid_id': stringOrUndefined,
   'job_number': numberOrString,
   'prevailing_wage': z.boolean(),
   'job_folder_id': z.string(),
@@ -172,6 +176,8 @@ export const jobValidator = z.object({
   'start_date': numberOrString,
   'closed_date': numberOrString,
 })
+
+export type JobType = z.infer<typeof jobValidator>
 
 export const bidValidator = z.object({
   'id': z.string(),
@@ -369,14 +375,20 @@ export const moveValidator = z.object({
 
 export type Move = z.infer<typeof moveValidator>
 
-// const test = {
-//   ops: [
-//     { insert: 'Some description here\nThis is a list' },
-//     { attributes: { list: 'ordered' }, insert: '\n' },
-//     { insert: 'of' },
-//     { attributes: { list: 'ordered' }, insert: '\n' },
-//     { insert: 'stuff' },
-//     { attributes: { list: 'ordered' }, insert: '\n' },
-//     { insert: '\n' }],
-// }
+export const jobParsedValidator = z.object({
+  'id': z.string(),
+  'FK|client_id': clientValidator,
+  'FK|contact_id': contactValidator,
+  'FK|bid_id': bidValidator,
+  'job_number': numberOrString,
+  'prevailing_wage': z.boolean(),
+  'job_folder_id': z.string(),
+  'address': stringOrUndefined,
+  'job_name': stringOrUndefined,
+  'status': z.string(),
+  'billing_type': z.string(),
+  'start_date': numberOrString,
+  'closed_date': numberOrString,
+})
 
+export type JobParsedType = z.infer<typeof jobParsedValidator>

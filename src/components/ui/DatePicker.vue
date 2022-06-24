@@ -1,8 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{ date: number | null; disabled: boolean; saved: boolean }>()
+const props = defineProps<{ date: number | null; disabled: boolean }>()
 const emit = defineEmits<{
   (e: 'update:date', value: string | undefined): void
-  (e: 'update:isDirty', value: boolean): void
 }>()
 const { getReadableDate } = useMainStore()
 const readableDate = $ref()
