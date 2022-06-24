@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components'
+import Fuse from 'fuse.js'
 import type { TableKey, TableRowType } from '~/types'
-
 // props
 interface Props {
   type: TableKey
@@ -46,23 +46,23 @@ onBeforeMount(() => {
 // computed
 const isDirty = $computed(() => textValue !== initialValue)
 const errorMessage = computed(() => 'That doesn\'t exist yet.')
-const searchResults = $computed(() => {
-  if (!isDirty)
-    return list
+// const searchResults = $computed(() => {
+//   if (!isDirty)
+//     return list
 
-  const searchWords = textValue?.split(/\+s/)
-  const searchData = list
+//   const searchWords = textValue?.split(/\+s/)
+//   const searchData = list
 
-  const results = searchData.filter((row: TableRowType) => {
-    return searchWords?.every((word) => {
-      return searchKeys.some((key: TableKey) => {
-        return row[key].includes(word)
-      })
-    })
-  })
+//   const results = searchData.filter((row: TableRowType) => {
+//     return searchWords?.every((word) => {
+//       return searchKeys.some((key: TableKey) => {
+//         return row[key].includes(word)
+//       })
+//     })
+//   })
 
-  return results ?? []
-})
+//   return results ?? []
+// })
 
 // helpers
 const activeIdx = () => {
@@ -169,6 +169,20 @@ const handleEnter = () => {
   if (activeIndex < 0) checkEntry()
 }
 const toggleFocus = () => focus ? handleBlur() : handleFocus()
+
+const options = {
+  minMatchCharLength: 1,
+  threshold: 0.3,
+  keys: searchKeys,
+}
+const fuse = $computed(() => new Fuse(list, options))
+const searchResults = $computed(() => {
+  if (textValue === '') return list
+  return fuse.search(textValue)
+    ?.map((result) => {
+      return result.item
+    })
+})
 </script>
 
 // TODO click needs to be on button not the icon. FIx date parse
@@ -214,7 +228,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
           <div
             v-for="key in showKeys" :key="key"
           >
-            <template v-if="item[key]">
+            <template v-if="item?.[key]">
               <div pr-5>
                 {{ item[key] }}
               </div>

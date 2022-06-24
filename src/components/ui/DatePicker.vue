@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ date: number | null; disabled: boolean }>()
+const props = defineProps<{ date: number | null; disabled: boolean; label?: string }>()
 const emit = defineEmits<{
   (e: 'update:date', value: string | undefined): void
 }>()
@@ -14,7 +14,7 @@ getReadableDate({ timestamp: $$(data), readable: $$(readableDate) })
   <div>
     <Input
       v-model="readableDate"
-      label="Start Date"
+      :label="props?.label"
       type="date"
       :disabled="disabled"
       place-holder-text="Start date"

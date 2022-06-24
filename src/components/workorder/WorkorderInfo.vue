@@ -22,9 +22,9 @@ const { wo, state } = useWoStore()
             Work Order Info
           </h3>
 
-          <DatePicker v-model:date="wo.start_date" :disabled="state.disabled" />
+          <DatePicker v-model:date="wo.start_date" :disabled="state.disabled" label="Start Date" />
 
-          <DatePicker v-model:date="wo.due_date" :disabled="state.disabled" />
+          <DatePicker v-model:date="wo.due_date" :disabled="state.disabled" label="Due Date"/>
 
           <div class="flex gap-x-4">
             <JobTypePicker v-model:type="wo.job_type" :options="jobTypeOptions" :disabled="state.disabled" />

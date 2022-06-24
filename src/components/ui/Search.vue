@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
-const { data, keys } = defineProps<{
+const { data, keys, initial } = defineProps<{
   data: any[]
   keys: string[]
+  initial?: string
 }>()
 
 const emit = defineEmits(['update:results'])
