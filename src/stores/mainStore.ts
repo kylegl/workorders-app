@@ -30,6 +30,7 @@ export const useMainStore = defineStore('main', {
     },
     getById(state) {
       return ({ id, type, getParsed = false }) => {
+        console.log('getById', id, type)
         const row = state.data?.[type as keyof Data]?.find(entry => entry.id.toString() === id?.toString())
         return getParsed && row
           ? this.formatRowData({ row })

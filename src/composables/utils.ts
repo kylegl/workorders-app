@@ -45,12 +45,6 @@ export function watchAfterInit(source: any, cb: WatchCallback, options: WatchWit
   ignoreUpdates(() => !source.value)
 }
 
-export function collectDirt(source, trash) {
-  const makeDirty = () => trash.value = true
-
-  watchAfterInit(source, makeDirty, { deep: true })
-}
-
 export function deRef(obj: any) {
   return Object.assign({}, obj)
 }
