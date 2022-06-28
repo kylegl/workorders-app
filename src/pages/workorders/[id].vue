@@ -3,8 +3,8 @@ import { useWoStore } from '~/stores/wo/useWoStore'
 
 const { wo, state } = storeToRefs(useWoStore())
 const { saveWo, editWo } = useWoStore()
-let printPage = $ref(true)
-
+let printPage = $ref(false)
+const togglePrint = () => printPage = !printPage
 const printMe = () => {
   printPage = true
 
@@ -31,6 +31,10 @@ const printMe = () => {
           <Icon i-carbon:save text-2xl icon-btn />
           Save
         </Button>
+        <!-- <Button @click="togglePrint">
+          <Icon i-ion:print text-2xl icon-btn />
+          toggle
+        </Button> -->
         <Button @click="printMe">
           <Icon i-ion:print text-2xl icon-btn />
           Print
@@ -43,6 +47,6 @@ const printMe = () => {
 
       <Tasks />
     </section>
-    <PrintPage v-else :woData="wo" />
+    <PrintPage v-else />
   </div>
 </template>

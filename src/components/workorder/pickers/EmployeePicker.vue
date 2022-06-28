@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ id: string; disabled: boolean }>()
+const props = defineProps<{ id?: string; disabled: boolean }>()
 const emit = defineEmits<{
   (e: 'update:id', value: string | undefined): void
 }>()

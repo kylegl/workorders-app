@@ -2,7 +2,7 @@
 import { useWoStore } from '~/stores/wo/useWoStore'
 import { woStatuses } from '~/stores/wo/constants'
 
-const { wo, state } = useWoStore()
+const { wo, state } = storeToRefs(useWoStore())
 </script>
 
 <template>

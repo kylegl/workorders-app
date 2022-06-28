@@ -5,9 +5,9 @@ import type { TableKey, TableRowType } from '~/types'
 // props
 interface Props {
   type: TableKey
-  list: TableRowType[]
+  list: TableRowType[] | undefined
   modelValue?: string
-  searchKeys: TableKey[]
+  searchKeys: string[]
   showKeys: string[]
   label?: string
   disabled?: boolean
@@ -24,7 +24,6 @@ const [primaryKey] = showKeys
 let id = $ref(modelValue)
 
 // store
-const { data } = storeToRefs(useMainStore())
 const { getById } = useMainStore()
 
 // refs
@@ -35,6 +34,7 @@ let activeIndex = $ref<number>(-1)
 let validationError = $ref(false)
 
 // hooks
+const getDisplayStr = (entry: TableRowType, showKeys: Array<string>) => showKeys.map(key => entry[key]).filter(Boolean).join(' | ')
 onBeforeMount(() => {
   if (id) {
     const entry = getById({ id, type })
@@ -46,23 +46,6 @@ onBeforeMount(() => {
 // computed
 const isDirty = $computed(() => textValue !== initialValue)
 const errorMessage = computed(() => 'That doesn\'t exist yet.')
-// const searchResults = $computed(() => {
-//   if (!isDirty)
-//     return list
-
-//   const searchWords = textValue?.split(/\+s/)
-//   const searchData = list
-
-//   const results = searchData.filter((row: TableRowType) => {
-//     return searchWords?.every((word) => {
-//       return searchKeys.some((key: TableKey) => {
-//         return row[key].includes(word)
-//       })
-//     })
-//   })
-
-//   return results ?? []
-// })
 
 // helpers
 const activeIdx = () => {
@@ -93,8 +76,6 @@ const setFocus = ({ isFocused, reset }: { isFocused: boolean; reset?: boolean })
     if (reset) textValue = initialValue ?? ''
   }
 }
-
-const getDisplayStr = (entry: TableRowType, showKeys: Array<string>) => showKeys.map(key => entry[key]).filter(Boolean).join(' | ')
 
 const setEntry = (entry: TableRowType): void => {
   try {
@@ -177,7 +158,7 @@ const options = {
 }
 const fuse = $computed(() => new Fuse(list, options))
 const searchResults = $computed(() => {
-  if (textValue === '') return list
+  if (!isDirty) return list
   return fuse.search(textValue)
     ?.map((result) => {
       return result.item
