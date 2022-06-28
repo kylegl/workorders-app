@@ -6,14 +6,26 @@ const employees = $computed(() => {
   const result = getByType({ type: 'employees' })
   return result
 })
+const showModal = $ref(false)
+
+const addEmployee = () => {
+  showModal = true
+}
 </script>
 
 <template>
   <div class="flex flex-col gap-y-4">
     <section class="flex flex-col gap-y-4">
-      <div class="text-h4">
-        Employees
+      <div flex justify-between>
+        <div class="text-h4">
+          Employees
+        </div>
+        <Button @click="addEmployee">
+          <Icon i-fa-solid:plus text-2xl />
+          Employee
+        </Button>
       </div>
+
       <Card v-for="employee in employees" :key="employee.id" flex gap4 w-full>
         <div flex="~ col" w-38>
           <div>Name</div>
@@ -39,5 +51,10 @@ const employees = $computed(() => {
         </div>
       </Card>
     </section>
+    <!-- <template v-if="showModal">
+      <div absolute >
+              o
+      </div>
+    </template> -->
   </div>
 </template>

@@ -3,7 +3,6 @@ import { useWoStore } from '~/stores/wo/useWoStore'
 
 const { id } = useRoute().params
 const { getByKeyValue, deleteById, getById } = useMainStore()
-const { wo } = storeToRefs(useWoStore())
 const { createWo } = useWoStore()
 
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))
@@ -74,7 +73,7 @@ const startDate = $computed(() => unixToHumanDate(job?.start_date))
           <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }">
             <button i-ion:edit icon-btn />
           </router-link>
-          <button i-carbon:close icon-btn @click="deleteById({ id: workorder.id, type: 'workorders' })" />
+          <button i-carbon:close icon-btn @click="deleteById({ id: workorder.id, table: 'workorders' })" />
         </div>
       </div>
     </section>

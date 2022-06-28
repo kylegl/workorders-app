@@ -1,6 +1,8 @@
 import type { WatchWithFilterOptions } from '@vueuse/core'
 import type { WatchCallback } from 'vue'
-import type { ErrorWithMessage, TableKey } from '~/types'
+import type { ErrorWithMessage, TableKey, Version } from '~/types'
+import { mutationValidator } from '~/types'
+import { Mutation, Query } from '~/api/index'
 
 export function isFK(key: string): TableKey | undefined {
   const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
@@ -45,12 +47,16 @@ export function watchAfterInit(source: any, cb: WatchCallback, options: WatchWit
   ignoreUpdates(() => !source.value)
 }
 
-export function collectDirt(source, trash) {
-  const makeDirty = () => trash.value = true
-
-  watchAfterInit(source, makeDirty, { deep: true })
-}
-
 export function deRef(obj: any) {
   return Object.assign({}, obj)
+}
+
+export async function mutation(table: string, action: string, data?: TableRow, versions: Version) {
+  const mutation = mutationValidator.parse({
+    table,
+    data,
+  })
+
+  const res = await Mutation(mutation, versions, action)
+  return res
 }

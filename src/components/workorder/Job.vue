@@ -38,6 +38,15 @@ const { job } = defineProps<{ job: Job }>()
             {{ job.address }}
           </div>
         </div>
+
+        <div flex="~ col" w-50>
+          <div>
+            Start Date
+          </div>
+          <div v-if="job?.start_date" text-h5>
+            {{ unixToHumanDate(job.start_date) }}
+          </div>
+        </div>
       </div>
     </Card>
   </router-link>

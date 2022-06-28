@@ -8,37 +8,47 @@ export const useWoStore = defineStore('woStore', () => {
   const state = reactive({
     disabled: false,
     dirty: false,
-    saved: false,
   })
+  const id = ref('')
+  const wo = computed(() => main.getById({ id: id.value, type: 'workorders' }))
+  let watcher
 
-  const wo = reactive({} as WorkorderType)
+  function getWatcher() {
+    const stop = watch(wo.value, () => {
+      state.dirty = true
+    })
+
+    watcher = stop
+  }
 
   function createWo(job: JobParsedType) {
     state.disabled = false
-    Object.keys(newWorkorder).forEach(key => wo[key] = newWorkorder[key])
-    wo.id = useUid()
+    const newWo = { ...newWorkorder }
+    newWo.id = useUid()
     if (job) {
-      wo['FK|job_id'] = job.id
-      wo['FK|bid_id'] = job['FK|bid_id']?.id
-      wo['FK|client_id'] = job['FK|client_id'].id
-      wo['FK|contact_id'] = job['FK|contact_id']?.id
+      newWo['FK|job_id'] = job.id
+      newWo['FK|bid_id'] = job['FK|bid_id']?.id
+      newWo['FK|client_id'] = job['FK|client_id'].id
+      newWo['FK|contact_id'] = job['FK|contact_id']?.id
     }
-    const params = { id: wo.id }
+    main.addItem({ data: newWo, table: 'workorders' })
+    setId(newWo.id)
+    const params = { id: newWo.id }
     router.push({ name: 'workorders-id', params })
+  }
+
+  function setId(woId: string) {
+    state.disabled = false
+    state.dirty = false
+
+    id.value = woId
+    getWatcher()
   }
 
   function saveWo() {
     try {
-      const isExisting = main.data.workorders?.find(entry => entry.id === wo.id)
-      const deRefWo = deRef(wo)
-      if (isExisting)
-        main.update({ data: deRefWo, table: 'workorders' })
-
-      if (!isExisting)
-        main.addItem({ data: deRefWo, table: 'workorders' })
-
       state.disabled = true
-      state.saved = true
+      mutation('workorders', 'update', wo.value, main.versions)
       state.dirty = false
     }
     catch (err) {
@@ -46,18 +56,16 @@ export const useWoStore = defineStore('woStore', () => {
     }
   }
 
-  function editWo() {
+  function editWo(id: string) {
     state.disabled = false
+    loadWo(id)
   }
 
-  function loadWo(id: string) {
-    const match = main.getById({ id, type: 'workorders' })
-    if (match) {
-      const unref = deRef(match)
-      Object.keys(unref).forEach(key => wo[key] = unref[key])
-    }
+  function loadWo(woId: string) {
+    stop()
+    setId(woId)
   }
-  return { createWo, saveWo, loadWo, editWo, wo, state }
+  return { createWo, saveWo, loadWo, editWo, wo, state, watcher }
 })
 
 if (import.meta.hot)

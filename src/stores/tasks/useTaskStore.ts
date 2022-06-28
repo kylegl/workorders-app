@@ -5,63 +5,62 @@ import type { Lineitem } from '~/types'
 
 export const useTaskStore = defineStore('taskStore', () => {
   const main = useMainStore()
-  const { wo, state } = useWoStore()
+  const { wo, state } = storeToRefs(useWoStore())
 
   const taskState = reactive({
     showModal: false,
+    dirty: false,
   })
 
-  const task = reactive({} as Lineitem)
+  const id = ref('')
+  const task = computed((): Lineitem => main.getById({ id: id.value, type: 'line_items' }))
+  const watcher = ref('')
 
   function createTask(taskNumber: number) {
-    taskState.showModal = true
-
-    setNewVals(newTask, task)
+    const task = { ...newTask }
     task.id = useUid()
-    task['FK|workorder_id'] = wo.id
+    task['FK|workorder_id'] = wo.value.id
     task.item_number = taskNumber
-  }
 
-  function editTask() {
-    // TODO capture initial state to reset if need be.
+    main.addItem({ data: task, table: 'line_items' })
+    setId(task.id)
     taskState.showModal = true
   }
 
-  function addTask() {
-    try {
-      const isExisting = main.data.line_items?.find(entry => entry.id === task.id)
-      const unrefTask = deRef(task)
-      if (isExisting)
-        // Object.keys(unrefTask).forEach(key => isExisting[key] = unrefTask[key])
-        main.update({ data: unrefTask, table: 'line_items' })
-
-      if (!isExisting)
-        main.addItem({ data: unrefTask, table: 'line_items' })
-
-      taskState.showModal = false
-    }
-    catch (err) {
-      getErrorMessage(err)
-    }
-  }
-
-  function closeModal() {
+  function saveTask() {
     taskState.showModal = false
+    mutation('line_items', 'update', task.value, main.versions)
+    taskState.dirty = false
   }
 
-  function loadTask(id: string) {
-    const match = main.getById({ id, type: 'line_items' })
-    if (match) {
-      const unrefMatch = deRef(match)
-      setNewVals(task, unrefMatch)
-    }
+  function loadTask(taskId: string) {
+    stop()
+    setId(taskId)
   }
 
-  function setNewVals(from, to) {
-    Object.keys(from).forEach(key => to[key] = from[key])
+  function editTask(id: string) {
+    taskState.showModal = true
+    loadTask(id)
   }
 
-  return { task, taskState, createTask, editTask, loadTask, addTask, closeModal }
+  function deleteTask(id: string) {
+    main.deleteById({ id, table: 'line_items' })
+  }
+
+  function setId(taskId) {
+    id.value = taskId
+    getWatcher()
+  }
+
+  function getWatcher() {
+    const stop = watch(task.value, () => {
+      state.dirty = true
+    })
+
+    watcher.value = stop
+  }
+
+  return { task, id, taskState, createTask, loadTask, editTask, deleteTask, saveTask }
 })
 
 if (import.meta.hot)

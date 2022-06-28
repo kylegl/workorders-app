@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWoStore } from '~/stores/wo/useWoStore'
-const { wo, state } = useWoStore()
+const { wo, state } = storeToRefs(useWoStore())
 </script>
 
 <template>

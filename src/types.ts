@@ -343,6 +343,8 @@ export const TableRow = z.union([
   lineitemValidator,
 ])
 
+export type TableRowKey = keyof TableRow
+
 export type TableRowType = z.infer<typeof TableRow>
 
 export const dataTypeValidator = z.object({

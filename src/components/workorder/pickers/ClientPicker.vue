@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const props = defineProps<{ id: string; disabled: boolean }>()
+const props = defineProps<{ id?: string; disabled: boolean }>()
 const emit = defineEmits<{
   (e: 'update:id', value: string | undefined): void
 }>()
 const { data } = storeToRefs(useMainStore())
 
-const clientId = $computed(() => props.id)
+const clientId = useVModel(props, 'id', emit)
 </script>
 
 <template>

@@ -3,11 +3,16 @@ import { useWoStore } from '~/stores/wo/useWoStore'
 
 const { wo, state } = storeToRefs(useWoStore())
 const { saveWo, editWo } = useWoStore()
+let printPage = $ref(false)
+const togglePrint = () => printPage = !printPage
+const printMe = () => {
+  printPage = true
 
-// TODO Need to get this setup to update the db
-// after this is setup. check update, delete, add, etc. Then pull line items from jobs and bids.
-// after that setup print work order
-// then setup auto sync between this and the db.
+  setTimeout(() => {
+    print('printMe')
+    printPage = false
+  }, 1000)
+}
 </script>
 
 <template>
@@ -16,18 +21,32 @@ const { saveWo, editWo } = useWoStore()
       <h1 text-h3 :class="[state.dirty ? 'text-red/80' : '']">
         {{ `Work Order` }}
       </h1>
-      <Button v-if="state.disabled" text-h5 @click="editWo">
-        <Icon i-ion:edit text-2xl icon-btn />
-        edit
-      </Button>
-      <Button v-else text-h5 @click="saveWo">
-        <Icon i-carbon:save text-2xl icon-btn />
-        Save
-      </Button>
+
+      <div flex gap4>
+        <Button v-if="state.disabled" text-h5 @click="editWo">
+          <Icon i-ion:edit text-2xl icon-btn />
+          edit
+        </Button>
+        <Button v-else text-h5 @click="saveWo">
+          <Icon i-carbon:save text-2xl icon-btn />
+          Save
+        </Button>
+        <!-- <Button @click="togglePrint">
+          <Icon i-ion:print text-2xl icon-btn />
+          toggle
+        </Button> -->
+        <Button @click="printMe">
+          <Icon i-ion:print text-2xl icon-btn />
+          Print
+        </Button>
+      </div>
     </div>
 
-    <WorkorderInfo />
+    <section v-if="!printPage" id="printMe" flex="~ col" gap-y-4 p8>
+      <WorkorderInfo />
 
-    <Tasks />
+      <Tasks />
+    </section>
+    <PrintPage v-else />
   </div>
 </template>
