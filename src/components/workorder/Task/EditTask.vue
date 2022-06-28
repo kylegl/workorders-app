@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useTaskStore } from '~/stores/tasks/useTaskStore'
 const { task } = storeToRefs(useTaskStore())
-const { addTask, closeModal } = useTaskStore()
+const { saveTask } = useTaskStore()
 const richTextFields = ['description', 'details', 'quantity', 'notes']
 
 const modal = ref<HTMLDivElement>()
-onClickOutside(modal, () => closeModal())
+onClickOutside(modal, () => saveTask())
 </script>
 
 <template>
@@ -25,7 +25,7 @@ onClickOutside(modal, () => closeModal())
         <div text-h4>
           {{ `Edit Line Item #${task?.item_number}` }}
         </div>
-        <button i-carbon:close text-2xl icon-btn @click="closeModal()" />
+        <button i-carbon:close text-2xl icon-btn @click="saveTask" />
       </div>
       <div v-for="key in richTextFields" :key="key">
         <div capitalize text-h5>
@@ -41,7 +41,7 @@ onClickOutside(modal, () => closeModal())
         </div>
         <Input v-model="task.hours" type="number" />
       </div>
-      <Button m-auto @click="addTask">
+      <Button m-auto @click="saveTask">
         <Icon i-fa-solid:plus text-2xl icon-btn />
         Add
       </Button>

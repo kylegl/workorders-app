@@ -11,57 +11,39 @@ export const useTaskStore = defineStore('taskStore', () => {
     showModal: false,
   })
 
-  const task = reactive({} as Lineitem)
+  const id = ref('')
+  const task = computed((): Lineitem => main.getById({ id: id.value, type: 'line_items' }))
 
   function createTask(taskNumber: number) {
-    taskState.showModal = true
-
-    setNewVals(newTask, task)
+    const task = { ...newTask }
     task.id = useUid()
     task['FK|workorder_id'] = wo.id
     task.item_number = taskNumber
-  }
 
-  function editTask() {
-    // TODO capture initial state to reset if need be.
+    main.addItem({ data: task, table: 'line_items' })
+    id.value = task.id
     taskState.showModal = true
   }
 
-  function addTask() {
-    try {
-      const isExisting = main.data.line_items?.find(entry => entry.id === task.id)
-      const unrefTask = deRef(task)
-      if (isExisting)
-        // Object.keys(unrefTask).forEach(key => isExisting[key] = unrefTask[key])
-        main.update({ data: unrefTask, table: 'line_items' })
-
-      if (!isExisting)
-        main.addItem({ data: unrefTask, table: 'line_items' })
-
-      taskState.showModal = false
-    }
-    catch (err) {
-      getErrorMessage(err)
-    }
-  }
-
-  function closeModal() {
+  function saveTask() {
     taskState.showModal = false
+    mutation('line_items', 'update', task.value, main.versions)
   }
 
-  function loadTask(id: string) {
-    const match = main.getById({ id, type: 'line_items' })
-    if (match) {
-      const unrefMatch = deRef(match)
-      setNewVals(task, unrefMatch)
-    }
+  function loadTask(taskId: string) {
+    id.value = taskId
   }
 
-  function setNewVals(from, to) {
-    Object.keys(from).forEach(key => to[key] = from[key])
+  function editTask(id: string) {
+    taskState.showModal = true
+    loadTask(id)
   }
 
-  return { task, taskState, createTask, editTask, loadTask, addTask, closeModal }
+  function deleteTask(id: string) {
+    main.deleteById({ id, table: 'line_items' })
+  }
+
+  return { task, id, taskState, createTask, loadTask, editTask, deleteTask, saveTask }
 })
 
 if (import.meta.hot)

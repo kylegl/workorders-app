@@ -30,7 +30,6 @@ export const useMainStore = defineStore('main', {
     },
     getById(state) {
       return ({ id, type, getParsed = false }) => {
-        console.log('getById', id, type)
         const row = state.data?.[type as keyof Data]?.find(entry => entry.id.toString() === id?.toString())
         return getParsed && row
           ? this.formatRowData({ row })
@@ -106,37 +105,20 @@ export const useMainStore = defineStore('main', {
         this.loading = false
       }
     },
-    async mutation(table: string, action: string, data?: TableRow) {
-      const mutation = mutationValidator.parse({
-        table,
-        data,
-      })
-
-      const res = await Mutation(mutation, this.versions, action)
-      return res
-    },
     async deleteById({ data, table }: MutationParams) {
       if (this.data?.[table])
         this.data[table] = this.data[table]!.filter((el: DataType) => el.id !== data.id)
 
-      const res = await this.mutation(table, 'delete', data)
-
-      // console.log(`Delete request for ${table}: ${id}, res = ${res}`)
+      const res = await mutation(table, 'delete', data, this.versions)
     },
     async addItem({ data, table }: MutationParams) {
       if (this.data?.[table])
         this.data[table]?.push(data)
 
-      const res = await this.mutation(table, 'add', data)
+      const res = await mutation(table, 'add', data, this.versions)
     },
     async update({ data, table }: MutationParams) {
-      if (this.data?.[table]) {
-        let entry = this.data[table]!.find((el: DataType) => el.id === data.id)
-        if (entry)
-          Object.keys(entry).forEach(key => entry[key] = data[key])
-      }
-
-      const res = await this.mutation(table, 'update', data)
+      const res = await mutation(table, 'update', data, this.versions)
     },
   },
 })
