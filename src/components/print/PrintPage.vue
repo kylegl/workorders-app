@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { usePrintStore } from '~/stores/wo/usePrintStore'
-
+const { getByKeyValue } = useMainStore()
 const { printValues } = storeToRefs(usePrintStore())
 
-const wo = $computed(() => printValues)
+const tasks = $computed(() => getByKeyValue({ key: 'FK|workorder_id', value: printValues.value.id, type: 'line_items' })
+  .sort((a: Lineitem, b: Lineitem) => a.item_number! - b.item_number!))
 </script>
 
 <template>
@@ -18,22 +19,24 @@ const wo = $computed(() => printValues)
             {{ printValues.client }}
           </div>
           <h4>
-            Job # {{ printValues.job.job_number }}
+            Job # {{ printValues.job?.job_number }}
           </h4>
-          <h5>{{ printValues.job?.job_name || printValues.job.address }}</h5>
+          <div>{{ printValues.job?.job_name || printValues.job?.address }}</div>
           <h4>
             Contact
           </h4>
           <div>
-            <span>{{ printValues.contact.name }}</span>   <span>Phone # {{ printValues.contact.phone }}</span>
+            <span>{{ printValues.contact?.name }}</span>   <span>Phone # {{ printValues.contact?.phone }}</span>
           </div>
           <div />
         </div>
-
+        <hr/>
         <Card w="1/2" flex="~ col" gap4>
           <h3 class="text-h4">
             Work Order Info
           </h3>
+
+          <h5>Assigned To: {{printValues.employee.name}}</h5>
 
           <div>Start Date:   {{ printValues.startDate }}</div>
 
@@ -44,52 +47,54 @@ const wo = $computed(() => printValues)
             <div v-html="parseDelta(printValues.description)" />
           </template>
 
-          <template v-if="printValues?.details">
-            <h3>Details</h3>
-            <div v-html="parseDelta(printValues.details)" />
-          </template>
-
           <template v-if="printValues?.notes">
-            <h3>Details</h3>
+            <h3>Notes</h3>
             <div v-html="parseDelta(printValues.notes)" />
           </template>
 
           <template v-if="printValues?.parkingInfo">
-            <h3>Details</h3>
+            <h3>Parking Info</h3>
             <div v-html="parseDelta(printValues.parkingInfo)" />
           </template>
+          <hr>
 
-          <h3>Line Items</h3>
-          <div v-for="task in printValues.tasks" :key="task.id">
+          <h4>Line Items</h4>
+          <div v-for="task in tasks" :key="task.id">
+              <template v-if="task?.item_number">
+                <h5>
+                  # {{ task.item_number }}
+                </h5>
+              </template>
             <span>
-              <h4>
-                Description
-              </h4>
               <template v-if="task?.description">
+                <h5>
+                  Description
+                </h5>
                 <div v-html="parseDelta(task.description)" />
               </template>
             </span>
             <span>
-              <h4>
-                Details
-              </h4>
               <template v-if="task?.details">
+                <h5>
+                  Details
+                </h5>
                 <div v-html="parseDelta(task.details)" />
               </template>
             </span>
 
-            <h4>
-              Quantity
-            </h4>
             <template v-if="task?.quantity">
+              <h5>
+                Quantity
+              </h5>
               <div v-html="parseDelta(task.quantity)" />
             </template>
-            <h4>
-              Notes
-            </h4>
             <template v-if="task?.notes">
-              <div v-html="parseDelta(task.notes)" />
+              <h5>
+                Notes
+              </h5>
+              <div bg-transparent v-html="parseDelta(task.notes)" />
             </template>
+            <hr>
           </div>
         </card>
       </section>

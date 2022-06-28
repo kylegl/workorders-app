@@ -25,3 +25,4 @@ const router = createRouter({
 app.use(router)
 app.use(createPinia())
 app.mount('#app')
+
