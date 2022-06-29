@@ -19,7 +19,7 @@ const printMe = () => {
   <div flex="~ col" gap-y-4 p8 relative>
     <div flex justify-between>
       <h1 text-h3 :class="[state.dirty ? 'text-red/80' : '']">
-        {{ `Work Order` }}
+        {{ `Work Order #${wo.wo_number}` }}
       </h1>
 
       <div flex gap4>

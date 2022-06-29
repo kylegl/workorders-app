@@ -5,6 +5,7 @@ export const woStatuses = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'C
 
 export const newWorkorder = workorderValidator.parse({
   'id': '',
+  'wo_number': null,
   'FK|job_id': '',
   'FK|bid_id': '',
   'FK|client_id': '',
@@ -22,18 +23,3 @@ export const newWorkorder = workorderValidator.parse({
   'closed_at': null,
   'status': 'Upcoming',
 })
-
-export const createWorkorder = (job: Record<string, any>): WorkorderType => {
-  const workorder = newWorkorder
-  workorder.id = useUid()
-
-  if (job) {
-    workorder['FK|job_id'] = job.id
-    workorder['FK|bid_id'] = job['FK|bid_id']?.id
-    workorder['FK|client_id'] = job['FK|client_id']?.id
-    workorder['FK|contact_id'] = job['FK|contact_id']?.id
-  }
-
-  return workorderValidator.parse(workorder)
-}
-
