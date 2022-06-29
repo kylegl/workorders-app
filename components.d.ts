@@ -24,7 +24,6 @@ declare module '@vue/runtime-core' {
     JobTypePicker: typeof import('./src/components/workorder/pickers/JobTypePicker.vue')['default']
     Nav: typeof import('./src/components/Nav/Nav.vue')['default']
     NavItem: typeof import('./src/components/Nav/NavItem.vue')['default']
-    Print: typeof import('./src/components/print/Print.vue')['default']
     PrintPage: typeof import('./src/components/print/PrintPage.vue')['default']
     ProjectInfo: typeof import('./src/components/workorder/ProjectInfo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

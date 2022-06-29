@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { Employee, Workorder, WorkorderType } from '~/types'
+import type { Employee, WorkorderType } from '~/types'
 import { useWoStore } from '~/stores/wo/useWoStore'
 const { workorder } = defineProps<{ workorder: WorkorderType }>()
-const { data } = storeToRefs(useMainStore())
 const { getById } = useMainStore()
-const { wo } = storeToRefs(useWoStore())
 const { loadWo } = useWoStore()
 
 const startDate = $computed(() => {
@@ -24,7 +22,7 @@ const employee = $computed((): Employee => getById({ id: workorder['FK|employee_
           <div flex="~ col" gap2 justify-between>
             <StatusIndicator :status="workorder.status" />
             <div text-h5>
-              #
+              # {{ workorder.wo_number }}
             </div>
           </div>
 

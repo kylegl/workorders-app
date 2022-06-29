@@ -38,6 +38,7 @@ export interface Task {
 
 export interface Workorder {
   id: Id
+  wo_number: number
   'FK|client_id': Id
   'FK|employee_id'?: Id
   'FK|contact_id'?: Id
@@ -101,6 +102,7 @@ export const employeeValidator = z.object({
 
 export const incomingWorkorderValidator = z.object({
   'id': z.string(),
+  'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
   'FK|employee_id': stringOrUndefined,
   'FK|contact_id': stringOrUndefined,
@@ -121,6 +123,7 @@ export const incomingWorkorderValidator = z.object({
 
 export const workorderValidator = z.object({
   'id': z.string(),
+  'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
   'FK|employee_id': stringOrUndefined,
   'FK|contact_id': stringOrUndefined,
@@ -143,6 +146,7 @@ export type WorkorderType = z.infer<typeof workorderValidator>
 
 export const outgoingWorkorderValidator = z.object({
   'id': z.string(),
+  'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
   'FK|employee_id': stringOrUndefined,
   'FK|contact_id': stringOrUndefined,
