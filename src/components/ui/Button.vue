@@ -10,7 +10,6 @@ const handleClick = () => emit('click')
   <button
     flex items-center justify-center gap2 p2
     border="~ base" rounded
-    bg-bg-j dark:bg-bg-a
     text-h5
     shadow-md
     action-hover

@@ -41,7 +41,7 @@ const enter = () => {
         w-full p-2 rounded input-base
         placeholder:text-subtle
         in_out
-        class="focus:outline-none focus:caret-fg-subtle dark:focus:caret-fg-subtle-d"
+        class="focus:outline-none focus:caret-fg-lit-subtle dark:focus:caret-fg-drk-subtle"
         :placeholder="placeHolderText"
         :type="type"
         :value="modelValue"
