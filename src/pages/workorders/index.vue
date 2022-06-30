@@ -62,7 +62,7 @@ const tableValues = $computed(() => workorders?.length
           </template>
         </Input>
 
-        <Button class="text-h4 button-primary" @click="undefined">
+        <Button class="text-h4 btn-primary" @click="undefined">
           <Icon class="i-fa-solid:plus text-2xl" />
           Work Order
         </Button>
@@ -71,7 +71,7 @@ const tableValues = $computed(() => workorders?.length
       <!-- Filters -->
       <div class="flex gap-x-4">
         <Icon class="i-bx:filter-alt text-3xl m-0 my-auto text-fg-muted" />
-        <Button v-for="filter in filters" :key="filter" class="button-primary">
+        <Button v-for="filter in filters" :key="filter" class="btn-primary">
           {{ filter }}
         </Button>
       </div>
@@ -84,12 +84,8 @@ const tableValues = $computed(() => workorders?.length
       <div v-if="error" class="">
         {{ error }}
       </div>
-      <template v-if="tableValues?.length">
-        <Table
-          :headers="workorderTableHeaders"
-          :values="tableValues"
-          type="workorders"
-        />
+      <template v-if="workorders.length">
+        <Workorder v-for="wo in workorders" :key="wo.id" :workorder="wo" />
       </template>
     </section>
   </div>

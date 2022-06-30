@@ -5,9 +5,10 @@
 <template>
   <div
     flex p4
-    bg-2 shadow-md
+    bg-2
+    shadow-md
     hover="shadow-sm" in_out
-    border="~ base" rounded
+    rounded
   >
     <slot />
   </div>

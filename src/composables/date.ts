@@ -42,3 +42,26 @@ export const durationBoolean = (timestamp): boolean => {
   const withinOneWeek = duration < 0 && duration > -7
   return withinOneWeek
 }
+
+export function getTimeInstant(ts: number | undefined | null) {
+  if (!ts) return ''
+  return Temporal.Instant
+    .fromEpochMilliseconds(ts)
+    .toZonedDateTimeISO('America/Los_Angeles')
+    .toPlainDate()
+}
+
+export function shortenYear(year: number) {
+  return year.toString().slice(2)
+}
+
+export function shortDate(unix: number | null | undefined) {
+  const instant = getTimeInstant(unix)
+
+  if (!instant) return undefined
+
+  const currYear = new Date().getFullYear()
+  const isCurrYear = instant?.year === currYear
+  const moDay = `${instant?.month}/${instant?.day}`
+  return isCurrYear ? moDay : `${moDay}/${shortenYear(instant?.year)}`
+}
