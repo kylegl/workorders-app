@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ParsedWorkorderType, WorkorderType } from '~/types'
 
-const { data, loading, error } = storeToRefs(useMainStore())
+const { loading, error } = storeToRefs(useMainStore())
 const { getByType } = useMainStore()
 const searchResults = $ref<WorkorderType[]>()
 

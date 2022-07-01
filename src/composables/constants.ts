@@ -1,5 +1,3 @@
-import { lineitemValidator, workorderValidator } from '~/types'
-
 export const jobFilters = [
   { name: 'Active', key: 'status', value: 'Active', isActive: true },
   { name: 'Upcoming', key: 'status', value: 'Upcoming', isActive: true },
@@ -24,8 +22,12 @@ export const woFilters = [
 export const woSearchKeys = [
   'job_name',
   'address',
-  'job_number',
+  'wo_number',
   'FK|client_id.name',
+  'FK|employee_id.name',
+  'FK|job_id.job_name',
+  'FK|job_id.address',
+  'FK|job_id.job_number',
 ]
 
 export const billingOptions = ['T&M', 'Fixed']
