@@ -60,7 +60,7 @@ const employee = $computed(() => workorder?.['FK|employee_id'])
               </template>
             </div>
 
-            <div self-start  text-base ml-auto shrink-0>
+            <div self-start text-base ml-auto shrink-0>
               #{{ workorder?.wo_number }}
             </div>
           </div>
