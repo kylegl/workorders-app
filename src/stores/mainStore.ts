@@ -3,22 +3,6 @@ import { Query } from '~/api/index'
 import type { Data, DataType, StoreData, TableKey, TableRowKey, TableRowType, Version, VersionKeys } from '~/types'
 import { versionValidator } from '~/types'
 
-interface GetByIdParams {
-  id: string
-  type: TableKey
-  getParsed?: boolean
-}
-interface GetByTypeParams {
-  type: TableKey
-  getParsed?: boolean
-}
-
-interface GetKeyParams {
-  key: string
-  type: TableKey
-  value: string | number | boolean
-}
-
 export const useMainStore = defineStore('main', {
   state: (): { data: StoreData; versions: Version; loading: boolean; error: any } => ({
     data: {},
@@ -53,9 +37,11 @@ export const useMainStore = defineStore('main', {
       }
     },
     getByKeyValue(state) {
-      return ({ key, value, type }: GetKeyParams) => {
+      return ({ key, value, type, getParsed }: GetKeyParams) => {
         const results = state.data?.[type]?.filter((entry: TableRowType) => entry[key] === value)
-        return results ?? []
+        return getParsed
+          ? results.map(row => this.formatRowData({ row }))
+          : results
       }
     },
     formatRowData() {
@@ -143,4 +129,20 @@ interface MutationParams {
   id?: string
   data?: TableRowType
   table: TableKey
+}
+interface GetByIdParams {
+  id: string
+  type: TableKey
+  getParsed?: boolean
+}
+interface GetByTypeParams {
+  type: TableKey
+  getParsed?: boolean
+}
+
+interface GetKeyParams {
+  key: string
+  type: TableKey
+  value: string | number | boolean
+  getParsed?: boolean
 }

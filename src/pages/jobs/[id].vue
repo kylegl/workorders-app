@@ -11,6 +11,7 @@ const jobTitle = $computed(() => {
   if (job?.job_name && job?.address) return `${job.job_name} - ${job.address}`
   return job?.job_name ?? job?.address
 })
+
 const startDate = $computed(() => unixToHumanDate(job?.start_date))
 </script>
 
@@ -28,18 +29,21 @@ const startDate = $computed(() => unixToHumanDate(job?.start_date))
           {{ jobTitle }}
         </div>
         <div flex="~ col" gap2>
-          <div text-h5>
+          <div text-h5 flex gap2 items-center>
             {{ job['FK|contact_id']?.name }}
+            <Copy :value="job['FK|contact_id']?.name" />
           </div>
 
           <div text-h5 flex gap2 items-center>
             <Icon i-carbon:email />
             {{ job['FK|contact_id']?.email }}
+            <Copy :value="job['FK|contact_id']?.email" />
           </div>
 
           <div text-h5 flex items-center gap2>
             <Icon i-carbon:phone />
             {{ job['FK|contact_id']?.phone }}
+            <Copy :value="job['FK|contact_id']?.phone" />
           </div>
         </div>
       </Card>
@@ -50,7 +54,7 @@ const startDate = $computed(() => unixToHumanDate(job?.start_date))
           <div>
             Start Date:
           </div>
-          <div text-h5>
+          <div text-lit-fnorm>
             {{ startDate }}
           </div>
         </div>
