@@ -23,6 +23,7 @@ export default defineConfig({
     'text-norm': 'text-fg-lit-norm dark:text-fg-drk-norm',
     'text-subtle': 'text-fg-lit-subtle dark:text-fg-drk-subtle',
     'text-muted': 'text-fg-lit-muted dark:text-fg-drk-muted',
+    'highlight': 'bg-fg-lit-muted dark:bg-fg-drk-muted text-fg-drk-norm dark:text-fg-lit-norm py1 px2 rounded-sm shadow-sm',
     'action-hover': 'op70 hover:op100 in_out',
     'border-base': 'border-fg-lit-subtle/40 dark:border-fg-drk-subtle/40',
     'input-base': 'bg-bg-lit-a  dark:bg-bg-drk-k',

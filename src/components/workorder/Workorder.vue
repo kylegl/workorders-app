@@ -1,57 +1,73 @@
 <script setup lang="ts">
-import type { Employee, ParsedWorkorderType } from '~/types'
+import type { ParsedWorkorderType } from '~/types'
 import { useWoStore } from '~/stores/wo/useWoStore'
 const { workorder } = defineProps<{ workorder: ParsedWorkorderType }>()
 const { loadWo } = useWoStore()
 
 const startDate = $computed(() => shortDate(workorder?.start_date))
 const dueDate = $computed(() => shortDate(workorder?.due_date))
+const job = $computed(() => workorder?.['FK|job_id'])
+const employee = $computed(() => workorder?.['FK|employee_id'])
 </script>
 
 <template>
   <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }" w-full>
-    <Card @click="loadWo(workorder.id)" bg-1>
+    <Card bg-1 text-muted @click="loadWo(workorder.id)">
       <div flex gap4 min-h-25 w-full>
         <!-- WORKORDER INFO -->
-        <div flex="~ col" gap2 justify-center w-50 h-full>
+        <div
+          flex="~ col" gap2 justify-center w-50 shrink-0
+          font-semibold
+        >
           <StatusIndicator :status="workorder.status" text-h4 />
-          <div flex gap2 text-muted font-semibold w-full>
+          <div
+            flex gap2 w-full items-center
+            text-sm
+          >
             <Icon i-carbon:calendar text-xl />
             <span>{{ `${startDate} - ${dueDate}` }}</span>
           </div>
-          <div flex gap2 text-muted font-semibold w-full>
+          <div flex gap2 w-full>
             <Icon i-mdi:account-hard-hat-outline text-xl />
-            <span>{{ workorder?.['FK|employee_id']?.name }}</span>
+            <span v-if="employee?.name">{{ employee?.name }}</span>
+            <span v-else text-red>Not Assigned</span>
           </div>
         </div>
 
-        <!-- DIVIDER -->
-        <div w=".25" bg-3 op30 />
+        <Divider w=".25" />
 
         <!-- INFO -->
-        <div flex="~ col" max-h-auto gap2 w-full>
-          <div flex w-full>
-            <div flex gap4 text-h4 items-center min-w-full >
-              <div bg-fg-lit-muted dark:bg-fg-drk-muted text-fg-drk-norm dark:text-fg-lit-norm py1 px2 rounded shadow-sm>
-                {{ workorder?.['FK|client_id']?.name }}
-              </div>
-              <template v-if="workorder?.['FK|job_id']?.job_name">
-                <span shrink-0 text-h5>{{ workorder?.['FK|job_id']?.job_name }}</span>
+        <div flex="~ col" gap2 w-full overflow-hidden>
+          <div flex gap4 text-h4 items-baseline>
+            <div highlight min-w-fit wrap>
+              {{ workorder?.['FK|client_id']?.name }}
+            </div>
+            <div min-w-0 truncate>
+              <template v-if="job?.job_name">
+                <span>
+                  {{ job?.job_name }}
+                </span>
               </template>
-              <template v-if="workorder?.['FK|job_id']?.address">
-                <div flex gap1 items-baseline w-full min-w-min>
-                  <Icon i-fa6-solid:house text-xs />
-                  <span min-w-min text-h5  truncate>{{ workorder?.['FK|job_id']?.address }}</span>
-                </div>
+              <template v-if="job?.address">
+                <Icon
+                  v-if=" job?.job_name && job?.address"
+                  inline-block text-xs mx2 my-auto
+                  i-fa6-solid:house
+                />
+                <span>
+                  {{ job?.address }}
+                </span>
               </template>
-              <div text-muted text-base ml-auto>#{{workorder?.wo_number}}</div>
+            </div>
+
+            <div self-start  text-base ml-auto shrink-0>
+              #{{ workorder?.wo_number }}
             </div>
           </div>
 
-          <div text-muted font-semibold text-ellipsis overflow-hidden>
+          <div font-semibold my-auto line-clamp-3>
             {{ workorder?.description }}
           </div>
-
         </div>
       </div>
     </Card>

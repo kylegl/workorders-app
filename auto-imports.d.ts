@@ -40,6 +40,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getErrorMessage: typeof import('./src/composables/utils')['getErrorMessage']
+  const getTimeInstant: typeof import('./src/composables/date')['getTimeInstant']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
@@ -99,6 +100,8 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
+  const shortDate: typeof import('./src/composables/date')['shortDate']
+  const shortenYear: typeof import('./src/composables/date')['shortenYear']
   const storeToRefs: typeof import('pinia')['storeToRefs']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
@@ -266,6 +269,8 @@ declare global {
   const watchThrottled: typeof import('@vueuse/core')['watchThrottled']
   const watchWithFilter: typeof import('@vueuse/core')['watchWithFilter']
   const whenever: typeof import('@vueuse/core')['whenever']
+  const woFilters: typeof import('./src/composables/constants')['woFilters']
+  const woSearchKeys: typeof import('./src/composables/constants')['woSearchKeys']
 }
 // for vue template auto import
 declare module 'vue' {
@@ -309,6 +314,7 @@ declare module 'vue' {
     getCurrentInstance: typeof import('vue')['getCurrentInstance']
     getCurrentScope: typeof import('vue')['getCurrentScope']
     getErrorMessage: typeof import('./src/composables/utils')['getErrorMessage']
+    getTimeInstant: typeof import('./src/composables/date')['getTimeInstant']
     h: typeof import('vue')['h']
     ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
     inject: typeof import('vue')['inject']
@@ -368,6 +374,8 @@ declare module 'vue' {
     shallowReactive: typeof import('vue')['shallowReactive']
     shallowReadonly: typeof import('vue')['shallowReadonly']
     shallowRef: typeof import('vue')['shallowRef']
+    shortDate: typeof import('./src/composables/date')['shortDate']
+    shortenYear: typeof import('./src/composables/date')['shortenYear']
     storeToRefs: typeof import('pinia')['storeToRefs']
     syncRef: typeof import('@vueuse/core')['syncRef']
     syncRefs: typeof import('@vueuse/core')['syncRefs']
@@ -535,5 +543,7 @@ declare module 'vue' {
     watchThrottled: typeof import('@vueuse/core')['watchThrottled']
     watchWithFilter: typeof import('@vueuse/core')['watchWithFilter']
     whenever: typeof import('@vueuse/core')['whenever']
+    woFilters: typeof import('./src/composables/constants')['woFilters']
+    woSearchKeys: typeof import('./src/composables/constants')['woSearchKeys']
   }
 }
