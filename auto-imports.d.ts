@@ -271,6 +271,7 @@ declare global {
   const whenever: typeof import('@vueuse/core')['whenever']
   const woFilters: typeof import('./src/composables/constants')['woFilters']
   const woSearchKeys: typeof import('./src/composables/constants')['woSearchKeys']
+  const woSortKeys: typeof import('./src/composables/constants')['woSortKeys']
 }
 // for vue template auto import
 declare module 'vue' {
@@ -545,5 +546,6 @@ declare module 'vue' {
     whenever: typeof import('@vueuse/core')['whenever']
     woFilters: typeof import('./src/composables/constants')['woFilters']
     woSearchKeys: typeof import('./src/composables/constants')['woSearchKeys']
+    woSortKeys: typeof import('./src/composables/constants')['woSortKeys']
   }
 }

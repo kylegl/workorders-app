@@ -8,6 +8,7 @@ const searchResults = $ref<WorkorderType[]>()
 const rawWos = $computed(() => getByType({ type: 'workorders', getParsed: true }) ?? [])
 const wos = $computed(() => searchResults?.length ? searchResults : rawWos)
 const filteredWos = $ref<ParsedWorkorderType[]>()
+const sortedWos = $ref<ParsedWorkorderType[]>()
 </script>
 
 <template>
@@ -22,8 +23,12 @@ const filteredWos = $ref<ParsedWorkorderType[]>()
         w="1/2"
         max-w-75
       />
+      <div flex gap2>
+        <Filter v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" />
 
-      <Filter v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" />
+        <Sort v-model:sortedList="sortedWos" :list="filteredWos" :keys="woSortKeys" flex gap2 />
+      </div>
+
       <Divider w="full" h=".25" />
     </section>
 
@@ -36,7 +41,7 @@ const filteredWos = $ref<ParsedWorkorderType[]>()
       </div>
       <div v-else>
         <div v-if="wos" flex="~ col" gap2>
-          <Workorder v-for="wo in filteredWos" :key="wo?.id" :workorder="wo" />
+          <Workorder v-for="wo in sortedWos" :key="wo?.id" :workorder="wo" />
         </div>
       </div>
     </section>

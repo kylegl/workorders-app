@@ -1,4 +1,3 @@
-import type { WorkorderType } from '~/types'
 import { workorderValidator } from '~/types'
 
 export const woStatuses = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']

@@ -19,6 +19,12 @@ export const woFilters = [
   { name: 'Completed', key: 'status', value: 'Completed', isActive: false },
 ]
 
+export const woSortKeys = [
+  { name: 'Start Date', key: 'start_date', isString: false, isActive: false, isReverse: false },
+  { name: 'Client', key: 'FK|client_id.name', isString: true, isActive: false, isReverse: false },
+  { name: 'Assigned', key: 'FK|employee_id.name', isString: true, isActive: false, isReverse: false },
+]
+
 export const woSearchKeys = [
   'job_name',
   'address',

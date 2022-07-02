@@ -1,3 +1,4 @@
+import { type } from 'os'
 import { z } from 'zod'
 
 type Id = string | number
@@ -421,3 +422,17 @@ export const parsedWorkorderValidator = z.object({
 })
 
 export type ParsedWorkorderType = z.infer<typeof parsedWorkorderValidator>
+
+export const sortKeyValidator = z.object({
+  name: z.string(),
+  key: z.string(),
+  isString: z.boolean(),
+  isActive: z.boolean(),
+  isReverse: z.boolean(),
+})
+
+export type SortKey = z.infer<typeof sortKeyValidator>
+
+export const sortKeyArrayValidator = z.array(sortKeyValidator)
+
+export type SortKeyArray = z.infer<typeof sortKeyArrayValidator>
