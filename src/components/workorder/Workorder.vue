@@ -65,9 +65,7 @@ const employee = $computed(() => workorder?.['FK|employee_id'])
             </div>
           </div>
 
-          <div font-semibold my-auto line-clamp-3>
-            {{ workorder?.description }}
-          </div>
+          <div font-semibold my-auto line-clamp-3 v-html="parseDelta(workorder?.description)" />
         </div>
       </div>
     </Card>

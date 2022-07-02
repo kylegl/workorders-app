@@ -90,7 +90,7 @@ const parseJSON = (val) => {
 }
 const casteToJSON = z.preprocess(val => parseJSON(val), stringOrNumberOrDelta)
 const castJSONtoString = z.preprocess(val => JSON.stringify(val), stringOrNumberOrDelta)
-const castStringToNumber = z.preprocess(val => typeof val === 'string' ? parseInt(val) : val, numberOrUndefined)
+const castStringToNumber = z.preprocess(val => val === '' ? undefined : typeof val === 'string' ? +val : val, numberOrUndefined)
 
 export const employeeValidator = z.object({
   id: z.string(),
@@ -393,8 +393,8 @@ export const jobParsedValidator = z.object({
   'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
-  'start_date': numberOrUndefined,
-  'closed_date': numberOrString,
+  'start_date': castStringToNumber,
+  'closed_date': castStringToNumber,
 })
 
 export type JobParsedType = z.infer<typeof jobParsedValidator>
@@ -407,16 +407,16 @@ export const parsedWorkorderValidator = z.object({
   'FK|contact_id': contactValidator.optional(),
   'FK|job_id': jobValidator.optional(),
   'FK|bid_id': bidValidator.optional(),
-  'start_date': numberOrUndefined,
-  'due_date': numberOrUndefined,
+  'start_date': castStringToNumber,
+  'due_date': castStringToNumber,
   'description': stringOrDelta,
   'parking_info': stringOrDelta,
   'notes': stringOrDelta,
   'bill_type': stringOrUndefined,
   'job_type': stringOrUndefined,
-  'created_at': numberOrUndefined,
-  'udpated_at': numberOrUndefined,
-  'closed_at': numberOrUndefined,
+  'created_at': castStringToNumber,
+  'udpated_at': castStringToNumber,
+  'closed_at': castStringToNumber,
   'status': z.string(),
 })
 
