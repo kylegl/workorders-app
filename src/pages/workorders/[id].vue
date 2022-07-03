@@ -4,7 +4,6 @@ import { useWoStore } from '~/stores/wo/useWoStore'
 const { wo, state } = storeToRefs(useWoStore())
 const { saveWo, editWo } = useWoStore()
 let printPage = $ref(false)
-const togglePrint = () => printPage = !printPage
 const printMe = () => {
   printPage = true
 
@@ -16,33 +15,29 @@ const printMe = () => {
 </script>
 
 <template>
-  <div flex="~ col" gap-y-4 p8 relative>
+  <div flex="~ col" gap-y-4 relative>
     <div flex justify-between>
       <h1 text-h3 :class="[state.dirty ? 'text-red/80' : '']">
         {{ `Work Order #${wo.wo_number}` }}
       </h1>
 
       <div flex gap4>
-        <Button v-if="state.disabled" text-h5 @click="editWo">
-          <Icon i-ion:edit text-2xl icon-btn />
+        <Button v-if="state.disabled"  @click="editWo(wo.id)" btn-primary>
+          <Icon i-ion:edit text-2xl btn-icon />
           edit
         </Button>
-        <Button v-else text-h5 @click="saveWo">
-          <Icon i-carbon:save text-2xl icon-btn />
+        <Button v-else @click="saveWo" btn-primary>
+          <Icon i-carbon:save text-2xl btn-icon/>
           Save
         </Button>
-        <!-- <Button @click="togglePrint">
-          <Icon i-ion:print text-2xl icon-btn />
-          toggle
-        </Button> -->
-        <Button @click="printMe">
-          <Icon i-ion:print text-2xl icon-btn />
+        <Button  @click="printMe" btn-primary>
+          <Icon i-ion:print text-2xl btn-icon />
           Print
         </Button>
       </div>
     </div>
 
-    <section v-if="!printPage" id="printMe" flex="~ col" gap-y-4 p8>
+    <section v-if="!printPage" id="printMe" flex="~ col" gap-y-4 >
       <WorkorderInfo />
 
       <Tasks />

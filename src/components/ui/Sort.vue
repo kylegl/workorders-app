@@ -2,7 +2,7 @@
 import type { SortKey, SortKeyArray } from '~/types'
 const { keys, list } = defineProps<{
   keys: SortKeyArray
-  list: any[]
+  list: any[] | undefined
 }>()
 const emit = defineEmits(['update:sortedList'])
 
@@ -21,7 +21,7 @@ const toggleSort = (key: SortKey) => {
 }
 
 const sortedList = $computed(() => {
-  if (!activeKey)
+  if (!activeKey || !list)
     return list
   const keys = activeKey.key.split('.')
   const sorted = [...list].sort((a, b) => {
@@ -40,14 +40,17 @@ const active = (key: SortKey) => key.isActive ? 'btn-active' : 'btn-inactive'
 
 <template>
   <div>
-    <button
+    <Button
       v-for="key in sortKeys" :key="key.name"
-      btn flex gap1
+      flex gap1
       :class="active(key)"
       @click="toggleSort(key)"
     >
       {{ key.name }}
-      <Icon i-carbon:arrows-vertical text-xl my-auto text-fg-muted />
-    </button>
+      <Icon
+        i-carbon:arrow-down text-xl my-auto text-fg-muted in_out
+        :class="{ 'rotate-180': key.isReverse, 'rotate-0': !key.isReverse }"
+      />
+    </Button>
   </div>
 </template>

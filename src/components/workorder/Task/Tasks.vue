@@ -31,7 +31,7 @@ const moveTask = (move: Move) => {
       <h3 text-h3>
         Line Items
       </h3>
-      <Button @click="createTask(tasks?.length + 1)">
+      <Button @click="createTask(tasks?.length + 1)" btn-primary>
         <Icon i-fa-solid:plus text-2xl />
         Line Item
       </Button>

@@ -182,7 +182,7 @@ const searchResults = $computed(() => {
       @keydown.enter="handleEnter"
     >
       <template v-if="!disabled" #after>
-        <button>
+        <button px2>
           <Icon i-fa:chevron-down m-auto @click="toggleFocus()" />
         </button>
       </template>

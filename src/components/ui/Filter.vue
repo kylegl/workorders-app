@@ -31,21 +31,19 @@ const toggleFilter = (filter: Filter) => filter.isActive = !filter.isActive
 
 watchEffect(() => emit('update:filteredData', filteredData))
 
-const isActive = (filter: Filter) => filter.isActive ? 'btn-active' : 'btn-primary'
+const isActive = (filter: Filter) => filter.isActive ? 'btn-active' : 'btn-inactive'
 </script>
 
 <template>
-  <div flex gap4>
-    <Icon i-bx:filter-alt text-3xl my-auto text-fg-muted />
-    <button
+  <div>
+    <Icon i-bx:filter-alt text-3xl my-auto text-subtle />
+    <Button
       v-for="filter in filters"
       :key="filter.name"
-      border="~ base"
-      btn
       :class="isActive(filter)"
       @click="toggleFilter(filter)"
     >
       {{ filter.name }}
-    </button>
+    </Button>
   </div>
 </template>

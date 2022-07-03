@@ -23,10 +23,10 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
         w="1/2"
         max-w-75
       />
-      <div flex gap2>
-        <Filter v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" />
+      <div flex gap2 w-full flex-wrap>
+        <Filter v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" flex gap2/>
 
-        <Sort v-model:sortedList="sortedWos" :list="filteredWos" :keys="woSortKeys" flex gap2 />
+        <Sort v-if="filteredWos" v-model:sortedList="sortedWos" :list="filteredWos" :keys="woSortKeys" flex gap2/>
       </div>
 
       <Divider w="full" h=".25" />
