@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useWoStore } from '~/stores/wo/useWoStore'
-
 const { wo, state } = storeToRefs(useWoStore())
 const { saveWo, editWo } = useWoStore()
 let printPage = $ref(false)
@@ -22,22 +20,22 @@ const printMe = () => {
       </h1>
 
       <div flex gap4>
-        <Button v-if="state.disabled"  @click="editWo(wo.id)" btn-primary >
+        <Button v-if="state.disabled" btn-primary @click="editWo(wo.id)">
           <Icon i-ion:edit text-2xl btn-icon />
           edit
         </Button>
-        <Button v-else @click="saveWo" btn-primary>
-          <Icon i-carbon:save text-2xl btn-icon/>
+        <Button v-else btn-primary @click="saveWo">
+          <Icon i-carbon:save text-2xl btn-icon />
           Save
         </Button>
-        <Button  @click="printMe" btn-primary>
+        <Button btn-primary @click="printMe">
           <Icon i-ion:print text-2xl btn-icon />
           Print
         </Button>
       </div>
     </div>
 
-    <section v-if="!printPage" id="printMe" flex="~ col" gap-y-4 >
+    <section v-if="!printPage" id="printMe" flex="~ col" gap-y-4>
       <WorkorderInfo />
 
       <Tasks />

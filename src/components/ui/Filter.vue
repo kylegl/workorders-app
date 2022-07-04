@@ -36,7 +36,6 @@ const isActive = (filter: Filter) => filter.isActive ? 'btn-active' : 'btn-inact
 
 <template>
   <div>
-    <Icon i-bx:filter-alt text-3xl my-auto text-subtle />
     <Button
       v-for="filter in filters"
       :key="filter.name"

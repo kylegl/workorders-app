@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useWoStore } from '~/stores/wo/useWoStore'
-
 const { id } = useRoute().params
 const { getByKeyValue, deleteById, getById } = useMainStore()
 const { createWo } = useWoStore()

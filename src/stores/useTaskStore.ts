@@ -1,6 +1,4 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { newTask } from '../tasks/constants'
-import { useWoStore } from '../wo/useWoStore'
 import type { Lineitem } from '~/types'
 
 export const useTaskStore = defineStore('taskStore', () => {
