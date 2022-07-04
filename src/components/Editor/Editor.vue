@@ -28,7 +28,7 @@ const updateValue = () => emit('update:content', editorContent)
       :content-type="type"
       theme="snow"
       :toolbar="toolbarOptions"
-      rounded-b
+      rounded-b border="~ base 3"
       input-base
       @text-change="updateValue"
     />
