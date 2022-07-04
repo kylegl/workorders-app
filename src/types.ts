@@ -91,6 +91,7 @@ const parseJSON = (val) => {
 }
 const casteToJSON = z.preprocess(val => parseJSON(val), stringOrNumberOrDelta)
 const castJSONtoString = z.preprocess(val => JSON.stringify(val), stringOrNumberOrDelta)
+const castStringToNumber = z.preprocess(val => val === '' ? undefined : typeof val === 'string' ? +val : val, numberOrUndefined)
 
 export const employeeValidator = z.object({
   id: z.string(),
@@ -108,16 +109,16 @@ export const incomingWorkorderValidator = z.object({
   'FK|contact_id': stringOrUndefined,
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
-  'start_date': numberOrString,
-  'due_date': numberOrString,
+  'start_date': castStringToNumber,
+  'due_date': castStringToNumber,
   'description': casteToJSON,
   'parking_info': casteToJSON,
   'notes': casteToJSON,
   'bill_type': stringOrUndefined,
   'job_type': stringOrUndefined,
-  'created_at': numberOrString,
-  'udpated_at': numberOrString,
-  'closed_at': numberOrString,
+  'created_at': castStringToNumber,
+  'udpated_at': castStringToNumber,
+  'closed_at': castStringToNumber,
   'status': z.string(),
 })
 
@@ -129,16 +130,16 @@ export const workorderValidator = z.object({
   'FK|contact_id': stringOrUndefined,
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
-  'start_date': numberOrString,
-  'due_date': numberOrString,
+  'start_date': numberOrUndefined,
+  'due_date': numberOrUndefined,
   'description': stringOrDelta,
   'parking_info': stringOrDelta,
   'notes': stringOrDelta,
   'bill_type': stringOrUndefined,
   'job_type': stringOrUndefined,
-  'created_at': numberOrString,
-  'udpated_at': numberOrString,
-  'closed_at': numberOrString,
+  'created_at': numberOrUndefined,
+  'udpated_at': numberOrUndefined,
+  'closed_at': numberOrUndefined,
   'status': z.string(),
 })
 
@@ -152,16 +153,16 @@ export const outgoingWorkorderValidator = z.object({
   'FK|contact_id': stringOrUndefined,
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
-  'start_date': numberOrString,
-  'due_date': numberOrString,
+  'start_date': numberOrUndefined,
+  'due_date': numberOrUndefined,
   'description': castJSONtoString,
   'parking_info': castJSONtoString,
   'notes': castJSONtoString,
   'bill_type': stringOrUndefined,
   'job_type': stringOrUndefined,
-  'created_at': numberOrString,
-  'udpated_at': numberOrString,
-  'closed_at': numberOrString,
+  'created_at': numberOrUndefined,
+  'udpated_at': numberOrUndefined,
+  'closed_at': numberOrUndefined,
   'status': z.string(),
 })
 
@@ -177,8 +178,8 @@ export const jobValidator = z.object({
   'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
-  'start_date': numberOrString,
-  'closed_date': numberOrString,
+  'start_date': castStringToNumber,
+  'closed_date': castStringToNumber,
 })
 
 export type JobType = z.infer<typeof jobValidator>
@@ -393,8 +394,45 @@ export const jobParsedValidator = z.object({
   'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
-  'start_date': numberOrString,
-  'closed_date': numberOrString,
+  'start_date': castStringToNumber,
+  'closed_date': castStringToNumber,
 })
 
 export type JobParsedType = z.infer<typeof jobParsedValidator>
+
+export const parsedWorkorderValidator = z.object({
+  'id': z.string(),
+  'wo_number': numberOrUndefined,
+  'FK|client_id': clientValidator.optional(),
+  'FK|employee_id': employeeValidator.optional(),
+  'FK|contact_id': contactValidator.optional(),
+  'FK|job_id': jobValidator.optional(),
+  'FK|bid_id': bidValidator.optional(),
+  'start_date': castStringToNumber,
+  'due_date': castStringToNumber,
+  'description': stringOrDelta,
+  'parking_info': stringOrDelta,
+  'notes': stringOrDelta,
+  'bill_type': stringOrUndefined,
+  'job_type': stringOrUndefined,
+  'created_at': castStringToNumber,
+  'udpated_at': castStringToNumber,
+  'closed_at': castStringToNumber,
+  'status': z.string(),
+})
+
+export type ParsedWorkorderType = z.infer<typeof parsedWorkorderValidator>
+
+export const sortKeyValidator = z.object({
+  name: z.string(),
+  key: z.string(),
+  isString: z.boolean(),
+  isActive: z.boolean(),
+  isReverse: z.boolean(),
+})
+
+export type SortKey = z.infer<typeof sortKeyValidator>
+
+export const sortKeyArrayValidator = z.array(sortKeyValidator)
+
+export type SortKeyArray = z.infer<typeof sortKeyArrayValidator>

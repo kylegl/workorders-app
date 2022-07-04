@@ -144,7 +144,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
     >
       <template v-if="!disabled" #after>
         <button>
-          <Icon class="i-fa:chevron-down m-auto" @click="toggleFocus()" />
+          <Icon class="i-fa:chevron-down m-auto" @click="toggleFocus()" mx2/>
         </button>
       </template>
       <template v-if="validationError" #error>

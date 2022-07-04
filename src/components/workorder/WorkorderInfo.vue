@@ -15,9 +15,9 @@ const { wo, state } = storeToRefs(useWoStore())
       </div>
 
       <section class="flex gap-x-4">
-        <ProjectInfo v-model:workorder="wo" :disabled="state.disabled" />
+        <ProjectInfo v-model:workorder="wo" :disabled="state.disabled" bg-3/>
 
-        <Card w="1/2" flex="~ col" gap4>
+        <Card w="1/2" flex="~ col" gap4 bg-3>
           <h3 class="text-h4">
             Work Order Info
           </h3>
@@ -35,7 +35,7 @@ const { wo, state } = storeToRefs(useWoStore())
       </section>
 
       <section>
-        <Card w-full flex="~ col" gap4>
+        <Card w-full flex="~ col" gap4 bg-3>
           <div text-h5>
             Description
           </div>

@@ -1,102 +1,50 @@
 <script setup lang="ts">
-const { data, loading, error } = storeToRefs(useMainStore())
-const { getByType, query } = useMainStore()
+import type { ParsedWorkorderType, WorkorderType } from '~/types'
 
-const filters = ['Job', 'Status', 'Team']
-const searchValue = $ref('')
+const { loading, error } = storeToRefs(useMainStore())
+const { getByType } = useMainStore()
+const searchResults = $ref<WorkorderType[]>()
 
-// TODO add suspense logic to await resutls. https://www.trpkovski.com/2021/09/25/suspense-feature-in-vue-3-with-sfc-script-setup/
-const search = () => {
-  // eslint-disable-next-line no-console
-  console.log(searchValue)
-}
-interface HeaderParam {
-  key: string
-  displayProp?: string | undefined
-  title: string
-}
-
-const workorderTableHeaders: HeaderParam[] = [
-  { key: 'status', title: 'Status' },
-  { key: 'FK|client_id', displayProp: 'name', title: 'Client' },
-  { key: 'FK|job_id', displayProp: 'address', title: 'Job' },
-  { key: 'description', title: 'Description' },
-  { key: 'FK|employee_id', displayProp: 'name', title: 'Assigned' },
-  { key: 'start_date', title: 'Start Date' },
-]
-
-const workorders = $computed(() => getByType({ type: 'workorders', getParsed: true }) ?? [])
-
-const tableValues = $computed(() => workorders?.length
-  ? workorders.map((row) => {
-    const updatedRow = workorderTableHeaders.reduce((newRow, header) => {
-      if (header?.displayProp) newRow[header.key] = row[header.key]?.[header.displayProp]
-      else newRow[header.key] = row[header.key]
-      return newRow
-    }, {})
-
-    updatedRow.id = row.id
-    return updatedRow
-  })
-  : [])
+const rawWos = $computed(() => getByType({ type: 'workorders', getParsed: true }) ?? [])
+const wos = $computed(() => searchResults?.length ? searchResults : rawWos)
+const filteredWos = $ref<ParsedWorkorderType[]>()
+const sortedWos = $ref<ParsedWorkorderType[]>()
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-8 w-full">
-    <h1 class="text-h3" op70>
+  <div flex="~ col" gap8 w-full>
+    <h1 text-h3 op70>
       Work Orders
     </h1>
-    <section id="header" class="flex flex-col gap-y-4  w-full">
-      <div class="flex justify-between w-full">
-        <Input
-          v-model="searchValue"
-          type="text"
-          class="w-1/2"
-          place-holder-text="Search"
-          @enter="search"
-        >
-          <template #after>
-            <button class="flex" @click="true">
-              <Icon i-fluent-search-12-regular text-2xl in_out m-auto action-hover />
-            </button>
-          </template>
-        </Input>
+    <section flex="~ col" gap4 w-full>
+      <Search
+        v-model:results="searchResults" :data="rawWos"
+        :keys="woSearchKeys"
+        w="1/2"
+        max-w-75
+      />
+      <div flex gap2 w-full flex-wrap>
+        <Filter v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" flex gap2/>
 
-        <Button class="text-h4 button-primary" @click="undefined">
-          <Icon class="i-fa-solid:plus text-2xl" />
-          Work Order
-        </Button>
+        <Sort v-if="filteredWos" v-model:sortedList="sortedWos" :list="filteredWos" :keys="woSortKeys" flex gap2/>
       </div>
 
-      <!-- Filters -->
-      <div class="flex gap-x-4">
-        <Icon class="i-bx:filter-alt text-3xl m-0 my-auto text-fg-muted" />
-        <Button v-for="filter in filters" :key="filter" class="button-primary">
-          {{ filter }}
-        </Button>
-      </div>
+      <Divider w="full" h=".25" />
     </section>
 
-    <section class="flex flex-col gap-y-2">
-      <div v-if="loading" class="">
-        Loading Work Orders...
+    <section>
+      <div v-if="loading">
+        Loading Work Orders ...
       </div>
-      <div v-if="error" class="">
-        {{ error }}
+      <div v-else-if="error">
+        There was a problem getting the Work Orders...
       </div>
-      <template v-if="tableValues?.length">
-        <Table
-          :headers="workorderTableHeaders"
-          :values="tableValues"
-          type="workorders"
-        />
-      </template>
+      <div v-else>
+        <div v-if="wos" flex="~ col" gap2>
+          <Workorder v-for="wo in sortedWos" :key="wo?.id" :workorder="wo" />
+        </div>
+      </div>
     </section>
   </div>
 </template>
 
-<style>
-.workorder-grid {
-  grid-template-columns: 80px 100px 100px auto 75px 85px;
-}
-</style>

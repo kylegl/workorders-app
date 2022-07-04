@@ -15,7 +15,7 @@ const { job } = defineProps<{ job: Job }>()
             {{ job.job_number }}
           </div>
           <div>
-            <div>
+            <div text-h5 text-fg-lit-muted>
               Client
             </div>
             <div text-h5>

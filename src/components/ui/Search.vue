@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
-const { data, keys, initial } = defineProps<{
+const { data, keys } = defineProps<{
   data: any[]
   keys: string[]
   initial?: string
@@ -36,7 +36,7 @@ const searchResult = $computed(() => {
     >
       <template #after>
         <button class="flex" @click="true">
-          <Icon i-fluent-search-12-regular text-2xl in_out m-auto action-hover />
+          <Icon i-fluent-search-12-regular text-2xl in_out m-auto action-hover mx2/>
         </button>
       </template>
     </Input>

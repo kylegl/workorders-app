@@ -15,8 +15,6 @@ interface Props {
 const { list, searchKeys, label, disabled, type, modelValue, showKeys } = defineProps<Props>()
 // emits
 const emit = defineEmits<{
-  (e: 'update:textValue', value: string | number | undefined): void
-  (e: 'update:id', value: string | undefined): void
   (e: 'update:modelValue', value: string): void
 }>()
 
@@ -182,7 +180,7 @@ const searchResults = $computed(() => {
       @keydown.enter="handleEnter"
     >
       <template v-if="!disabled" #after>
-        <button>
+        <button px2>
           <Icon i-fa:chevron-down m-auto @click="toggleFocus()" />
         </button>
       </template>

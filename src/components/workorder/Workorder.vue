@@ -1,58 +1,71 @@
 <script setup lang="ts">
-import type { Employee, WorkorderType } from '~/types'
+import type { ParsedWorkorderType } from '~/types'
 import { useWoStore } from '~/stores/wo/useWoStore'
-const { workorder } = defineProps<{ workorder: WorkorderType }>()
-const { getById } = useMainStore()
+const { workorder } = defineProps<{ workorder: ParsedWorkorderType }>()
 const { loadWo } = useWoStore()
 
-const startDate = $computed(() => {
-  if (workorder?.start_date) return unixToHumanDate(workorder.start_date)
-})
-const dueDate = $computed(() => {
-  if (workorder?.due_date) return unixToHumanDate(workorder.due_date)
-})
-const employee = $computed((): Employee => getById({ id: workorder['FK|employee_id'], type: 'employees' }))
+const startDate = $computed(() => shortDate(workorder?.start_date))
+const dueDate = $computed(() => shortDate(workorder?.due_date))
+const job = $computed(() => workorder?.['FK|job_id'])
+const employee = $computed(() => workorder?.['FK|employee_id'])
 </script>
 
 <template>
   <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }" w-full>
-    <Card @click="loadWo(workorder.id)">
-      <div flex gap3>
-        <div flex gap2 items-center text-sm>
-          <div flex="~ col" gap2 justify-between>
-            <StatusIndicator :status="workorder.status" />
-            <div text-h5>
-              # {{ workorder.wo_number }}
-            </div>
+    <Card bg-1 text-muted @click="loadWo(workorder.id)">
+      <div flex gap4 min-h-25 w-full>
+        <!-- WORKORDER INFO -->
+        <div
+          flex="~ col" gap2 justify-center w-50 shrink-0
+          font-semibold
+        >
+          <StatusIndicator :status="workorder.status" text-h4 />
+          <div
+            flex gap2 w-full items-center
+            text-sm
+          >
+            <Icon i-carbon:calendar text-xl />
+            <span>{{ `${startDate} - ${dueDate}` }}</span>
           </div>
-
-          <div flex="~ col" gap2>
-            <div flex gap2 items-center>
-              <div>
-                Start Date:
-              </div>
-              <div text-h5>
-                {{ startDate }}
-              </div>
-            </div>
-            <div flex gap2 items-center>
-              <div>
-                Due Date:
-              </div>
-              <div text-h5>
-                {{ dueDate }}
-              </div>
-            </div>
+          <div flex gap2 w-full>
+            <Icon i-mdi:account-hard-hat-outline text-xl />
+            <span v-if="employee?.name">{{ employee?.name }}</span>
+            <span v-else text-red>Not Assigned</span>
           </div>
         </div>
 
-        <div flex="~ col" gap2>
-          <div>
-            Assigned To
+        <Divider w=".25" />
+
+        <!-- INFO -->
+        <div flex="~ col" gap2 w-full overflow-hidden>
+          <div flex gap4 text-h4 items-baseline>
+            <div highlight min-w-fit wrap>
+              {{ workorder?.['FK|client_id']?.name }}
+            </div>
+            <div min-w-0 truncate>
+              <template v-if="job?.job_name">
+                <span>
+                  {{ job?.job_name }}
+                </span>
+              </template>
+              <template v-if="job?.address">
+                <Icon
+                  v-if=" job?.job_name && job?.address"
+                  inline-block text-xs mx2 my-auto
+                  i-fa6-solid:house
+                />
+                <span>
+                  {{ job?.address }}
+                </span>
+              </template>
+            </div>
+
+            <div self-start text-base ml-auto shrink-0>
+              #{{ workorder?.wo_number }}
+            </div>
           </div>
-          <div text-h5>
-            {{ employee?.name }}
-          </div>
+
+          <div font-semibold my-auto line-clamp-3 v-html="parseDelta(workorder?.description)" />
         </div>
       </div>
     </Card>

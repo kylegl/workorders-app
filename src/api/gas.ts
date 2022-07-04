@@ -2,38 +2,11 @@ import type { Data, MutationType, RequestType, VersionType } from '~/types'
 import { apiResponseValidator } from '~/types'
 import { getErrorMessage } from '~/composables/utils'
 
-const handleResponse = (rawResponse: string) => {
+export const handleResponse = (rawResponse: string) => {
   const parsedRes = JSON.parse(rawResponse)
-  console.log('parsedRes', parsedRes)
+
   const res = apiResponseValidator.parse(parsedRes)
   return res
-}
-
-const stringifyDeltas = (entry: Data) => {
-  const keys = Object.keys(entry)
-
-  const deltaKeys = ['description', 'notes', 'parking_info', 'details', 'quantity']
-
-  return keys.reduce((result, key) => {
-    if (deltaKeys.includes(key) && entry[key])
-      result[key] = JSON.stringify(entry[key])
-    else result[key] = entry[key]
-
-    return result
-  }, {})
-}
-const parseDeltas = (entry: Data) => {
-  const keys = Object.keys(entry)
-
-  const deltaKeys = ['description', 'notes', 'parking_info', 'details', 'quantity']
-
-  return keys.reduce((result, key) => {
-    if (deltaKeys.includes(key) && entry[key])
-      result[key] = JSON.parse(entry[key])
-    else result[key] = entry[key]
-
-    return result
-  }, {})
 }
 
 const Provoke = ((ns) => {

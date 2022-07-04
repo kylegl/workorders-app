@@ -43,7 +43,7 @@ const color = $computed(() => {
 
 <template>
   <div
-    flex p1 rounded-sm shadow-sm font-semibold tracking-wider text-fg-norm-d
+    flex p1 rounded-sm shadow-sm font-semibold tracking-wider text-fg-drk-norm justify-center
     :class="color"
   >
     {{ status }}
