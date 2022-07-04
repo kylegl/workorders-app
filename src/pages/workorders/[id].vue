@@ -17,12 +17,12 @@ const printMe = () => {
 <template>
   <div flex="~ col" gap-y-4 relative>
     <div flex justify-between>
-      <h1 text-h3 :class="[state.dirty ? 'text-red/80' : '']">
+      <h1 text-h3>
         {{ `Work Order #${wo.wo_number}` }}
       </h1>
 
       <div flex gap4>
-        <Button v-if="state.disabled"  @click="editWo(wo.id)" btn-primary>
+        <Button v-if="state.disabled"  @click="editWo(wo.id)" btn-primary >
           <Icon i-ion:edit text-2xl btn-icon />
           edit
         </Button>
