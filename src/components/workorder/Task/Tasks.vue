@@ -5,7 +5,7 @@ const { data } = storeToRefs(useMainStore())
 const { getByKeyValue } = useMainStore()
 const { wo, state } = storeToRefs(useWoStore())
 const { task, taskState } = storeToRefs(useTaskStore())
-const { createTask } = useTaskStore()
+const { createTask, saveTask } = useTaskStore()
 
 const tasks = $computed(() => getByKeyValue({ key: 'FK|workorder_id', value: wo.value.id, type: 'line_items' })
   .sort((a: Lineitem, b: Lineitem) => a.item_number! - b.item_number!))
@@ -46,7 +46,9 @@ const moveTask = (move: Move) => {
     </section>
 
     <template v-if="taskState.showModal">
-      <EditTask v-if="task" :task="task" />
+      <Modal @close="saveTask">
+        <EditTask v-if="task" :task="task" />
+      </Modal>
     </template>
   </div>
 </template>
