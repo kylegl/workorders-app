@@ -1,5 +1,4 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { useWoStore } from '~/stores/wo/useWoStore'
 
 export const usePrintStore = defineStore('print', () => {
   const main = useMainStore()

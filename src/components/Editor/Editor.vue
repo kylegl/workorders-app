@@ -3,7 +3,7 @@ import { Delta, QuillEditor } from '@vueup/vue-quill'
 import './vue-quill.snow.css'
 
 const { data, type = 'delta' } = defineProps<{
-  data: Delta
+  data?: Delta
   type?: string | undefined
 }>()
 
@@ -28,7 +28,7 @@ const updateValue = () => emit('update:content', editorContent)
       :content-type="type"
       theme="snow"
       :toolbar="toolbarOptions"
-      rounded-b
+      rounded-r border-base
       input-base
       @text-change="updateValue"
     />

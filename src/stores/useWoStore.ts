@@ -1,8 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { newWorkorder } from '~/stores/wo/constants'
 import type { JobParsedType, WorkorderType } from '~/types'
-
-// TODO need to remake mock data for workorders to include wo_number col.
 
 export const useWoStore = defineStore('woStore', () => {
   const main = useMainStore()
@@ -12,8 +9,8 @@ export const useWoStore = defineStore('woStore', () => {
     dirty: false,
   })
   const id = ref('')
-  const wo = computed(() => main.getById({ id: id.value, type: 'workorders' }))
-  const wo_number = computed(() => main.getByType({ type: 'workorders' })?.length + 1700)
+  const wo = computed((): WorkorderType => main.getById({ id: id.value, type: 'workorders' }))
+  const wo_number = computed(() => (main.getByType({ type: 'workorders' })?.length || 0) + 1700)
   let watcher
 
   function getWatcher() {

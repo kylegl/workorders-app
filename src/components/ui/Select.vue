@@ -144,7 +144,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
     >
       <template v-if="!disabled" #after>
         <button>
-          <Icon class="i-fa:chevron-down m-auto" @click="toggleFocus()" mx2/>
+          <Icon class="i-fa:chevron-down m-auto" mx2 @click="toggleFocus()" />
         </button>
       </template>
       <template v-if="validationError" #error>
@@ -160,7 +160,7 @@ const toggleFocus = () => focus ? handleBlur() : handleFocus()
             flex gap-x-2 p-2 justify-between
             border="~ base"
             :class="[isActive(index) ? 'bg-base' : 'input-base',
-            isLastIdx(index) ? 'rounded-b' : '']"
+                     isLastIdx(index) ? 'rounded-b' : '']"
             in_out
             @mousedown="handleClick(item)"
             @mouseover="handleHover(index)"

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useWoStore } from '~/stores/wo/useWoStore'
-import { woStatuses } from '~/stores/wo/constants'
-
 const { wo, state } = storeToRefs(useWoStore())
 </script>
 
@@ -15,9 +12,9 @@ const { wo, state } = storeToRefs(useWoStore())
       </div>
 
       <section class="flex gap-x-4">
-        <ProjectInfo v-model:workorder="wo" :disabled="state.disabled" bg-3/>
+        <ProjectInfo v-model:workorder="wo" :disabled="state.disabled" bg-2/>
 
-        <Card w="1/2" flex="~ col" gap4 bg-3>
+        <Card w="1/2" flex="~ col" gap4 bg-2>
           <h3 class="text-h4">
             Work Order Info
           </h3>
@@ -35,7 +32,7 @@ const { wo, state } = storeToRefs(useWoStore())
       </section>
 
       <section>
-        <Card w-full flex="~ col" gap4 bg-3>
+        <Card w-full flex="~ col" gap4 bg-2>
           <div text-h5>
             Description
           </div>

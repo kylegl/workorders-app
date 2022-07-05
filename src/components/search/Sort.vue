@@ -47,9 +47,13 @@ const active = (key: SortKey) => key.isActive ? 'btn-active' : 'btn-inactive'
       @click="toggleSort(key)"
     >
       {{ key.name }}
-      <Icon
+      <Icon v-if="!key.isString"
         i-carbon:arrow-down text-xl my-auto text-fg-muted in_out
         :class="{ 'rotate-180': key.isReverse, 'rotate-0': !key.isReverse }"
+      />
+      <Icon v-if="key.isString"
+        text-xl my-auto text-fg-muted in_out
+        :class="{ 'i-icons8:alphabetical-sorting-2 rotate-360': key.isReverse, 'i-icons8:alphabetical-sorting  rotate-0': !key.isReverse }"
       />
     </Button>
   </div>

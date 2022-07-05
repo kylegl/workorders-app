@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { mainModule } from 'process'
-import { useTaskStore } from '~/stores/tasks/useTaskStore'
-import { useWoStore } from '~/stores/wo/useWoStore'
+
 const { wo, prevWo } = storeToRefs(useWoStore())
 const { task, id } = storeToRefs(useTaskStore())
 const { loadTask } = useTaskStore()
@@ -60,7 +58,7 @@ const changeLineItem = () => {
 
     <section w-full flex="~ col" bg-orange-300 p4>
       <div
-        w-full min-h-25 rounded-sm flex gap2
+        w-full min-h-25 rounded flex gap2
         bg-black
       >
         <div flex="~ col" w-50 bg-red shrink-0 />
@@ -83,7 +81,7 @@ const changeLineItem = () => {
 
             <div truncate min-w-0>
               <span>Job Name</span>
-              <div inline-block i-carbon:home text-2xl/>
+              <div inline-block i-carbon:home text-2xl />
               <span>Such preserved spaces take up space and do not hang, and thus affect the box's intrinsic sizes (min-content size and max-content size).</span>
             </div>
             <div shrink-0 ml-auto>

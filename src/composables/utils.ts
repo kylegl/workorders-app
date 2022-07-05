@@ -1,5 +1,6 @@
 import type { WatchWithFilterOptions } from '@vueuse/core'
 import type { WatchCallback } from 'vue'
+import * as short from 'short-uuid'
 import type { ErrorWithMessage, TableKey, Version } from '~/types'
 import { mutationValidator } from '~/types'
 import { Mutation, Query } from '~/api/index'
@@ -60,3 +61,17 @@ export async function mutation(table: string, action: string, data?: TableRow, v
   const res = await Mutation(mutation, versions, action)
   return res
 }
+
+export const useUid = () => short.generate()
+
+export function getStatusColor(status: string, startDate: number | null | undefined, employeeId: string | null | undefined) {
+  const withinAWeek = tsWithin(startDate, -7)
+
+  if (status === 'Upcoming' && withinAWeek && employeeId)
+    status = 'warning'
+  if (status === 'Upcoming' && withinAWeek && !employeeId)
+    status = 'danger'
+
+  return statusColors[status as keyof typeof statusColors]
+}
+

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Lineitem, Move } from '~/types'
-import { useWoStore } from '~/stores/wo/useWoStore'
-import { useTaskStore } from '~/stores/tasks/useTaskStore'
+
 const { data } = storeToRefs(useMainStore())
 const { getByKeyValue } = useMainStore()
 const { wo, state } = storeToRefs(useWoStore())
@@ -31,7 +30,7 @@ const moveTask = (move: Move) => {
       <h3 text-h3>
         Line Items
       </h3>
-      <Button @click="createTask(tasks?.length + 1)" btn-primary>
+      <Button btn-primary @click="createTask(tasks?.length + 1)">
         <Icon i-fa-solid:plus text-2xl />
         Line Item
       </Button>
@@ -47,7 +46,7 @@ const moveTask = (move: Move) => {
     </section>
 
     <template v-if="taskState.showModal">
-      <EditTask :task="task" />
+      <EditTask v-if="task" :task="task" />
     </template>
   </div>
 </template>

@@ -1,31 +1,28 @@
 <script setup lang="ts">
 import type { ParsedWorkorderType } from '~/types'
-import { useWoStore } from '~/stores/wo/useWoStore'
 const { workorder } = defineProps<{ workorder: ParsedWorkorderType }>()
 const { loadWo } = useWoStore()
 
-const startDate = $computed(() => shortDate(workorder?.start_date))
-const dueDate = $computed(() => shortDate(workorder?.due_date))
+const startDate = $computed(() => shortDate(workorder?.start_date) || 'Not Set')
+const dueDate = $computed(() => shortDate(workorder?.due_date) || 'Not Set')
+const dateString = $computed(() => startDate !== 'Not Set' && dueDate !== 'Not Set' ?`${startDate} - ${dueDate}` : 'Not Set')
 const job = $computed(() => workorder?.['FK|job_id'])
 const employee = $computed(() => workorder?.['FK|employee_id'])
 </script>
 
 <template>
   <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }" w-full>
-    <Card bg-1 text-muted @click="loadWo(workorder.id)">
+    <Card bg-1 text-norm @click="loadWo(workorder.id)">
       <div flex gap4 min-h-25 w-full>
         <!-- WORKORDER INFO -->
         <div
           flex="~ col" gap2 justify-center w-50 shrink-0
-          font-semibold
+          text-h5
         >
           <StatusIndicator :status="workorder.status" text-h4 />
-          <div
-            flex gap2 w-full items-center
-            text-sm
-          >
+          <div flex gap2 w-full items-center>
             <Icon i-carbon:calendar text-xl />
-            <span>{{ `${startDate} - ${dueDate}` }}</span>
+            <span>{{ dateString}}</span>
           </div>
           <div flex gap2 w-full>
             <Icon i-mdi:account-hard-hat-outline text-xl />
@@ -65,7 +62,7 @@ const employee = $computed(() => workorder?.['FK|employee_id'])
             </div>
           </div>
 
-          <div font-semibold my-auto line-clamp-3 v-html="parseDelta(workorder?.description)" />
+          <div text-h5 my-auto line-clamp-3 v-html="parseDelta(workorder?.description)" />
         </div>
       </div>
     </Card>
