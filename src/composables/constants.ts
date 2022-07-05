@@ -14,6 +14,11 @@ export const jobSearchKeys = [
   'FK|client_id.name',
 ]
 
+export const jobSortKeys = [
+  { name: 'Start Date', key: 'start_date', isString: false, isActive: false, isReverse: false },
+  { name: 'Client', key: 'FK|client_id.name', isString: true, isActive: false, isReverse: false },
+]
+
 export const newTask = lineitemValidator.parse({
   id: '',
   workorder_id: '',
