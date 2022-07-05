@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Lineitem, Move } from '~/types'
-import { useTaskStore } from '~/stores/tasks/useTaskStore'
-import { useWoStore } from '~/stores/wo/useWoStore'
+
 const props = defineProps<{
   id: string
   idx: number

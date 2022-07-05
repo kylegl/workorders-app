@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useTaskStore } from '~/stores/tasks/useTaskStore'
 const { task } = storeToRefs(useTaskStore())
 const { saveTask } = useTaskStore()
 const richTextFields = ['description', 'details', 'quantity', 'notes']
@@ -19,7 +18,7 @@ onClickOutside(modal, () => saveTask())
       ref="modal"
       flex="~ col" gap4 m16 p4
       min-w-100
-      border="~ base 3" bg-1
+      border-base bg-1
       w="1/2"
     >
       <div flex justify-between>

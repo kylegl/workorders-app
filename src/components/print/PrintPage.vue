@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { usePrintStore } from '~/stores/wo/usePrintStore'
 const { getByKeyValue } = useMainStore()
 const { printValues } = storeToRefs(usePrintStore())
 
