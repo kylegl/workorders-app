@@ -18,7 +18,6 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
       Work Orders
     </h1>
     <section flex="~ col" gap4 w-full>
-<<<<<<< HEAD
       <div flex justify-between>
         <Search
           v-model:results="searchResults" :data="rawWos"
@@ -33,28 +32,13 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
           Work Order
         </Button>
       </div>
-=======
-      <Search
-        v-model:results="searchResults" :data="rawJobs"
-        :keys="jobSearchKeys"
-        w="1/2"
-        min-w-xs
-        max-w-75
-      />
->>>>>>> c9dda15885ed1e790739e2ba6c9f305a60b48e0a
 
       <div flex gap2 items-center>
         <Icon i-mdi:filter text-2xl my-auto />
         <div flex gap2 w-full flex-wrap>
-<<<<<<< HEAD
           <Filter v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" flex gap2 />
 
           <Sort v-if="filteredWos" v-model:sortedList="sortedWos" :list="filteredWos" :keys="woSortKeys" flex gap2 />
-=======
-          <Filter v-model:filteredData="filteredJobs" :filter-list="jobFilters" :data="jobs" flex gap2 />
-
-          <Sort v-if="filteredJobs" v-model:sortedList="sortedJobs" :list="filteredJobs" :keys="jobSortKeys" flex gap2 />
->>>>>>> c9dda15885ed1e790739e2ba6c9f305a60b48e0a
         </div>
       </div>
 

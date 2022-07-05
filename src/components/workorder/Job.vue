@@ -25,8 +25,11 @@ const contact = $computed(() => job?.['FK|contact_id'])
           </div>
         </div>
 
+<<<<<<< HEAD
         <Divider w=".25" />
 
+=======
+>>>>>>> c9dda15885ed1e790739e2ba6c9f305a60b48e0a
         <!-- INFO -->
         <div flex="~ col" gap2 w-full overflow-hidden>
           <div flex gap4 text-h4 items-baseline>
