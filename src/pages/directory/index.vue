@@ -1,16 +1,13 @@
 <script setup lang="ts">
 const { data, loading, error } = storeToRefs(useMainStore())
 const { getByType } = useMainStore()
+const { state } = storeToRefs(useEmployeeStore())
+const { addEmployee, saveEmployee, editEmployee } = useEmployeeStore()
 
 const employees = $computed(() => {
   const result = getByType({ type: 'employees' })
   return result
 })
-const showModal = $ref(false)
-
-const addEmployee = () => {
-  showModal = true
-}
 </script>
 
 <template>
@@ -26,7 +23,7 @@ const addEmployee = () => {
         </Button>
       </div>
 
-      <Card v-for="employee in employees" :key="employee.id" flex gap4 w-full>
+      <Card v-for="employee in employees" :key="employee.id" flex gap4 w-full @click="editEmployee(employee.id)">
         <div flex="~ col" w-38>
           <div>Name</div>
           <div text-h5>
@@ -51,10 +48,10 @@ const addEmployee = () => {
         </div>
       </Card>
     </section>
-    <!-- <template v-if="showModal">
-      <div absolute >
-              o
-      </div>
-    </template> -->
+    <template v-if="state.showModal">
+      <Modal @close="saveEmployee">
+        <EditEmployee />
+      </Modal>
+    </template>
   </div>
 </template>

@@ -2,9 +2,6 @@
 const { task } = storeToRefs(useTaskStore())
 const { saveTask } = useTaskStore()
 const richTextFields = ['description', 'details', 'quantity', 'notes']
-
-const modal = ref<HTMLDivElement>()
-onClickOutside(modal, () => saveTask())
 </script>
 
 <template>

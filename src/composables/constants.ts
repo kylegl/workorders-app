@@ -1,4 +1,4 @@
-import { lineitemValidator, workorderValidator } from '~/types'
+import { employeeValidator, lineitemValidator, workorderValidator } from '~/types'
 
 export const jobFilters = [
   { name: 'Active', key: 'status', value: 'Active', isActive: true },
@@ -92,3 +92,12 @@ export const statusColors = {
   'danger': 'bg-red-500/80 shadow-red-500/50',
   'warning': 'bg-yellow-500/80 shadow-yellow-500/50',
 }
+
+export const newEmployee = employeeValidator.parse({
+  id: '',
+  name: '',
+  email: '',
+  phone: '',
+})
+
+export const employeePositions = ['Manager', 'Painter', 'Supervisor']

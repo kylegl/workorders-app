@@ -15,6 +15,7 @@ declare module '@vue/runtime-core' {
     Datalist: typeof import('./src/components/ui/Datalist.vue')['default']
     DatePicker: typeof import('./src/components/ui/DatePicker.vue')['default']
     Divider: typeof import('./src/components/ui/Divider.vue')['default']
+    EditEmployee: typeof import('./src/components/workorder/EditEmployee.vue')['default']
     Editor: typeof import('./src/components/Editor/Editor.vue')['default']
     EditTask: typeof import('./src/components/workorder/Task/EditTask.vue')['default']
     EmployeePicker: typeof import('./src/components/workorder/pickers/EmployeePicker.vue')['default']
