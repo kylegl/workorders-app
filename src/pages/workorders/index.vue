@@ -15,7 +15,9 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
 <template>
   <div flex="~ col" gap8 w-full>
     <h1 text-h3>
-      Work Orders
+      <router-link :to="{ name: 'workorders-id', params: { id: '25d6c02b-d1c0-4e48-b890-dc0596f81098' } }">
+        Work Orders
+      </router-link>
     </h1>
     <section flex="~ col" gap4 w-full>
       <div flex justify-between>
@@ -27,7 +29,7 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
           max-w-75
         />
 
-        <Button @click="createWo">
+        <Button btn-primary @click="createWo">
           <Icon i-fa-solid:plus text-2xl />
           Work Order
         </Button>
@@ -42,7 +44,7 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
         </div>
       </div>
 
-      <Divider w="full" h=".5" />
+      <Divider w="full" h=".25" />
     </section>
 
     <section>
@@ -60,4 +62,3 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
     </section>
   </div>
 </template>
-

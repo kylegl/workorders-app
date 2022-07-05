@@ -63,3 +63,15 @@ export async function mutation(table: string, action: string, data?: TableRow, v
 }
 
 export const useUid = () => short.generate()
+
+export function getStatusColor(status: string, startDate: number | null | undefined, employeeId: string | null | undefined) {
+  const withinAWeek = tsWithin(startDate, -7)
+
+  if (status === 'Upcoming' && withinAWeek && employeeId)
+    status = 'warning'
+  if (status === 'Upcoming' && withinAWeek && !employeeId)
+    status = 'danger'
+
+  return statusColors[status as keyof typeof statusColors]
+}
+

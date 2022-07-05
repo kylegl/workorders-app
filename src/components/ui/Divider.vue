@@ -1,3 +1,3 @@
 <template>
-  <div bg-3  />
+  <div bg-3 op60  />
 </template>

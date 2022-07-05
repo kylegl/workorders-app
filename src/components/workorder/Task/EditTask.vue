@@ -32,7 +32,7 @@ onClickOutside(modal, () => saveTask())
           {{ key }}
         </div>
         <div>
-          <Editor v-model:content="task[key]" :data="task[key]" />
+          <Editor v-model:content="task[key]" :data="task?.[key]" />
         </div>
       </div>
       <div mr-auto>

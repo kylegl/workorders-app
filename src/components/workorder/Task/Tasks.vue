@@ -46,7 +46,7 @@ const moveTask = (move: Move) => {
     </section>
 
     <template v-if="taskState.showModal">
-      <EditTask :task="task" />
+      <EditTask v-if="task" :task="task" />
     </template>
   </div>
 </template>

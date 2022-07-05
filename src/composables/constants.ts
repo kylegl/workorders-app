@@ -75,3 +75,15 @@ export const woSearchKeys = [
 
 export const billingOptions = ['T&M', 'Fixed']
 export const jobTypeOptions = ['Finishing', 'Painting']
+
+export const statusColors = {
+  'Upcoming': 'bg-blue-500/80 shadow-blue-500/50',
+  'In-progress': 'bg-green-500/80 shadow-green-500/50',
+  'Active': 'bg-green-500/80 shadow-green-500/50',
+  'Cancelled': 'bg-bg-drk-c/50 shadow-bg-drk-c-/50',
+  'On-hold': 'bg-orange-500/80 shadow-orange-500/50',
+  'Hold': 'bg-orange-500/80 shadow-orange-500/50',
+  'Completed': 'bg-bg-drk-c shadow-bg-drk-c',
+  'danger': 'bg-red-500/80 shadow-red-500/50',
+  'warning': 'bg-yellow-500/80 shadow-yellow-500/50',
+}

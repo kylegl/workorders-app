@@ -881,8 +881,8 @@
 }
 .ql-toolbar.ql-snow {
   background-color: #373737;
-  border: 3px solid #18181b;
-  border-radius: 4px 4px 0px 0px;
+  border: 1px solid #18181b;
+  border-radius: 2px 2px 0px 0px;
   box-sizing: border-box;
   font-family: 'Titillium Web', 'Helvetica', 'Arial', sans-serif;
   padding: 8px;

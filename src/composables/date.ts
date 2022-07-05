@@ -25,7 +25,7 @@ export const unixToDate = (timestamp: number): Date | string => {
 
 export const dateToUnix = (date: Date | string): Date | number | undefined => +new Date(date)
 
-export const durationBoolean = (timestamp): boolean => {
+export const tsWithin = (timestamp: number | null | undefined, days: number): boolean => {
   if (!timestamp) return false
   const start = Temporal.Instant
     .fromEpochMilliseconds(timestamp)
@@ -39,8 +39,7 @@ export const durationBoolean = (timestamp): boolean => {
 
   const timeUntil = start.until(now, { largestUnit: 'days' })
   const duration = Temporal.Duration.from(timeUntil).total({ unit: 'days' })
-  const withinOneWeek = duration < 0 && duration > -7
-  return withinOneWeek
+  return duration < 0 && duration > days
 }
 
 export function getTimeInstant(ts: number | undefined | null) {

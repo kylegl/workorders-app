@@ -32,9 +32,8 @@ const enter = () => {
     <div
       flex gap-x-2 max-h-fit shadow-md
       input-base
-      border="~ base 3" rounded
+      border-base rounded
       in_out
-      focus-within=" border-fg-lit-norm border-3"
     >
       <slot name="before" />
       <input

@@ -31,7 +31,7 @@ const employee = $computed(() => workorder?.['FK|employee_id'])
           </div>
         </div>
 
-        <Divider w="1" />
+        <Divider w=".25" />
 
         <!-- INFO -->
         <div flex="~ col" gap2 w-full overflow-hidden>

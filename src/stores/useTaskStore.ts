@@ -45,7 +45,7 @@ export const useTaskStore = defineStore('taskStore', () => {
     main.deleteById({ id, table: 'line_items' })
   }
 
-  function setId(taskId) {
+  function setId(taskId: string) {
     id.value = taskId
     getWatcher()
   }

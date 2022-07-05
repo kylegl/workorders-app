@@ -46,6 +46,8 @@ const downArrow = $computed(() => {
 <template>
   <Card
     v-if="task"
+    @click="editTask(task.id)"
+    bg-2
     relative
   >
     <div
@@ -104,7 +106,7 @@ const downArrow = $computed(() => {
     <div absolute flex="~ col" gap1 left="-6" top-0 bottom-0 justify-center>
       <button v-if="upArrow" i-carbon:caret-up icon-btn @click="moveTask(task, -1)" />
       <button i-ion:edit icon-btn @click="editTask(task.id)" />
-      <button i-carbon:trash-can icon-btn @click="deleteTask" />
+      <button i-carbon:trash-can icon-btn @click="deleteTask(task.id)" />
       <button v-if="downArrow" i-carbon:caret-down icon-btn @click="moveTask(task, 1)" />
     </div>
   </Card>
