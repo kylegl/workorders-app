@@ -19,10 +19,20 @@ const filteredJobs = $ref([])
         v-model:results="searchResults" :data="rawJobs"
         :keys="jobSearchKeys"
         w="1/2"
+        min-w-xs
         max-w-75
       />
 
-      <Filter v-model:filteredData="filteredJobs" :filter-list="jobFilters" :data="jobs" />
+      <div flex gap2 items-center>
+        <Icon i-mdi:filter text-2xl my-auto />
+        <div flex gap2 w-full flex-wrap>
+          <Filter v-model:filteredData="filteredJobs" :filter-list="jobFilters" :data="jobs" flex gap2 />
+
+          <Sort v-if="filteredJobs" v-model:sortedList="sortedJobs" :list="filteredJobs" :keys="jobSortKeys" flex gap2 />
+        </div>
+      </div>
+
+      <Divider w="full" h=".25" />
     </section>
 
     <section>

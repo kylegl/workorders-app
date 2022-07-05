@@ -15,9 +15,7 @@ const sortedWos = $ref<ParsedWorkorderType[]>()
 <template>
   <div flex="~ col" gap8 w-full>
     <h1 text-h3>
-      <router-link :to="{ name: 'workorders-id', params: { id: '25d6c02b-d1c0-4e48-b890-dc0596f81098' } }">
-        Work Orders
-      </router-link>
+      Work Orders
     </h1>
     <section flex="~ col" gap4 w-full>
       <div flex justify-between>
