@@ -56,7 +56,7 @@ const employees = $computed(() => {
       </Card>
     </section>
     <template v-if="state.showModal">
-      <Modal @close="saveEmployee">
+      <Modal @close="saveEmployee" border-2 dark:border-fg-drk-subtle>
         <EditEmployee />
       </Modal>
     </template>

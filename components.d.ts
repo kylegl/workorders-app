@@ -5,6 +5,7 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Assigned: typeof import('./src/components/workorder/card/Assigned.vue')['default']
     BillTypePicker: typeof import('./src/components/workorder/pickers/BillTypePicker.vue')['default']
     Button: typeof import('./src/components/ui/Button.vue')['default']
     Card: typeof import('./src/components/ui/Card.vue')['default']
@@ -23,6 +24,7 @@ declare module '@vue/runtime-core' {
     Icon: typeof import('./src/components/ui/Icon.vue')['default']
     Input: typeof import('./src/components/ui/Input.vue')['default']
     Job: typeof import('./src/components/workorder/Job.vue')['default']
+    JobDates: typeof import('./src/components/workorder/card/JobDates.vue')['default']
     JobPicker: typeof import('./src/components/workorder/pickers/JobPicker.vue')['default']
     JobTypePicker: typeof import('./src/components/workorder/pickers/JobTypePicker.vue')['default']
     Modal: typeof import('./src/components/ui/Modal.vue')['default']

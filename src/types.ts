@@ -1,4 +1,3 @@
-import { type } from 'os'
 import { z } from 'zod'
 
 type Id = string | number
@@ -214,6 +213,8 @@ export const contactValidator = z.object({
   'FK|client_id': stringOrUndefined,
   'phone': numberOrString,
 })
+
+export type ContactType = z.infer<typeof contactValidator>
 
 export const clientValidator = z.object({
   id: z.string(),

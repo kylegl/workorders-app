@@ -4,8 +4,8 @@ const { saveEmployee } = useEmployeeStore()
 </script>
 
 <template>
-  <div flex="~ col" gap4 w-full dark:border-fg-drk-subtle>
-    <div flex justify-between>
+  <div flex="~ col" gap4 w-full >
+    <div flex justify-between >
       <div text-h4>
         Edit Employee
       </div>

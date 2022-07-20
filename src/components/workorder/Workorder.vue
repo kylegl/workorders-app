@@ -20,19 +20,16 @@ const client = $computed(() => workorder?.['FK|client_id'])
           text-h5
         >
           <StatusIndicator :status="workorder.status" text-h4 />
-          <div flex gap2 w-full items-center>
-            <Icon i-ion:calendar-outline text-xl :class="{ 'text-red': !startDate && !dueDate }" />
+          <JobDates :has-dates="!!startDate || !!dueDate">
             <span v-if="startDate || dueDate" flex gap=".5" items-center>
               <div v-if="startDate">{{ startDate }}</div>
               <X v-else />
               <div i-ion:arrow-right-b text-muted text-base />
               <div v-if="dueDate">{{ dueDate }}</div>
             </span>
-          </div>
-          <div flex gap2 w-full items-center>
-            <Icon i-lucide:hard-hat text-xl :class="{ 'text-red': !employee?.name }" />
-            <span v-if="employee?.name">{{ employee?.name }}</span>
-          </div>
+          </JobDates>
+
+          <Assigned :is-assigned="!!employee" :person="employee" />
         </div>
 
         <Divider w=".25" />
