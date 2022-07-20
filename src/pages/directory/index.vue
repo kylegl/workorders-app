@@ -11,20 +11,25 @@ const employees = $computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-4">
-    <section class="flex flex-col gap-y-4">
-      <div flex justify-between>
-        <div class="text-h4">
-          Employees
-        </div>
-        <Button @click="addEmployee">
-          <Icon i-fa-solid:plus text-2xl />
-          Employee
-        </Button>
+  <div flex="~ col" gap4>
+    <div flex justify-between>
+      <div class="text-h3">
+        Employees
       </div>
+      <Button btn-primary @click="addEmployee">
+        <Icon i-fa-solid:plus text-2xl />
+        Employee
+      </Button>
+    </div>
 
-      <Card v-for="employee in employees" :key="employee.id" flex gap4 w-full @click="editEmployee(employee.id)">
-        <div flex="~ col" w-38>
+    <Divider w-full h=".25" />
+    <section flex="~ col" gap2>
+      <Card
+        v-for="employee in employees" :key="employee.id"
+        bg-1
+        @click="editEmployee(employee.id)"
+      >
+        <div flex="~ col" w-38 gap2>
           <div>Name</div>
           <div text-h5>
             {{ employee.name }}
@@ -36,14 +41,16 @@ const employees = $computed(() => {
             {{ employee.position }}
           </div>
         </div>
+        <div flex="~ col" gap=".5" justify-between w-40>
+          <div>Phone</div>
+          <div text-h5>
+            {{ employee?.phone }}
+          </div>
+        </div>
         <div flex="~ col" gap=".5" justify-between w-50>
           <div>Email</div>
           <div text-h5>
             {{ employee?.email }}
-          </div>
-          <div>Phone</div>
-          <div text-h5>
-            {{ employee?.phone }}
           </div>
         </div>
       </Card>

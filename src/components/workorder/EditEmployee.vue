@@ -4,7 +4,7 @@ const { saveEmployee } = useEmployeeStore()
 </script>
 
 <template>
-  <div flex="~ col" gap4 w-full>
+  <div flex="~ col" gap4 w-full dark:border-fg-drk-subtle>
     <div flex justify-between>
       <div text-h4>
         Edit Employee
@@ -20,7 +20,7 @@ const { saveEmployee } = useEmployeeStore()
     </div>
 
     <div>
-      <Select v-model="employee.position" :list="employeePositions" label="Position"/>
+      <Select v-model="employee.position" :list="employeePositions" label="Position" />
 
       <div>
         <div text-h5>
@@ -35,11 +35,10 @@ const { saveEmployee } = useEmployeeStore()
         </div>
         <Input v-model="employee.phone" />
       </div>
-
-      <Button m-auto hover="text-flip bg-green" @click="saveEmployee">
-        <Icon i-fa-solid:plus text-2xl />
-        Add
-      </Button>
     </div>
+    <Button m-auto hover="text-flip bg-green" @click="saveEmployee">
+      <Icon i-fa-solid:plus text-2xl />
+      Add
+    </Button>
   </div>
 </template>

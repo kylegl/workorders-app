@@ -41,6 +41,7 @@ declare module '@vue/runtime-core' {
     Tasks: typeof import('./src/components/workorder/Task/Tasks.vue')['default']
     Workorder: typeof import('./src/components/workorder/Workorder.vue')['default']
     WorkorderInfo: typeof import('./src/components/workorder/WorkorderInfo.vue')['default']
+    X: typeof import('./src/components/ui/X.vue')['default']
   }
 }
 

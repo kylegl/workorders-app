@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const syncFromMainDB = () => {
   const DBValues = SpreadsheetApp.openById('1FY1m2zRekFtB8mfBlkS1WXvyQ-0V_AOq6EIiuGySXs8')
     .getSheetByName('DB')
@@ -143,3 +146,176 @@ const setSheetValues = ({ sheetInterface }) => {
 
   sheetInterface.getRange().setValues(sheetInterface.createValues())
 }
+
+const createWos = () => {
+  const employees = getSheetInterface({ sheetName: 'employees' }).getData()
+  const jobs = getSheetInterface({ sheetName: 'jobs' }).getData()
+  const wsData = getSheetInterface({ sheetName: 'ws-wos' }).getData()
+  const woInterface = getSheetInterface({ sheetName: 'workorders' })
+  const woData = woInterface.getData()
+
+  const jobNumsNotInDb = []
+
+  const newWos = wsData.map((entry) => {
+    const wo = { ...newWorkorder }
+    const { result: { jobId, clientId, bidId }, error } = checkJobNumber(entry, jobs)
+    const contactIds = checkContact(entry, clientId) ?? []
+    const { employeeId } = checkEmployee(entry, employees)
+
+    wo.id = Utilities.getUuid()
+    wo.wo_number = entry.wo_number
+    wo['FK|job_id'] = jobId
+    wo['FK|client_id'] = clientId
+    wo['FK|bid_id'] = bidId
+    wo['FK|contact_id'] = JSON.stringify([...contactIds])
+    wo['FK|employee_id'] = employeeId
+    wo.start_date = parseDateStringToUnix(entry.start_date)
+    wo.end_date = parseDateStringToUnix(entry.end_date)
+    wo.description = parseStringToDelta(entry.description)
+    wo.status = entry.status || 'Upcoming'
+    wo.notes = parseStringToDelta(entry.notes)
+    wo.parking_info = parseStringToDelta(entry.parking_info)
+    wo.bill_type = entry.bill_type
+    wo.job_type = capFirst(entry.job_type)
+
+    if (Object.keys(error).length) jobNumsNotInDb.push(error)
+    return wo
+  })
+
+  console.log('no matching job nums', jobNumsNotInDb)
+  woInterface.setData([...woData, ...newWos])
+  setSheetValues({ sheetInterface: woInterface })
+}
+
+const checkJobNumber = (wo, jobs) => {
+  let result = { jobId: null, clientId: null, bidId: null }
+  let error = {}
+  // check for job number
+  if (wo.job_number) {
+    const job = jobs.find(job => job.job_number === wo.job_number)
+    if (job) {
+      result = {
+        jobId: job.id,
+        clientId: job['FK|client_id'],
+        bidId: job['FK|bid_id'],
+      }
+    }
+
+    if (!job) {
+      error = {
+        woNum: wo.wo_number,
+        jobNum: wo.job_number,
+      }
+    }
+  }
+
+  return { result, error }
+}
+
+const checkContact = (wo, clientId) => {
+  const contactsInterface = getSheetInterface({ sheetName: 'contacts' })
+  const existingContacts = contactsInterface.getData()
+  const res = []
+
+  if (wo.contact) {
+    // parse contact value
+    const regex = /(?<name>[a-z ,.'-]+)?(?<number>[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6})(?<ext>[x+][0-9]+)?/gmi
+    const matches = [...wo.contact.matchAll(regex)]
+
+    const contacts = matches.map((match) => {
+      const { name, number, ext } = match.groups
+      return { name, number, ext }
+    })
+
+    // check contact name against existing, if exists return id, if not create new contact
+    contacts.forEach((contact) => {
+      const existingContact = existingContacts.find(item => normalize(item.name) === normalize(contact.name))
+      if (existingContact)
+        res.push(existingContact.id)
+
+      if (!existingContact) {
+        const phone = contact.ext ? `${contact.number} ${contact.ext}` : contact.number
+        const newContact = {
+          'id': Utilities.getUuid(),
+          'FK|client_id': clientId,
+          'name': titleCase(contact.name),
+          'phone': phone,
+          'email': '',
+        }
+
+        contactsInterface.setData([...existingContacts, newContact])
+        setSheetValues({ sheetInterface: contactsInterface })
+
+        res.push(newContact.id)
+      }
+    })
+  }
+  return res
+}
+
+const checkEmployee = (wo, employees) => {
+  const res = { employeeId: null }
+  // check for employee
+  if (wo.employee) {
+    const employee = employees.find(employee => normalize(employee.name) === normalize(wo.employee))
+    // if exists, check for match
+    if (employee)
+      res.employeeId = employee.id
+    if (!employee)
+      console.log('Could not find employee for WO: ', wo.wo_number)
+  }
+
+  return res
+}
+
+const titleCase = (string) => {
+  if (!string) return
+
+  const arr = string.split(' ')
+  const formatted = arr.map(word => capFirst(word))
+  return formatted.join(' ')
+}
+
+const normalize = (data) => {
+  if (typeof data !== 'string') return
+  return data.toLowerCase().trim().replace(/\s\s+/g, ' ')
+}
+
+const parseDateStringToUnix = (date) => {
+  if (!date) return
+  // get unix from date object
+  const dateObj = new Date(date)
+  return dateObj.getTime()
+}
+
+const parseStringToDelta = (string) => {
+  if (!string) return ''
+  return JSON.stringify({ ops: [{ insert: `${string}\n` }] })
+}
+
+const capFirst = (string) => {
+  if (!string) return
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+}
+
+const newWorkorder = {
+  'id': '',
+  'wo_number': null,
+  'FK|job_id': '',
+  'FK|bid_id': '',
+  'FK|client_id': '',
+  'FK|contact_id': '',
+  'FK|employee_id': '',
+  'start_date': null,
+  'due_date': null,
+  'description': '',
+  'parking_info': '',
+  'notes': '',
+  'bill_type': '',
+  'job_type': '',
+  'created_at': +new Date(),
+  'updated_at': null,
+  'closed_at': null,
+  'status': 'Upcoming',
+}
+

@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'development') {
       md="static"
     />
     <router-view
-      class="w-full max-w-7xl mx-auto p-8"
+      class="w-full max-w-6xl mx-auto p-8"
     />
   </main>
 </template>

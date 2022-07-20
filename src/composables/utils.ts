@@ -1,6 +1,6 @@
 import type { WatchWithFilterOptions } from '@vueuse/core'
 import type { WatchCallback } from 'vue'
-import * as short from 'short-uuid'
+import { nanoid } from 'nanoid'
 import type { ErrorWithMessage, TableKey, Version } from '~/types'
 import { mutationValidator } from '~/types'
 import { Mutation, Query } from '~/api/index'
@@ -62,7 +62,7 @@ export async function mutation(table: string, action: string, data?: TableRow, v
   return res
 }
 
-export const useUid = () => short.generate()
+export const useUid = () => nanoid()
 
 export function getStatusColor(status: string, startDate: number | null | undefined, employeeId: string | null | undefined) {
   const withinAWeek = tsWithin(startDate, -7)
