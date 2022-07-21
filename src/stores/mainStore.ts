@@ -125,23 +125,23 @@ export const useMainStore = defineStore('main', {
 })
 
 // Types
-interface MutationParams {
+export interface MutationParams {
   id?: string
   data?: TableRowType
   table: TableKey
   localOnly?: boolean
 }
-interface GetByIdParams {
+export interface GetByIdParams {
   id: string
   type: TableKey
   getParsed?: boolean
 }
-interface GetByTypeParams {
+export interface GetByTypeParams {
   type: TableKey
   getParsed?: boolean
 }
 
-interface GetKeyParams {
+export interface GetKeyParams {
   key: string
   type: TableKey
   value: string | number | boolean

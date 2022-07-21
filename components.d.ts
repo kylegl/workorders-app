@@ -6,6 +6,7 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Assigned: typeof import('./src/components/workorder/card/Assigned.vue')['default']
+    BackButton: typeof import('./src/components/ui/BackButton.vue')['default']
     BillTypePicker: typeof import('./src/components/workorder/pickers/BillTypePicker.vue')['default']
     Button: typeof import('./src/components/ui/Button.vue')['default']
     Card: typeof import('./src/components/ui/Card.vue')['default']
@@ -30,6 +31,7 @@ declare module '@vue/runtime-core' {
     Modal: typeof import('./src/components/ui/Modal.vue')['default']
     Nav: typeof import('./src/components/Nav/Nav.vue')['default']
     NavItem: typeof import('./src/components/Nav/NavItem.vue')['default']
+    Popup: typeof import('./src/components/ui/Popup.vue')['default']
     PrintPage: typeof import('./src/components/print/PrintPage.vue')['default']
     ProjectInfo: typeof import('./src/components/workorder/ProjectInfo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

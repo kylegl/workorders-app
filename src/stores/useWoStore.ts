@@ -1,54 +1,42 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import type { MutationParams } from './mainStore'
 import type { JobParsedType, WorkorderType } from '~/types'
 
 export const useWoStore = defineStore('woStore', () => {
   const main = useMainStore()
   const router = useRouter()
   const state = reactive({
-    disabled: false,
+    saved: false,
     dirty: false,
+    new: false,
   })
   const id = ref('')
   const wo = computed((): WorkorderType => main.getById({ id: id.value, type: 'workorders' }))
   const wo_number = computed(() => (main.getByType({ type: 'workorders' })?.length || 0) + 1700)
   let watcher
 
-  function getWatcher() {
-    const stop = watch(wo.value, () => {
-      state.dirty = true
-    })
-
-    watcher = stop
-  }
-
   function createWo(job: JobParsedType) {
-    state.disabled = false
     const newWo = { ...newWorkorder }
     newWo.id = useUid()
     newWo.wo_number = wo_number.value
+
     if (job) {
       newWo['FK|job_id'] = job.id
       newWo['FK|bid_id'] = job['FK|bid_id']?.id
       newWo['FK|client_id'] = job['FK|client_id'].id
       newWo['FK|contact_id'] = job['FK|contact_id']?.id
     }
+
     main.addItem({ data: newWo, table: 'workorders' })
-    setId(newWo.id)
-    const params = { id: newWo.id }
-    router.push({ name: 'workorders-id', params })
-  }
 
-  function setId(woId: string) {
-    state.disabled = false
-    state.dirty = false
-
-    id.value = woId
-    getWatcher()
+    state.new = true
+    loadWo(newWo.id)
+    router.push({ name: 'workorders-id', params: { id: newWo.id } })
   }
 
   function saveWo() {
     try {
-      state.disabled = true
+      state.saved = true
       mutation('workorders', 'update', wo.value, main.versions)
       state.dirty = false
     }
@@ -58,15 +46,52 @@ export const useWoStore = defineStore('woStore', () => {
   }
 
   function editWo(id: string) {
-    state.disabled = false
-    loadWo(id)
+    state.saved = false
+  }
+
+  function trash() {
+    let params: MutationParams = { data: wo.value, table: 'workorders' }
+
+    if (state.new && !state.dirty)
+      params = { ...params, localOnly: true }
+
+    main.deleteById(params)
+    close()
   }
 
   function loadWo(woId: string) {
     stop()
-    setId(woId)
+
+    state.saved = !state.new
+    state.dirty = false
+    id.value = woId
+
+    getWatcher()
   }
-  return { createWo, saveWo, loadWo, editWo, wo, state, watcher }
+
+  function safeToClose() {
+    const trash = Boolean(state.new && !state.dirty)
+
+    const close = Boolean(state.saved || (!state.new && !state.dirty))
+
+    return { trash, close }
+  }
+
+  function close() {
+    router.push({ path: '/' })
+    state.saved = false
+    state.dirty = false
+    state.new = false
+  }
+
+  function getWatcher() {
+    const stop = watch(wo.value, () => {
+      state.dirty = true
+    })
+
+    watcher = stop
+  }
+  return { createWo, saveWo, loadWo, editWo, trash, wo, state, watcher, safeToClose, close }
 })
 
 if (import.meta.hot)
