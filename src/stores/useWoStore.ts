@@ -45,7 +45,7 @@ export const useWoStore = defineStore('woStore', () => {
     }
   }
 
-  function editWo(id: string) {
+  function editWo() {
     state.saved = false
   }
 
