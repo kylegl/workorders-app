@@ -13,7 +13,7 @@ export default defineConfig({
     'bg-base': 'bg-bg-lit-c dark:bg-bg-drk-g',
     'bg-1': 'bg-bg-lit-a dark:bg-bg-drk-f',
     'bg-2': 'bg-bg-lit-b dark:bg-bg-drk-f',
-    'bg-3': 'bg-fg-lit-norm dark:bg-fg-drk-norm/5',
+    'bg-3': 'bg-bg-lit-c dark:bg-bg-drk-b',
     'border-base': 'border-fg-lit-norm dark:border-none border-1',
     'btn': 'p2 rounded shadow-md cursor-pointer disabled:cursor-default disabled:opacity-50 text-h5',
     'btn-active': 'btn-primary op100',

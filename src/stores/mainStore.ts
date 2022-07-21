@@ -106,11 +106,11 @@ export const useMainStore = defineStore('main', {
         this.loading = false
       }
     },
-    async deleteById({ data, table }: MutationParams) {
+    async deleteById({ data, table, localOnly }: MutationParams): Promise<void> {
       if (this.data?.[table])
         this.data[table] = this.data[table]!.filter((el: DataType) => el.id !== data.id)
-
-      const res = await mutation(table, 'delete', data, this.versions)
+      if (!localOnly)
+        mutation(table, 'delete', data, this.versions)
     },
     async addItem({ data, table }: MutationParams) {
       if (this.data?.[table])
@@ -129,6 +129,7 @@ interface MutationParams {
   id?: string
   data?: TableRowType
   table: TableKey
+  localOnly?: boolean
 }
 interface GetByIdParams {
   id: string

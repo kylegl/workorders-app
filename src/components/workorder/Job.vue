@@ -7,7 +7,7 @@ const contact = $computed((): ContactType => job?.['FK|contact_id'])
 
 <template>
   <router-link :to="{ name: 'jobs-id', params: { id: job.id } }" w-full>
-    <Card bg-1 text-norm>
+    <Card bg-1 flex text-norm>
       <div flex gap4 min-h-25 w-full>
         <!-- WORKORDER INFO -->
         <div

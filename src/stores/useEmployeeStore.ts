@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import type { EmployeeType } from '~/types'
 import { employeeValidator } from '~/types'
 
 export const useEmployeeStore = defineStore('employeeStore', () => {
@@ -18,14 +19,20 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
     employee.id = useUid()
     main.addItem({ data: employee, table: 'employees' })
     setId(employee.id)
-    state.showModal = true
+    openModal()
   }
 
   function saveEmployee() {
-    const res = employeeValidator.safeParse(employee.value)
-    state.showModal = false
-    mutation('employees', 'update', employee.value, main.versions)
-    state.dirty = false
+    if (state.dirty) {
+      const res = employeeValidator.safeParse(employee.value)
+      mutation('employees', 'update', employee.value, main.versions)
+      state.dirty = false
+    }
+
+    if (!state.dirty)
+      main.deleteById({ data: employee.value, table: 'employees', localOnly: true })
+
+    closeModal()
   }
 
   function loadEmployee(employeeId: string) {
@@ -34,8 +41,8 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
   }
 
   function editEmployee(id: string) {
-    state.showModal = true
     loadEmployee(id)
+    openModal()
   }
 
   function deleteEmployee(id: string) {
@@ -54,6 +61,16 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
     })
 
     watcher.value = stop
+  }
+
+  function openModal() {
+    if (!state.showModal)
+      state.showModal = true
+  }
+
+  function closeModal() {
+    if (state.showModal)
+      state.showModal = false
   }
 
   return { employee, state, addEmployee, saveEmployee, loadEmployee, editEmployee, deleteEmployee, setId }

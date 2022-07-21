@@ -26,6 +26,7 @@ const employees = $computed(() => {
     <section flex="~ col" gap2>
       <Card
         v-for="employee in employees" :key="employee.id"
+        flex
         bg-1
         @click="editEmployee(employee.id)"
       >
@@ -56,7 +57,7 @@ const employees = $computed(() => {
       </Card>
     </section>
     <template v-if="state.showModal">
-      <Modal @close="saveEmployee" border-2 dark:border-fg-drk-subtle>
+      <Modal @close="saveEmployee">
         <EditEmployee />
       </Modal>
     </template>

@@ -12,7 +12,7 @@ const client = $computed(() => workorder?.['FK|client_id'])
 
 <template>
   <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }" w-full>
-    <Card bg-1 text-norm @click="loadWo(workorder.id)">
+    <Card flex bg-1 text-norm @click="loadWo(workorder.id)">
       <div flex gap4 min-h-25 w-full>
         <!-- WORKORDER INFO -->
         <div

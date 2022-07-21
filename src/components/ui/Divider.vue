@@ -1,3 +1,3 @@
 <template>
-  <div bg-3 op60  />
+  <div bg-fg-lit-norm dark:bg-fg-drk-norm="/5" op60  />
 </template>

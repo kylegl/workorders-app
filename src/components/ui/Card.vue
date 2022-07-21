@@ -4,7 +4,7 @@
 
 <template>
   <div
-    flex p3
+    p3
     shadow-md
     hover="shadow-sm" in_out
     rounded
