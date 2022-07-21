@@ -200,7 +200,7 @@ const searchResults = $computed(() => {
           v-for="(item, index) in searchResults" :key="item?.id"
           flex border="b base"
           in_out w-full p2
-          :class="[activeIndex === index ? 'bg-bg-d' : 'bg-2']"
+          :class="[activeIndex === index ? 'bg-base' : 'input-base']"
           @mousedown="handleClick(item)" @mouseover="handleHover(index)"
           @mouseleave="handleHover(-1)"
         >

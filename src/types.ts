@@ -1,4 +1,3 @@
-import { type } from 'os'
 import { z } from 'zod'
 
 type Id = string | number
@@ -65,7 +64,7 @@ const stringOrUndefined = z.union([z.nullable(z.string()), z.undefined()])
 
 const numberOrUndefined = z.union([z.nullable(z.number()), z.undefined()])
 
-const emailOrUndefined = z.union([z.nullable(z.string().email()), z.undefined()])
+const emailOrUndefined = z.union([z.nullable(z.string().email()), z.undefined(), z.literal('')])
 
 const numberOrString = z.union([stringOrUndefined, numberOrUndefined])
 
@@ -95,11 +94,15 @@ const castStringToNumber = z.preprocess(val => val === '' ? undefined : typeof v
 
 export const employeeValidator = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string({
+    required_error: 'Name is required',
+  }),
   email: emailOrUndefined,
   phone: numberOrString,
   position: stringOrUndefined,
 })
+
+export type EmployeeType = z.infer<typeof employeeValidator>
 
 export const incomingWorkorderValidator = z.object({
   'id': z.string(),
@@ -210,6 +213,8 @@ export const contactValidator = z.object({
   'FK|client_id': stringOrUndefined,
   'phone': numberOrString,
 })
+
+export type ContactType = z.infer<typeof contactValidator>
 
 export const clientValidator = z.object({
   id: z.string(),

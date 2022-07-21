@@ -15,7 +15,7 @@ const tasks = $computed(() => getByKeyValue({ key: 'FK|workorder_id', value: pri
             Client
           </h4>
           <div>
-            {{ printValues.client }}
+            {{ printValues?.client }}
           </div>
           <h4>
             Job # {{ printValues.job?.job_number }}
@@ -35,7 +35,7 @@ const tasks = $computed(() => getByKeyValue({ key: 'FK|workorder_id', value: pri
             Work Order Info
           </h3>
 
-          <h5>Assigned To: {{printValues.employee.name}}</h5>
+          <h5>Assigned To: {{printValues.employee?.name}}</h5>
 
           <div>Start Date:   {{ printValues.startDate }}</div>
 

@@ -3,16 +3,16 @@ import type { ParsedWorkorderType } from '~/types'
 const { workorder } = defineProps<{ workorder: ParsedWorkorderType }>()
 const { loadWo } = useWoStore()
 
-const startDate = $computed(() => shortDate(workorder?.start_date) || 'Not Set')
-const dueDate = $computed(() => shortDate(workorder?.due_date) || 'Not Set')
-const dateString = $computed(() => startDate !== 'Not Set' && dueDate !== 'Not Set' ?`${startDate} - ${dueDate}` : 'Not Set')
+const startDate = $computed(() => shortDate(workorder?.start_date))
+const dueDate = $computed(() => shortDate(workorder?.due_date))
 const job = $computed(() => workorder?.['FK|job_id'])
 const employee = $computed(() => workorder?.['FK|employee_id'])
+const client = $computed(() => workorder?.['FK|client_id'])
 </script>
 
 <template>
   <router-link :to="{ name: 'workorders-id', params: { id: workorder.id } }" w-full>
-    <Card bg-1 text-norm @click="loadWo(workorder.id)">
+    <Card flex bg-1 text-norm @click="loadWo(workorder.id)">
       <div flex gap4 min-h-25 w-full>
         <!-- WORKORDER INFO -->
         <div
@@ -20,24 +20,25 @@ const employee = $computed(() => workorder?.['FK|employee_id'])
           text-h5
         >
           <StatusIndicator :status="workorder.status" text-h4 />
-          <div flex gap2 w-full items-center>
-            <Icon i-carbon:calendar text-xl />
-            <span>{{ dateString}}</span>
-          </div>
-          <div flex gap2 w-full>
-            <Icon i-mdi:account-hard-hat-outline text-xl />
-            <span v-if="employee?.name">{{ employee?.name }}</span>
-            <span v-else text-red>Not Assigned</span>
-          </div>
+          <JobDates :has-dates="!!startDate || !!dueDate">
+            <span v-if="startDate || dueDate" flex gap=".5" items-center>
+              <div v-if="startDate">{{ startDate }}</div>
+              <X v-else />
+              <div i-ion:arrow-right-b text-muted text-base />
+              <div v-if="dueDate">{{ dueDate }}</div>
+            </span>
+          </JobDates>
+
+          <Assigned :is-assigned="!!employee" :person="employee" />
         </div>
 
-        <Divider w=".25" />
+        <Divider w=".25" h-full/>
 
         <!-- INFO -->
         <div flex="~ col" gap2 w-full overflow-hidden>
           <div flex gap4 text-h4 items-baseline>
-            <div highlight min-w-fit wrap>
-              {{ workorder?.['FK|client_id']?.name }}
+            <div v-if="client?.name" highlight min-w-fit wrap>
+              {{ client?.name }}
             </div>
             <div min-w-0 truncate>
               <template v-if="job?.job_name">
@@ -58,7 +59,12 @@ const employee = $computed(() => workorder?.['FK|employee_id'])
             </div>
 
             <div self-start text-base ml-auto shrink-0>
-              #{{ workorder?.wo_number }}
+              <div>
+                {{ job?.job_number }}
+              </div>
+              <div float-right text-sm>
+                #{{ workorder?.wo_number }}
+              </div>
             </div>
           </div>
 

@@ -13,6 +13,7 @@
     "@vueuse/core": "^8.5.0",
     "build": "^0.1.4",
     "pinia": "^2.0.14",
+    "remove": "^0.1.5",
     "vue": "^3.2.36",
     "vue-router": "^4.0.15"
   },
@@ -32,6 +33,7 @@
     "fuse.js": "^6.6.2",
     "jsdom": "^19.0.0",
     "msw": "^0.41.1",
+    "nanoid": "^4.0.0",
     "pnpm": "^7.1.5",
     "quill-delta-to-html": "^0.12.1",
     "short-uuid": "^4.2.0",

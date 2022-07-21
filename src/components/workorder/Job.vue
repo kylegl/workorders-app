@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { JobType } from '~/types'
-const { job } = defineProps<{ job: JobType }>()
-const startDate = $computed(() => shortDate(job?.start_date) || 'Not Set')
-const contact = $computed(() => job?.['FK|contact_id'])
+import type { ContactType, JobParsedType } from '~/types'
+const { job } = defineProps<{ job: JobParsedType }>()
+const startDate = $computed(() => shortDate(job?.start_date))
+const contact = $computed((): ContactType => job?.['FK|contact_id'])
 </script>
 
 <template>
   <router-link :to="{ name: 'jobs-id', params: { id: job.id } }" w-full>
-    <Card bg-1 text-norm>
+    <Card bg-1 flex text-norm>
       <div flex gap4 min-h-25 w-full>
         <!-- WORKORDER INFO -->
         <div
@@ -15,14 +15,13 @@ const contact = $computed(() => job?.['FK|contact_id'])
           text-h5
         >
           <StatusIndicator :status="job.status" text-h4 />
-          <div flex gap2 w-full items-center>
-            <Icon i-carbon:calendar text-xl />
-            <span>{{ startDate }}</span>
-          </div>
-          <div v-if="contact?.name" flex gap2 w-full>
-            <Icon i-mdi:account-hard-hat-outline text-xl />
-            <span >{{ contact?.name }}</span>
-          </div>
+          <JobDates :has-dates="!!startDate">
+            <div v-if="startDate">
+              {{ startDate }}
+            </div>
+          </JobDates>
+
+          <Assigned v-if="contact" :is-assigned="!!contact" :person="contact" />
         </div>
 
         <Divider w=".25" />
@@ -52,10 +51,9 @@ const contact = $computed(() => job?.['FK|contact_id'])
             </div>
 
             <div self-start text-base ml-auto shrink-0>
-              #{{ job?.job_number }}
+              {{ job?.job_number }}
             </div>
           </div>
-
         </div>
       </div>
     </Card>
