@@ -9,17 +9,17 @@ const { wo, state } = storeToRefs(useWoStore())
     </h3>
 
     <ClientPicker
-      v-model:id="wo['FK|client_id']" :disabled="state.disabled"
+      v-model:id="wo['FK|client_id']" :disabled="state.saved"
       z3
     />
 
     <JobPicker
-      v-model:id="wo['FK|job_id']" :disabled="state.disabled"
+      v-model:id="wo['FK|job_id']" :disabled="state.saved"
       z2
     />
 
     <ContactPicker
-      v-model:id="wo['FK|contact_id']" :disabled="state.disabled"
+      v-model:id="wo['FK|contact_id']" :disabled="state.saved"
       z1
     />
   </Card>

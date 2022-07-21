@@ -26,31 +26,29 @@ const employees = $computed(() => {
     <section flex="~ col" gap2>
       <Card
         v-for="employee in employees" :key="employee.id"
-        flex
+        flex="~ wrap" gap3
         bg-1
         @click="editEmployee(employee.id)"
       >
-        <div flex="~ col" w-38 gap2>
-          <div>Name</div>
-          <div text-h5>
+        <div text-h5 gap2 flex items-center shrink-0>
+          <Icon i-lucide:hard-hat text-lg shrink-0 text-yellow />
+          <div w-42>
             {{ employee.name }}
           </div>
-        </div>
-        <div flex="~ col" gap2 w-24>
-          <div>Position</div>
-          <div text-h5>
+          <Divider w=".25" shrink-0 h-full />
+          <div>
             {{ employee.position }}
           </div>
         </div>
-        <div flex="~ col" gap=".5" justify-between w-40>
-          <div>Phone</div>
-          <div text-h5>
+        <div flex text-h5 gap2 items-center w-40 shrink-0>
+          <Icon i-carbon:phone shrink-0 />
+          <div>
             {{ employee?.phone }}
           </div>
         </div>
-        <div flex="~ col" gap=".5" justify-between w-50>
-          <div>Email</div>
-          <div text-h5>
+        <div flex text-h5 gap2 grow shrink-0 items-center>
+          <Icon i-carbon:email shrink-0 />
+          <div>
             {{ employee?.email }}
           </div>
         </div>

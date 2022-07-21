@@ -8,6 +8,7 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
   const state = reactive({
     showModal: false,
     dirty: false,
+    new: false,
   })
 
   const id = ref('')
@@ -19,17 +20,19 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
     employee.id = useUid()
     main.addItem({ data: employee, table: 'employees' })
     setId(employee.id)
+    state.new = true
     openModal()
   }
 
   function saveEmployee() {
     if (state.dirty) {
       const res = employeeValidator.safeParse(employee.value)
+      console.log(res)
       mutation('employees', 'update', employee.value, main.versions)
       state.dirty = false
     }
 
-    if (!state.dirty)
+    if (!state.dirty && state.new)
       main.deleteById({ data: employee.value, table: 'employees', localOnly: true })
 
     closeModal()
@@ -45,8 +48,9 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
     openModal()
   }
 
-  function deleteEmployee(id: string) {
-    main.deleteById({ id, table: 'employees' })
+  function deleteEmployee() {
+    closeModal()
+    main.deleteById({ data: employee.value, table: 'employees' })
   }
 
   function setId(employeeId: string) {
@@ -64,13 +68,13 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
   }
 
   function openModal() {
-    if (!state.showModal)
-      state.showModal = true
+    state.showModal = true
   }
 
   function closeModal() {
-    if (state.showModal)
-      state.showModal = false
+    state.showModal = false
+    state.dirty = false
+    state.new = false
   }
 
   return { employee, state, addEmployee, saveEmployee, loadEmployee, editEmployee, deleteEmployee, setId }

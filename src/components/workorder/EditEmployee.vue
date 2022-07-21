@@ -1,11 +1,21 @@
 <script setup lang="ts">
 const { employee } = storeToRefs(useEmployeeStore())
-const { saveEmployee } = useEmployeeStore()
+const { saveEmployee, deleteEmployee } = useEmployeeStore()
+const isDelete = $ref(false)
+const isSave = $ref(false)
+
+function deleteEmp() {
+  useDelay(100, deleteEmployee, $$(isDelete))
+}
+
+function saveEmp() {
+  useDelay(300, saveEmployee, $$(isSave))
+}
 </script>
 
 <template>
-  <div flex="~ col" gap4 w-full >
-    <div flex justify-between >
+  <div flex="~ col" gap4 w-full>
+    <div flex justify-between>
       <div text-h4>
         Edit Employee
       </div>
@@ -36,9 +46,18 @@ const { saveEmployee } = useEmployeeStore()
         <Input v-model="employee.phone" />
       </div>
     </div>
-    <Button m-auto hover="text-flip bg-green" @click="saveEmployee">
-      <Icon i-fa-solid:plus text-2xl />
-      Add
-    </Button>
+    <div flex gap2 justify-center>
+      <Button
+        bg-green
+        @click="saveEmp"
+      >
+        <Icon i-carbon:save text-2xl :class="{ 'animate-tada animate-faster': isSave }"/>
+        Save
+      </Button>
+      <Button bg-red  @click="deleteEmp">
+        <Icon ref="target" i-carbon:trash-can text-2xl :class="{ 'rotate-140 transition-ease-in-out duration-100': isDelete }" />
+        Delete
+      </Button>
+    </div>
   </div>
 </template>

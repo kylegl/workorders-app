@@ -8,7 +8,7 @@ function addStyles(win, styles) {
   })
 }
 
-export function print(el, localOptions?: Record<string, any>, cb = () => true) {
+export function print(el: string, cb = () => true, localOptions?: Record<string, any>) {
   const defaultStyles = []
   let styles = defaultStyles
 

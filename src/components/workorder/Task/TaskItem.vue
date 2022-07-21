@@ -36,19 +36,19 @@ const pos = $computed(() => {
 })
 
 const upArrow = $computed(() => {
-  return !state.value.disabled ? !!(pos === 'middle' || pos === 'last') : false
+  return !state.value.saved ? !!(pos === 'middle' || pos === 'last') : false
 })
 const downArrow = $computed(() => {
-  return !state.value.disabled ? !!(pos === 'middle' || pos === 'first') : false
+  return !state.value.saved ? !!(pos === 'middle' || pos === 'first') : false
 })
 </script>
 
 <template>
   <Card
     v-if="task"
-    @click="editTask(task.id)"
     bg-2
     relative
+    @click="editTask(task.id)"
   >
     <div
       flex justify-between gap-x-2 h-auto min-h-20 w-full

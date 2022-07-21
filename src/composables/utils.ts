@@ -1,6 +1,8 @@
-import type { WatchWithFilterOptions } from '@vueuse/core'
-import type { WatchCallback } from 'vue'
+import type { MaybeRef, WatchWithFilterOptions } from '@vueuse/core'
+import { promiseTimeout } from '@vueuse/core'
+import type { Ref, WatchCallback } from 'vue'
 import { nanoid } from 'nanoid'
+import type { ReactiveVariable } from 'vue/macros'
 import type { ErrorWithMessage, TableKey, Version } from '~/types'
 import { mutationValidator } from '~/types'
 import { Mutation, Query } from '~/api/index'
@@ -75,3 +77,14 @@ export function getStatusColor(status: string, startDate: number | null | undefi
   return statusColors[status as keyof typeof statusColors]
 }
 
+export async function useDelay(ms: number, cb: () => void, state?: Ref<boolean>) {
+  if (state)
+    state.value = !state.value
+
+  await promiseTimeout(ms)
+
+  if (state)
+    state.value = !state.value
+
+  return cb()
+}

@@ -18,6 +18,7 @@ export default defineConfig({
     'btn': 'p2 rounded shadow-md cursor-pointer disabled:cursor-default disabled:opacity-50 text-h5',
     'btn-active': 'btn-primary op100',
     'btn-primary': 'bg-bg-lit-a dark:bg-bg-drk-f',
+    'btn-secondary': 'bg-bg-drk-a dark:bg-bg-drk-b',
     'btn-toggle': 'btn-primary op70',
     'btn-inactive': 'btn-primary op40',
     'btn-icon': 'op70 group-hover:op100 in_out',
