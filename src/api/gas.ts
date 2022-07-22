@@ -1,4 +1,4 @@
-import type { Data, MutationType, RequestType, VersionType } from '~/types'
+import type { MutationType, RequestType, VersionType } from '~/types'
 import { apiResponseValidator } from '~/types'
 import { getErrorMessage } from '~/composables/utils'
 
@@ -38,10 +38,10 @@ const serverRequest = async (request: RequestType) => {
   return await Provoke.run('requestHandler', request)
 }
 
-export async function gasQuery(versions: VersionType) {
+export async function gasQuery(versions: VersionType, path: string) {
   try {
     const request = {
-      path: 'database/get',
+      path,
       method: 'GET',
       cache: versions,
     }

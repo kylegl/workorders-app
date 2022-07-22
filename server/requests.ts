@@ -23,13 +23,16 @@ const requestHandler = (req: ClientRequest) => {
 
     const [namespace, action] = req.path.split('/')
 
-    const res = router()[namespace](req.cache)[action](body)
+    const results = router()[namespace](req.cache)[action](body)
+    const res = { ok: true, ...results }
 
     return JSON.stringify(res)
   }
   catch (err) {
     console.error(err)
     unlockAll()
+    const res = { ok: false }
+    return JSON.stringify(res)
   }
 }
 

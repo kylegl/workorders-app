@@ -4,10 +4,10 @@ import { apiResponseValidator } from '~/types'
 
 const isProd = process.env.NODE_ENV === 'production'
 
-export async function Query(versions: VersionType) {
+export async function Query(versions: VersionType, path: string) {
   try {
     if (isProd) {
-      const result = await gasQuery(versions)
+      const result = await gasQuery(versions, path)
       if (!result)
         throw new Error('No response from API')
 

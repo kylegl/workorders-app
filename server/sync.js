@@ -156,18 +156,30 @@ function getLegacyDbVersion() {
 }
 
 function pollLegacyDb() {
-  const legacyVersion = getScriptProp('legacydb')
+  const legacyVersion = getScriptProp({ prop: 'legacydb' })
   const currentLegacydbVersion = getLegacyDbVersion()
 
   if (legacyVersion !== currentLegacydbVersion) {
-    syncFromLegacyDB()
+    try {
+      const dbController = new DatabaseController({ clientVersions: {} })
+      dbController.getLock()
 
-    scriptPropService()
-      .setProperties({
-        legacydb: currentLegacydbVersion,
-        clients: getUuid(),
-        bids: getUuid(),
-        jobs: getUuid(),
-      })
+      syncFromLegacyDB()
+
+      scriptPropService()
+        .setProperties({
+          legacydb: currentLegacydbVersion,
+          main: getUuid(),
+          clients: getUuid(),
+          bids: getUuid(),
+          jobs: getUuid(),
+        })
+
+      dbController.unlock()
+    }
+    catch (err) {
+      console.log('legacy db sync error', err)
+      unlockAll()
+    }
   }
 }

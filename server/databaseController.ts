@@ -65,11 +65,16 @@ class DatabaseController {
     }
   }
 
+  getAll() {
+    pollLegacyDb()
+    this.startTransaction()
+    this.commitTransaction(true)
+  }
+
   // helpers
   getChangedTables() {
     const serverVersions = getScriptProps()
     const versions = this.getVersions(serverVersions)
-
     if (this.clientVersions.main === serverVersions.main)
       return { data: {}, versions }
 
@@ -102,16 +107,14 @@ class DatabaseController {
   }
 
   startTransaction({ table }: StartTransactionParams = {}) {
-    wait(this.isLocked())
-    this.lock()
-    const version = this.clientVersions[table]
-
-    return table ? new TableController({ table, version }) : undefined
+    this.getLock()
+    if (table) {
+      const version = this.clientVersions[table]
+      return table ? new TableController({ table, version }) : undefined
+    }
   }
 
   commitTransaction(ok: boolean) {
-    this.unlock()
-
     const { data, versions } = this.getChangedTables()
 
     const res = {
@@ -120,7 +123,13 @@ class DatabaseController {
       versions,
     }
 
+    this.unlock()
     return res as DatabaseControllerResponse
+  }
+
+  getLock() {
+    wait(this.isLocked())
+    this.lock()
   }
 
   isLocked(): boolean {

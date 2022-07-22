@@ -3,11 +3,11 @@ const { loading } = storeToRefs(useMainStore())
 const { query } = useMainStore()
 
 if (process.env.NODE_ENV === 'production')
-  query()
+  query('database/get')
 
 if (process.env.NODE_ENV === 'development') {
   onMounted(() => {
-    if (loading) setTimeout(() => query(), 1000)
+    if (loading) setTimeout(() => query('mock'), 1000)
   })
 }
 </script>

@@ -336,12 +336,13 @@ export type StoreData = z.infer<typeof storeDataValidator>
 
 export type MutationType = z.infer<typeof mutationValidator>
 
-export const requestValidator = z.object({
+export const getRequestValidator = z.object({
   method: z.string(),
-  body: z.string(),
+  path: z.string(),
+  cache: versionValidator.optional(),
 })
 
-export type RequestType = z.infer<typeof requestValidator>
+export type RequestType = z.infer<typeof getRequestValidator>
 
 export const TableRow = z.union([
   clientValidator,
