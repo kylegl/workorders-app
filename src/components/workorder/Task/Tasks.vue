@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { Lineitem, Move } from '~/types'
 
-const { data } = storeToRefs(useMainStore())
 const { getByKeyValue } = useMainStore()
-const { wo, state } = storeToRefs(useWoStore())
+const { wo } = storeToRefs(useWoStore())
 const { task, taskState } = storeToRefs(useTaskStore())
 const { createTask, saveTask } = useTaskStore()
 
@@ -46,7 +45,7 @@ const moveTask = (move: Move) => {
     </section>
 
     <template v-if="taskState.showModal">
-      <Modal @close="saveTask">
+      <Modal z-12 @close="saveTask">
         <EditTask v-if="task" />
       </Modal>
     </template>

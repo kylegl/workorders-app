@@ -27,7 +27,6 @@ export const useEmployeeStore = defineStore('employeeStore', () => {
   function saveEmployee() {
     if (state.dirty) {
       const res = employeeValidator.safeParse(employee.value)
-      console.log(res)
       mutation('employees', 'update', employee.value, main.versions)
       state.dirty = false
     }

@@ -22,3 +22,5 @@ const contactId = useVModel(props, 'id', emit)
     />
   </div>
 </template>
+
+// TODO can have multiple contacts - need to account for this.

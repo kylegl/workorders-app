@@ -182,9 +182,41 @@ const createWos = () => {
     return wo
   })
 
-  console.log('no matching job nums', jobNumsNotInDb)
   woInterface.setData([...woData, ...newWos])
   setSheetValues({ sheetInterface: woInterface })
+}
+
+const createTasks = () => {
+  const lineItemsInterface = getSheetInterface({ sheetName: 'line_items' })
+  const lineItemData = lineItemsInterface.getData()
+  const wsData = getSheetInterface({ sheetName: 'ws-li' }).getData()
+  const wos = getSheetInterface({ sheetName: 'workorders' }).getData()
+
+  const newLineitems = wsData.map((entry) => {
+    const lineitem = {}
+    lineitem.id = Utilities.getUuid()
+    lineitem['FK|workorder_id'] = mapWoNumberToWoId(wos, entry.wo_number)
+    lineitem.description = parseStringToDelta(entry.description)
+    lineitem.details = parseStringToDelta(entry.details)
+    lineitem.quantity = parseStringToDelta(entry.quantity)
+    lineitem.hours = entry.hours
+    lineitem.item_number = entry.item_number
+    lineitem.completed = entry.completed
+    lineitem.notes = parseStringToDelta(entry.notes)
+    lineitem.created_at = +new Date()
+    lineitem.updated_at = +new Date()
+    lineitem.completed_at = ''
+
+    return lineitem
+  })
+
+  lineItemsInterface.setData([...lineItemData, ...newLineitems])
+  setSheetValues({ sheetInterface: lineItemsInterface })
+}
+
+const mapWoNumberToWoId = (wos, woNum) => {
+  const wo = wos.find(wo => wo.wo_number === woNum)
+  return wo?.id
 }
 
 const checkJobNumber = (wo, jobs) => {
@@ -255,14 +287,10 @@ const checkContact = (wo, clientId) => {
 
 const checkEmployee = (wo, employees) => {
   const res = { employeeId: null }
-  // check for employee
   if (wo.employee) {
     const employee = employees.find(employee => normalize(employee.name) === normalize(wo.employee))
-    // if exists, check for match
     if (employee)
       res.employeeId = employee.id
-    if (!employee)
-      console.log('Could not find employee for WO: ', wo.wo_number)
   }
 
   return res
