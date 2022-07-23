@@ -6,6 +6,7 @@ import employees from './data/employees.json'
 import jobs from './data/jobs.json'
 import lineItems from './data/line_items.json'
 import workorders from './data/workorders.json'
+import properties from './data/properties.json'
 
 export const handlers = [
   rest.get('/mock-api', (req, res, ctx) => {
@@ -41,6 +42,10 @@ export const handlers = [
             table: 'workorders',
             data: workorders,
           },
+          properties: {
+            table: 'properties',
+            data: properties,
+          },
         },
         versions: {
           main: 'a',
@@ -49,8 +54,9 @@ export const handlers = [
           contacts: 'd',
           employees: 'e',
           jobs: 'f',
-          lineItems: 'g',
+          line_items: 'g',
           workorders: 'h',
+          properties: 'i',
         },
       }),
     )

@@ -21,7 +21,7 @@ const property = $ref('')
           z3
         />
 
-        <PropertyPicker v-model:id="property" :disabled="state.saved"/>
+        <PropertyPicker v-model:id="wo['FK|property_id']" :disabled="state.saved"/>
       </div>
 
       <div flex="~ col" gap4 w="1/2">

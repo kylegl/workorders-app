@@ -130,7 +130,7 @@ export const incomingWorkorderValidator = z.object({
 export const propertyValidator = z.object({
   id: z.string(),
   address: z.string(),
-  gate_code: z.string().optional(),
+  gate_code: z.number().nullable().optional(),
 })
 
 export type PropertyType = z.infer<typeof propertyValidator>
@@ -299,6 +299,7 @@ export const packValidator = z.discriminatedUnion('table', [
   z.object({ table: z.literal('employees'), data: z.array(employeeValidator), version: z.string().optional() }),
   z.object({ table: z.literal('workorders'), data: z.array(incomingWorkorderValidator), version: z.string().optional() }),
   z.object({ table: z.literal('line_items'), data: z.array(incomingLineitemValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('properties'), data: z.array(propertyValidator), version: z.string().optional() }),
 ])
 
 export const mutationValidator = z.discriminatedUnion('table', [
@@ -309,6 +310,7 @@ export const mutationValidator = z.discriminatedUnion('table', [
   z.object({ table: z.literal('employees'), data: employeeValidator }),
   z.object({ table: z.literal('workorders'), data: outgoingWorkorderValidator }),
   z.object({ table: z.literal('line_items'), data: outgoingLineitemValidator }),
+  z.object({ table: z.literal('properties'), data: z.array(propertyValidator)}),
 ])
 
 export const dataResponseValidator = z.object({
@@ -319,6 +321,7 @@ export const dataResponseValidator = z.object({
   contacts: packValidator.optional(),
   clients: packValidator.optional(),
   line_items: packValidator.optional(),
+  properties: packValidator.optional(),
 })
 
 export type Data = z.infer<typeof dataResponseValidator>
@@ -331,7 +334,7 @@ export const apiResponseValidator = z.object({
 
 export type ApiResponse = z.infer<typeof apiResponseValidator>
 
-export const tableKeyEnum = z.enum(['jobs', 'bids', 'contacts', 'clients', 'employees', 'workorders', 'line_items'])
+export const tableKeyEnum = z.enum(['jobs', 'bids', 'contacts', 'clients', 'employees', 'workorders', 'line_items', 'properties'])
 
 export type TableKey = z.infer<typeof tableKeyEnum>
 
@@ -371,6 +374,7 @@ export const TableRow = z.union([
 export type TableRowKey = keyof TableRow
 
 export type TableRowType = z.infer<typeof TableRow>
+
 
 export const dataTypeValidator = z.object({
   employees: employeeValidator,

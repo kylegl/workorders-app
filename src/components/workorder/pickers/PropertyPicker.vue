@@ -5,15 +5,15 @@ const emit = defineEmits<{
 }>()
 const { data } = storeToRefs(useMainStore())
 
-const ID = useVModel(props, 'id', emit)
+const propertyId = useVModel(props, 'id', emit)
 </script>
 
 <template>
   <div>
     <Datalist
-      v-model="ID"
-      type="property"
-      :list="data.property"
+      v-model="propertyId"
+      type="properties"
+      :list="data?.properties"
       :search-keys="['address']"
       :show-keys="['address']"
       class="z-1"

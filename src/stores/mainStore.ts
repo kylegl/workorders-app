@@ -57,11 +57,7 @@ export const useMainStore = defineStore('main', {
             result[key] = entry
           }
 
-          const isDateType = isDate(key)
-          if (isDateType)
-            result[key] = row[key] ? unixToHumanDate(row[key]) : row[key]
-
-          if (!isDateType && !isForeignKey) result[key] = row[key]
+          if (!isForeignKey) result[key] = row[key]
           return result
         }, {})
         return parsedRow
