@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { wo, state } = storeToRefs(useWoStore())
-const property = $ref('')
 </script>
 
 <template>
@@ -21,14 +20,22 @@ const property = $ref('')
           z3
         />
 
-        <PropertyPicker v-model:id="wo['FK|property_id']" :disabled="state.saved"/>
+        <PropertyPicker v-model:id="wo['FK|property_id']" :disabled="state.saved" />
       </div>
 
       <div flex="~ col" gap4 w="1/2">
         <div flex gap4>
-          <JobTypePicker v-model:type="wo.job_type" :options="jobTypeOptions" :disabled="state.saved" />
+          <JobTypePicker
+            v-model:type="wo.job_type"
+            :options="jobTypeOptions"
+            :disabled="state.saved"
+          />
 
-          <BillTypePicker v-model:type="wo.bill_type" :options="billingOptions" :disabled="state.saved" />
+          <BillTypePicker
+            v-model:type="wo.bill_type"
+            :options="billingOptions"
+            :disabled="state.saved"
+          />
         </div>
 
         <ContactPicker

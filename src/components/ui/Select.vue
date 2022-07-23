@@ -4,7 +4,7 @@ import { vOnClickOutside } from '@vueuse/components'
 // props
 interface Props {
   list: any[]
-  modelValue?: string | number | undefined
+  modelValue?: string | number | null
   label?: string
   disabled?: boolean
 }

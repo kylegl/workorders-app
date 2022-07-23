@@ -6,7 +6,7 @@ import type { TableKey, TableRowType } from '~/types'
 interface Props {
   type: TableKey
   list: TableRowType[] | undefined
-  modelValue?: string
+  modelValue?: string | null
   searchKeys: string[]
   showKeys: string[]
   label?: string

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ type: string; options: Array<string>; disabled: boolean }>()
+const props = defineProps<{ type?: string | null; options: Array<string>; disabled: boolean }>()
 const emit = defineEmits<{
   (e: 'update:type', value: string | undefined): void
 }>()
