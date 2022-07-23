@@ -24,9 +24,7 @@ const { wo, state } = storeToRefs(useWoStore())
           <DatePicker v-model:date="wo.due_date" :disabled="state.saved" label="Due Date" />
 
           <div class="flex gap-x-4">
-            <JobTypePicker v-model:type="wo.job_type" :options="jobTypeOptions" :disabled="state.saved" />
 
-            <BillTypePicker v-model:type="wo.bill_type" :options="billingOptions" :disabled="state.saved" />
           </div>
         </Card>
       </section>

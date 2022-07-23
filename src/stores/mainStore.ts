@@ -15,6 +15,7 @@ export const useMainStore = defineStore('main', {
       clients: undefined,
       bids: undefined,
       jobs: undefined,
+      properties: undefined,
     }),
     loading: true,
     error: undefined,
@@ -52,7 +53,7 @@ export const useMainStore = defineStore('main', {
 
           if (isForeignKey) {
             const id = row[key]
-            const entry = this.getById({ id, type: isForeignKey }) as DataTable
+            const entry = this.getById({ id, type: isForeignKey }) as TableRowType
             result[key] = entry
           }
 

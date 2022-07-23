@@ -12,7 +12,7 @@ export function isFK(key: string): TableKey | undefined {
   return type ? `${type}s` as TableKey : undefined
 }
 
-export function isDate(key: string) { /^([^_]+)_(date|at)$/.test(key) }
+export function isDate(key: string): boolean { return /^([^_]+)_(date|at)$/.test(key) }
 
 const isErrorWithMessage = (error: unknown): error is ErrorWithMessage => {
   return (

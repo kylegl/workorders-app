@@ -56,7 +56,6 @@ export function shortenYear(year: number) {
 
 export function shortDate(unix: number | null | undefined) {
   const instant = getTimeInstant(unix)
-
   if (!instant) return undefined
 
   const currYear = new Date().getFullYear()

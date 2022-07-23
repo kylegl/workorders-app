@@ -38,14 +38,14 @@ const contact = $computed((): ContactType => job?.['FK|contact_id'])
                   {{ job?.job_name }}
                 </span>
               </template>
-              <template v-if="job?.address">
+              <template v-if="job?.['FK|property_id']?.address">
                 <Icon
-                  v-if=" job?.job_name && job?.address"
+                  v-if=" job?.job_name && job?.['FK|property_id']?.address"
                   inline-block text-xs mx2 my-auto
                   i-fa6-solid:house
                 />
                 <span>
-                  {{ job?.address }}
+                  {{ job?.['FK|property_id']?.address }}
                 </span>
               </template>
             </div>

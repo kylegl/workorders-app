@@ -5,22 +5,20 @@ const emit = defineEmits<{
 }>()
 const { data } = storeToRefs(useMainStore())
 
-const contactId = useVModel(props, 'id', emit)
+const ID = useVModel(props, 'id', emit)
 </script>
 
 <template>
   <div>
     <Datalist
-      v-model="contactId"
-      type="contacts"
-      :list="data.contacts"
-      :search-keys="['name']"
-      :show-keys="['name']"
+      v-model="ID"
+      type="property"
+      :list="data.property"
+      :search-keys="['address']"
+      :show-keys="['address']"
       class="z-1"
-      label="Contacts"
+      label="Address"
       :disabled="disabled"
     />
   </div>
 </template>
-
-// TODO can have multiple contacts - need to account for this.

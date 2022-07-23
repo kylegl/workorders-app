@@ -34,6 +34,7 @@ declare module '@vue/runtime-core' {
     Popup: typeof import('./src/components/ui/Popup.vue')['default']
     PrintPage: typeof import('./src/components/print/PrintPage.vue')['default']
     ProjectInfo: typeof import('./src/components/workorder/ProjectInfo.vue')['default']
+    PropertyPicker: typeof import('./src/components/workorder/pickers/PropertyPicker.vue')['default']
     RefreshData: typeof import('./src/components/workorder/RefreshData.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

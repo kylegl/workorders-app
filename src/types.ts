@@ -14,10 +14,10 @@ export interface Job {
   id: Id
   'FK|client_id': Id
   'FK|contact_id'?: Id
+  'FK|property_id'?: Id
   job_number: number
   prevailing_wage: boolean
   job_folder_id: string
-  address?: string
   job_name?: string
   status: string
   billing_type: string
@@ -43,6 +43,7 @@ export interface Workorder {
   'FK|contact_id'?: Id
   'FK|job_id'?: Id
   'FK|bid_id'?: Id
+  'FK|property_id'?: Id
   start_date?: number
   due_date?: number
   description?: string
@@ -80,7 +81,7 @@ export const deltaValidator = z.object({
 export const stringOrDelta = z.union([stringOrUndefined, deltaValidator])
 export const stringOrNumberOrDelta = z.union([numberOrString, deltaValidator])
 
-const parseJSON = (val) => {
+const parseJSON = (val: unknown) => {
   try {
     return JSON.parse(val)
   }
@@ -112,6 +113,7 @@ export const incomingWorkorderValidator = z.object({
   'FK|contact_id': stringOrUndefined,
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
+  'FK|property_id': stringOrUndefined,
   'start_date': castStringToNumber,
   'due_date': castStringToNumber,
   'description': casteToJSON,
@@ -125,6 +127,14 @@ export const incomingWorkorderValidator = z.object({
   'status': z.string(),
 })
 
+export const propertyValidator = z.object({
+  id: z.string(),
+  address: z.string(),
+  gate_code: z.string().optional(),
+})
+
+export type PropertyType = z.infer<typeof propertyValidator>
+
 export const workorderValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
@@ -133,6 +143,7 @@ export const workorderValidator = z.object({
   'FK|contact_id': stringOrUndefined,
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
+  'FK|property_id': z.string().optional(),
   'start_date': numberOrUndefined,
   'due_date': numberOrUndefined,
   'description': stringOrDelta,
@@ -156,6 +167,7 @@ export const outgoingWorkorderValidator = z.object({
   'FK|contact_id': stringOrUndefined,
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
+  'FK|property_id': z.string().optional(),
   'start_date': numberOrUndefined,
   'due_date': numberOrUndefined,
   'description': castJSONtoString,
@@ -174,10 +186,10 @@ export const jobValidator = z.object({
   'FK|client_id': z.string(),
   'FK|contact_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
+  'FK|property_id': z.string().optional(),
   'job_number': numberOrString,
   'prevailing_wage': z.boolean(),
   'job_folder_id': z.string(),
-  'address': stringOrUndefined,
   'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
@@ -191,10 +203,10 @@ export const bidValidator = z.object({
   'id': z.string(),
   'FK|client_id': z.string(),
   'FK|contact_id': stringOrUndefined,
+  'FK|property_id': z.string().optional(),
   'bid_id': z.string(),
   'prevailing_wage': z.boolean(),
   'bid_folder_id': stringOrUndefined,
-  'address': stringOrUndefined,
   'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
@@ -270,6 +282,7 @@ export const versionValidator = z.object({
   contacts: stringOrUndefined,
   clients: stringOrUndefined,
   line_items: stringOrUndefined,
+  properties: stringOrUndefined,
 })
 
 export type VersionType = z.infer<typeof versionValidator>
@@ -330,6 +343,7 @@ export const storeDataValidator = z.object({
   jobs: z.array(jobValidator).optional(),
   contacts: z.array(contactValidator).optional(),
   line_items: z.array(lineitemValidator).optional(),
+  properties: z.array(propertyValidator).optional(),
 })
 
 export type StoreData = z.infer<typeof storeDataValidator>
@@ -393,10 +407,10 @@ export const jobParsedValidator = z.object({
   'FK|client_id': clientValidator,
   'FK|contact_id': contactValidator,
   'FK|bid_id': bidValidator,
+  'FK|property_id': propertyValidator.optional(),
   'job_number': numberOrString,
   'prevailing_wage': z.boolean(),
   'job_folder_id': z.string(),
-  'address': stringOrUndefined,
   'job_name': stringOrUndefined,
   'status': z.string(),
   'billing_type': z.string(),
@@ -414,6 +428,7 @@ export const parsedWorkorderValidator = z.object({
   'FK|contact_id': contactValidator.optional(),
   'FK|job_id': jobValidator.optional(),
   'FK|bid_id': bidValidator.optional(),
+  'FK|property_id': propertyValidator.optional(),
   'start_date': castStringToNumber,
   'due_date': castStringToNumber,
   'description': stringOrDelta,

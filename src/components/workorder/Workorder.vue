@@ -6,6 +6,7 @@ const { loadWo } = useWoStore()
 const startDate = $computed(() => shortDate(workorder?.start_date))
 const dueDate = $computed(() => shortDate(workorder?.due_date))
 const job = $computed(() => workorder?.['FK|job_id'])
+const property = $computed(() => workorder?.['FK|property_id'])
 const employee = $computed(() => workorder?.['FK|employee_id'])
 const client = $computed(() => workorder?.['FK|client_id'])
 </script>
@@ -46,14 +47,14 @@ const client = $computed(() => workorder?.['FK|client_id'])
                   {{ job?.job_name }}
                 </span>
               </template>
-              <template v-if="job?.address">
+              <template v-if="property?.address">
                 <Icon
-                  v-if=" job?.job_name && job?.address"
+                  v-if=" job?.job_name && property?.address"
                   inline-block text-xs mx2 my-auto
                   i-fa6-solid:house
                 />
                 <span>
-                  {{ job?.address }}
+                  {{ property?.address }}
                 </span>
               </template>
             </div>

@@ -6,8 +6,8 @@ const { createWo } = useWoStore()
 const job = $computed(() => getById({ id, type: 'jobs', getParsed: true }))
 const workorders = $computed(() => getByKeyValue({ key: 'FK|job_id', value: id, type: 'workorders', getParsed: true }))
 const jobTitle = $computed(() => {
-  if (job?.job_name && job?.address) return `${job.job_name} - ${job.address}`
-  return job?.job_name ?? job?.address
+  if (job?.job_name && job?.['FK|property_id']?.address) return `${job.job_name} - ${job['FK|property_id'].address}`
+  return job?.job_name ?? job?.['FK|property_id']?.address
 })
 
 const startDate = $computed(() => unixToHumanDate(job?.start_date))

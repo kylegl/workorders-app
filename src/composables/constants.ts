@@ -9,7 +9,7 @@ export const jobFilters = [
 
 export const jobSearchKeys = [
   'job_name',
-  'address',
+  'FK|property_id.address',
   'job_number',
   'FK|client_id.name',
 ]
@@ -74,7 +74,7 @@ export const woSearchKeys = [
   'FK|client_id.name',
   'FK|employee_id.name',
   'FK|job_id.job_name',
-  'FK|job_id.address',
+  'FK|property_id.address',
   'FK|job_id.job_number',
 ]
 
