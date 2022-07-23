@@ -56,7 +56,7 @@ async function checkWoState(action: string) {
 </script>
 
 <template>
-  <div flex="~ col" gap-y-4 relative>
+  <div flex="~ col" gap4 relative>
     <Button btn-primary btn-icon place-self-end @click="checkWoState('close')">
       <Icon i-ri:arrow-go-back-fill text-2xl />
       Back
@@ -105,7 +105,7 @@ async function checkWoState(action: string) {
       </div>
     </div>
 
-    <section v-if="!printMe" flex="~ col" gap-y-4>
+    <section v-if="!printMe" flex="~ col" gap4>
       <WorkorderInfo />
 
       <Tasks />

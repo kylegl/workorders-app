@@ -3,7 +3,7 @@ import { Delta, QuillEditor } from '@vueup/vue-quill'
 import './vue-quill.snow.css'
 
 const { data, type = 'delta' } = defineProps<{
-  data?: Delta
+  data?: Delta | null
   type?: string | undefined
 }>()
 

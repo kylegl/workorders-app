@@ -8,67 +8,60 @@ const { wo, state } = storeToRefs(useWoStore())
       <div flex justify-between z10>
         <StatusPicker v-model:status="wo.status" :options="woStatuses" :disabled="state.saved" />
 
-        <EmployeePicker v-model:id="wo['FK|employee_id']" :disabled="state.saved" />
+        <EmployeePicker v-model:id="wo['FK|employee_id']" :disabled="state.saved" min-w-75/>
       </div>
 
-      <section class="flex gap-x-4">
-        <ProjectInfo v-model:workorder="wo" :disabled="state.saved" bg-2 />
+      <section class="flex gap4" items-start>
+        <ProjectInfo v-model:workorder="wo" :disabled="state.saved" bg-2 w="1/3" shrink-0 min-h-118 />
 
-        <Card w="1/2" flex="~ col" gap4 bg-2>
-          <h3 class="text-h4">
-            Work Order Info
-          </h3>
-
-          <DatePicker v-model:date="wo.start_date" :disabled="state.saved" label="Start Date" />
-
-          <DatePicker v-model:date="wo.due_date" :disabled="state.saved" label="Due Date" />
-
-          <div class="flex gap-x-4">
-
+        <Card flex="~ col" w-full gap4 bg-2  min-h-118>
+          <div flex gap4 justify-between>
+            <DatePicker v-model:date="wo.start_date" :disabled="state.saved" label="Start Date" />
+            <DatePicker v-model:date="wo.due_date" :disabled="state.saved" label="Due Date" />
           </div>
-        </Card>
-      </section>
+          <div flex="~ col">
+            <div text-h5>
+              Description
+            </div>
+            <div v-if="state.saved" v-html="parseDelta(wo.description)" />
+            <Editor
+              v-else
+              v-model:content="wo.description"
+              :data="wo.description"
+              label="Description"
+              :disabled="state.saved"
+              place-holder-text="Description"
+              flex="~ col"
+            />
 
-      <section>
-        <Card w-full flex="~ col" gap4 bg-2>
-          <div text-h5>
-            Description
-          </div>
-          <div v-if="state.saved" v-html="parseDelta(wo.description)" />
-          <Editor
-            v-else
-            v-model:content="wo.description"
-            :data="wo.description"
-            label="Description"
-            :disabled="state.saved"
-            place-holder-text="Description"
-          />
+            <div text-h5>
+              Notes
+            </div>
+            <div v-if="state.saved" v-html="parseDelta(wo.notes)" />
+            <Editor
+              v-else
+              v-model:content="wo.notes"
+              :data="wo.notes"
+              label="Description"
+              :disabled="state.saved"
+              place-holder-text="Description"
+              flex="~ col"
+            />
 
-          <div text-h5>
-            Notes
+            <div text-h5>
+              Parking Info
+            </div>
+            <div v-if="state.saved" v-html="parseDelta(wo.parking_info)" />
+            <Editor
+              v-else
+              v-model:content="wo.parking_info"
+              :data="wo.parking_info"
+              label="Description"
+              :disabled="state.saved"
+              place-holder-text="Description"
+              flex="~ col"
+            />
           </div>
-          <div v-if="state.saved" v-html="parseDelta(wo.notes)" />
-          <Editor
-            v-else
-            v-model:content="wo.notes"
-            :data="wo.notes"
-            label="Description"
-            :disabled="state.saved"
-            place-holder-text="Description"
-          />
-
-          <div text-h5>
-            Parking Info
-          </div>
-          <div v-if="state.saved" v-html="parseDelta(wo.parking_info)" />
-          <Editor
-            v-else
-            v-model:content="wo.parking_info"
-            :data="wo.parking_info"
-            label="Description"
-            :disabled="state.saved"
-            place-holder-text="Description"
-          />
         </Card>
       </section>
     </template>
