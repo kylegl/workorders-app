@@ -63,3 +63,9 @@ export function shortDate(unix: number | null | undefined) {
   const moDay = `${instant?.month}/${instant?.day}`
   return isCurrYear ? moDay : `${moDay}/${shortenYear(instant?.year)}`
 }
+
+export function useReadableDate() {
+  return ({ timestamp, readable }: { timestamp: number; readable: string }): void => {
+    return useConvertSyncRefs(timestamp, readable, unixToDate, dateToUnix)
+  }
+}

@@ -1,62 +1,5 @@
 import { z } from 'zod'
 
-type Id = string | number
-
-export interface Employee {
-  id: Id
-  name: string
-  position: string
-  email?: string
-  phone?: string
-}
-
-export interface Job {
-  id: Id
-  'FK|client_id': Id
-  'FK|contact_id'?: Id
-  'FK|property_id'?: Id
-  job_number: number
-  prevailing_wage: boolean
-  job_folder_id: string
-  job_name?: string
-  status: string
-  billing_type: string
-  closed_date?: number
-}
-
-export interface Task {
-  id: Id
-  'FK|workorder_id': Id
-  description?: string
-  details?: string
-  quantity?: string | number
-  hours: number
-  item_number: number
-  completed: boolean
-}
-
-export interface Workorder {
-  id: Id
-  wo_number: number
-  'FK|client_id': Id
-  'FK|employee_id'?: Id
-  'FK|contact_id'?: Id
-  'FK|job_id'?: Id
-  'FK|bid_id'?: Id
-  'FK|property_id'?: Id
-  start_date?: number
-  due_date?: number
-  description?: string
-  parking_info?: string
-  notes?: string
-  bill_type: string
-  job_type: string
-  created_at: number
-  udpated_at?: number
-  closed_at?: number
-  status: string
-}
-
 export interface Header {
   key: string
   title: string
@@ -218,6 +161,8 @@ export const bidValidator = z.object({
   'closed_date': numberOrString,
 })
 
+export type BidType = z.infer<typeof bidValidator>
+
 export const contactValidator = z.object({
   'id': z.string(),
   'name': z.string(),
@@ -235,6 +180,8 @@ export const clientValidator = z.object({
   phone: numberOrString,
   address: stringOrUndefined,
 })
+
+export type ClientType = z.infer<typeof clientValidator>
 
 export const incomingLineitemValidator = z.object({
   'id': z.string(),
@@ -259,7 +206,7 @@ export const lineitemValidator = z.object({
   'notes': stringOrDelta,
 })
 
-export type Lineitem = z.infer<typeof lineitemValidator>
+export type LineitemType = z.infer<typeof lineitemValidator>
 
 export const outgoingLineitemValidator = z.object({
   'id': z.string(),
@@ -310,10 +257,10 @@ export const mutationValidator = z.discriminatedUnion('table', [
   z.object({ table: z.literal('employees'), data: employeeValidator }),
   z.object({ table: z.literal('workorders'), data: outgoingWorkorderValidator }),
   z.object({ table: z.literal('line_items'), data: outgoingLineitemValidator }),
-  z.object({ table: z.literal('properties'), data: z.array(propertyValidator)}),
+  z.object({ table: z.literal('properties'), data: z.array(propertyValidator) }),
 ])
 
-export const dataResponseValidator = z.object({
+export const requestDataResponseValidator = z.object({
   employees: packValidator.optional(),
   workorders: packValidator.optional(),
   bids: packValidator.optional(),
@@ -324,19 +271,15 @@ export const dataResponseValidator = z.object({
   properties: packValidator.optional(),
 })
 
-export type Data = z.infer<typeof dataResponseValidator>
+export type RequestDataType = z.infer<typeof requestDataResponseValidator>
 
 export const apiResponseValidator = z.object({
   ok: z.boolean(),
-  data: dataResponseValidator.optional(),
+  data: requestDataResponseValidator.optional(),
   versions: versionValidator.optional(),
 })
 
 export type ApiResponse = z.infer<typeof apiResponseValidator>
-
-export const tableKeyEnum = z.enum(['jobs', 'bids', 'contacts', 'clients', 'employees', 'workorders', 'line_items', 'properties'])
-
-export type TableKey = z.infer<typeof tableKeyEnum>
 
 export const storeDataValidator = z.object({
   clients: z.array(clientValidator).optional(),
@@ -351,6 +294,12 @@ export const storeDataValidator = z.object({
 
 export type StoreData = z.infer<typeof storeDataValidator>
 
+export type StoreDataKey = keyof StoreData
+
+export type DataEntry<T> = {
+  [key in keyof T]: T[key]
+}
+
 export type MutationType = z.infer<typeof mutationValidator>
 
 export const getRequestValidator = z.object({
@@ -361,7 +310,7 @@ export const getRequestValidator = z.object({
 
 export type RequestType = z.infer<typeof getRequestValidator>
 
-export const TableRow = z.union([
+export const tableRow = z.union([
   clientValidator,
   employeeValidator,
   workorderValidator,
@@ -370,11 +319,6 @@ export const TableRow = z.union([
   contactValidator,
   lineitemValidator,
 ])
-
-export type TableRowKey = keyof TableRow
-
-export type TableRowType = z.infer<typeof TableRow>
-
 
 export const dataTypeValidator = z.object({
   employees: employeeValidator,
@@ -461,3 +405,8 @@ export type SortKey = z.infer<typeof sortKeyValidator>
 export const sortKeyArrayValidator = z.array(sortKeyValidator)
 
 export type SortKeyArray = z.infer<typeof sortKeyArrayValidator>
+
+export type DataEntryType = EmployeeType | WorkorderType | BidType | JobType | ContactType | ClientType | LineitemType | PropertyType
+
+export type allUnionMemberKeys<T> = T extends any ? keyof T : never
+export type DataEntryKeyType = allUnionMemberKeys<DataEntryType>

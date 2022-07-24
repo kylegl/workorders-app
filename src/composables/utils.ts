@@ -1,15 +1,14 @@
-import type { MaybeRef, WatchWithFilterOptions } from '@vueuse/core'
+import type { WatchWithFilterOptions } from '@vueuse/core'
 import { promiseTimeout } from '@vueuse/core'
 import type { Ref, WatchCallback } from 'vue'
 import { nanoid } from 'nanoid'
-import type { ReactiveVariable } from 'vue/macros'
-import type { ErrorWithMessage, TableKey, Version } from '~/types'
+import type { DataEntryType, ErrorWithMessage, Version } from '~/types'
 import { mutationValidator } from '~/types'
-import { Mutation, Query } from '~/api/index'
+import { Mutation } from '~/api/index'
 
-export function isFK(key: string): TableKey | undefined {
+export function isFK(key: string) {
   const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
-  return type ? `${type}s` as TableKey : undefined
+  return type ? `${type}s` : undefined
 }
 
 export function isDate(key: string): boolean { return /^([^_]+)_(date|at)$/.test(key) }
@@ -54,7 +53,7 @@ export function deRef(obj: any) {
   return Object.assign({}, obj)
 }
 
-export async function mutation(table: string, action: string, data?: TableRow, versions: Version) {
+export async function mutation(table: string, action: string, data: DataEntryType, versions: Version) {
   const mutation = mutationValidator.parse({
     table,
     data,
