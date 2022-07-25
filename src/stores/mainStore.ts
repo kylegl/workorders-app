@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { Query } from '~/api/index'
-import type { Data, DataType, StoreData, TableKey, TableRowKey, TableRowType, Version, VersionKeys } from '~/types'
+import type { DataEntryKeyType, DataEntryType, DataType, StoreData, StoreDataKey, Version, VersionKeys } from '~/types'
 import { versionValidator } from '~/types'
 
 export const useMainStore = defineStore('main', {
@@ -23,7 +23,7 @@ export const useMainStore = defineStore('main', {
   getters: {
     getByType(state) {
       return ({ type, getParsed = false }: GetByTypeParams) => {
-        const data = state.data?.[type as keyof Data]
+        const data = state.data?.[type]
 
         if (!getParsed) return data
         return data?.map(row => this.formatRowData({ row }))
@@ -31,7 +31,7 @@ export const useMainStore = defineStore('main', {
     },
     getById(state) {
       return ({ id, type, getParsed = false }: GetByIdParams) => {
-        const row = state.data?.[type as keyof Data]?.find(entry => entry.id.toString() === id?.toString())
+        const row = state.data?.[type]?.find(entry => entry.id.toString() === id?.toString())
         return getParsed && row
           ? this.formatRowData({ row })
           : row
@@ -39,21 +39,25 @@ export const useMainStore = defineStore('main', {
     },
     getByKeyValue(state) {
       return ({ key, value, type, getParsed }: GetKeyParams) => {
-        const results = state.data?.[type]?.filter((entry: TableRowType) => entry[key] === value)
-        return getParsed
-          ? results.map(row => this.formatRowData({ row }))
-          : results
+        const data = state.data?.[type]
+        if (data) {
+          const results = data.filter((entry: DataEntryType) => entry[key] === value)
+
+          return getParsed
+            ? results.map(row => this.formatRowData({ row }))
+            : results
+        }
       }
     },
     formatRowData() {
       return ({ row }: { row: TableRow }): TableRow | {} => {
-        const rowKeys = Object.keys(row) as TableRowKey[]
+        const rowKeys = Object.keys(row) as StoreDataKey[]
         const parsedRow: DataTableParsed | {} = rowKeys.reduce<ReduceReturnType>((result, key) => {
-          const isForeignKey: TableRowKey | undefined = isFK(key)
+          const isForeignKey: StoreDataKey | undefined = isFK(key)
 
           if (isForeignKey) {
             const id = row[key]
-            const entry = this.getById({ id, type: isForeignKey }) as TableRowType
+            const entry = this.getById({ id, type: isForeignKey }) as DataEntryType
             result[key] = entry
           }
 
@@ -80,9 +84,9 @@ export const useMainStore = defineStore('main', {
         const { data, versions } = res
 
         if (data) {
-          const tableNames = Object.keys(data) as TableKey[]
+          const tableNames = Object.keys(data) as StoreDataKey[]
 
-          tableNames.forEach((key: TableKey) => {
+          tableNames.forEach((key: StoreDataKey) => {
             this.data[key] = data?.[key]?.data
           })
         }
@@ -124,23 +128,23 @@ export const useMainStore = defineStore('main', {
 // Types
 export interface MutationParams {
   id?: string
-  data?: TableRowType
-  table: TableKey
+  data?: DataEntryType
+  table: StoreDataKey
   localOnly?: boolean
 }
 export interface GetByIdParams {
   id: string
-  type: TableKey
+  type: StoreDataKey
   getParsed?: boolean
 }
 export interface GetByTypeParams {
-  type: TableKey
+  type: StoreDataKey
   getParsed?: boolean
 }
 
 export interface GetKeyParams {
-  key: string
-  type: TableKey
+  key: DataEntryKeyType
+  type: StoreDataKey
   value: string | number | boolean
   getParsed?: boolean
 }

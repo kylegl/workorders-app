@@ -297,7 +297,7 @@ export type StoreData = z.infer<typeof storeDataValidator>
 export type StoreDataKey = keyof StoreData
 
 export type DataEntry<T> = {
-  [key in keyof T]: T[key]
+  [key in keyof T]: T[key] | DataEntryType
 }
 
 export type MutationType = z.infer<typeof mutationValidator>
@@ -410,3 +410,4 @@ export type DataEntryType = EmployeeType | WorkorderType | BidType | JobType | C
 
 export type allUnionMemberKeys<T> = T extends any ? keyof T : never
 export type DataEntryKeyType = allUnionMemberKeys<DataEntryType>
+

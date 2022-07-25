@@ -91,6 +91,21 @@ export const useWoStore = defineStore('woStore', () => {
 
     watcher = stop
   }
+
+  // cant have this watcher in pinia store
+  watchEffect(() => {
+    if (wo.value?.['FK|job_id']) {
+      console.log('job_id', wo.value['FK|job_id'])
+      const job = main.getById({ id: wo.value['FK|job_id'], type: 'jobs' })
+
+      if (job) {
+        wo.value['FK|bid_id'] = job['FK|bid_id']?.id ?? wo.value['FK|bid_id']
+        wo.value['FK|client_id'] = job['FK|client_id'].id ?? wo.value['FK|client_id']
+        wo.value['FK|contact_id'] = job['FK|contact_id']?.id ?? wo.value['FK|contact_id']
+        wo.value['FK|property_id'] = job['FK|property_id']?.id ?? wo.value['FK|property_id']
+      }
+    }
+  })
   return { createWo, saveWo, loadWo, editWo, trash, wo, state, watcher, safeToClose, close }
 })
 
