@@ -8,7 +8,7 @@ const isDelete = $ref(false)
 const isSave = $ref(false)
 const printMe = $ref(false)
 const togglePrint = useToggle($$(printMe))
-const popupMsg = $ref('')
+let popupMsg = $ref('')
 
 function deleteW() {
   useDelay(150, trash, $$(isDelete))

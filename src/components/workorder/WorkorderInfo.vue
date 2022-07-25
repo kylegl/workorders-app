@@ -8,13 +8,13 @@ const { wo, state } = storeToRefs(useWoStore())
       <div flex justify-between z10>
         <StatusPicker v-model:status="wo.status" :options="woStatuses" :disabled="state.saved" />
 
-        <EmployeePicker v-model:id="wo['FK|employee_id']" :disabled="state.saved" min-w-75/>
+        <EmployeePicker v-model:id="wo['FK|employee_id']" :disabled="state.saved" min-w-75 />
       </div>
 
       <section class="flex gap4" items-start>
-        <ProjectInfo v-model:workorder="wo" :disabled="state.saved" bg-2 w="1/3" shrink-0 min-h-118 />
+        <ProjectInfo v-model:workorder="wo" :disabled="state.saved" bg-2 w="1/3" shrink-0 min-h-122 />
 
-        <Card flex="~ col" w-full gap4 bg-2  min-h-118>
+        <Card flex="~ col" w-full gap4 bg-2 min-h-122>
           <div flex gap4 justify-between>
             <DatePicker v-model:date="wo.start_date" :disabled="state.saved" label="Start Date" />
             <DatePicker v-model:date="wo.due_date" :disabled="state.saved" label="Due Date" />

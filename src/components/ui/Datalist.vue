@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components'
 import Fuse from 'fuse.js'
-import type { TableKey, TableRowType } from '~/types'
+import type { StoreData, StoreDataKey } from '~/types'
 // props
 interface Props {
-  type: TableKey
-  list: TableRowType[] | undefined
+  type: StoreDataKey
+  list: StoreData[] | undefined
   modelValue?: string | null
   searchKeys: string[]
   showKeys: string[]
@@ -32,7 +32,7 @@ let activeIndex = $ref<number>(-1)
 let validationError = $ref(false)
 
 // hooks
-const getDisplayStr = (entry: TableRowType, showKeys: Array<string>) => showKeys.map(key => entry[key]).filter(Boolean).join(' | ')
+const getDisplayStr = (entry: StoreData, showKeys: Array<string>) => showKeys.map(key => entry[key]).filter(Boolean).join(' | ')
 onBeforeMount(() => {
   if (id) {
     const entry = getById({ id, type })
@@ -75,7 +75,7 @@ const setFocus = ({ isFocused, reset }: { isFocused: boolean; reset?: boolean })
   }
 }
 
-const setEntry = (entry: TableRowType): void => {
+const setEntry = (entry: StoreData): void => {
   try {
     id = entry?.id
 

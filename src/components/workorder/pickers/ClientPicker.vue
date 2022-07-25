@@ -5,13 +5,13 @@ const emit = defineEmits<{
 }>()
 const { data } = storeToRefs(useMainStore())
 
-const clientId = useVModel(props, 'id', emit)
+const id = useVModel(props, 'id', emit)
 </script>
 
 <template>
   <div>
     <Datalist
-      v-model="clientId"
+      v-model="id"
       label="Client"
       type="clients"
       :list="data.clients"
