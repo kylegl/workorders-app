@@ -43,7 +43,7 @@ onBeforeMount(() => {
 
 // computed
 const isDirty = $computed(() => textValue !== initialValue)
-const errorMessage = computed(() => 'That doesn\'t exist yet.')
+const errorMessage = computed(() => 'Not valid')
 
 // helpers
 const activeIdx = () => {

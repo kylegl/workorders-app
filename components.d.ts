@@ -40,6 +40,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     Search: typeof import('./src/components/search/Search.vue')['default']
     Select: typeof import('./src/components/ui/Select.vue')['default']
+    SelectV2: typeof import('./src/components/ui/SelectV2.vue')['default']
     Sort: typeof import('./src/components/search/Sort.vue')['default']
     StatusIndicator: typeof import('./src/components/workorder/StatusIndicator.vue')['default']
     StatusPicker: typeof import('./src/components/workorder/pickers/StatusPicker.vue')['default']

@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import vSelect from 'vue-select'
 import routes from 'virtual:generated-pages'
 import { createPinia } from 'pinia'
 import App from './App.vue'
@@ -22,6 +23,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 })
+app.component('v-select', vSelect)
 app.use(router)
 app.use(createPinia())
 app.mount('#app')
