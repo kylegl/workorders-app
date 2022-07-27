@@ -2,13 +2,19 @@ import type { WatchWithFilterOptions } from '@vueuse/core'
 import { promiseTimeout } from '@vueuse/core'
 import type { Ref, WatchCallback } from 'vue'
 import { nanoid } from 'nanoid'
-import type { DataEntryType, ErrorWithMessage, Version } from '~/types'
+import type { Data, DataEntryType, DataTable, ErrorWithMessage, Id, StoreDataKey, Version } from '~/types'
 import { mutationValidator } from '~/types'
 import { Mutation } from '~/api/index'
 
-export function isFK(key: string) {
+export function isFK(key: string): { isForeignKey: boolean; name: StoreDataKey | undefined } {
   const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
-  return type ? `${type}s` : undefined
+  const name: StoreDataKey | undefined = type ? `${type}s` : undefined
+  const isForeignKey = !!type
+
+  return {
+    isForeignKey,
+    name,
+  }
 }
 
 export function isDate(key: string): boolean { return /^([^_]+)_(date|at)$/.test(key) }
@@ -86,4 +92,15 @@ export async function useDelay(ms: number, cb: () => void, state?: Ref<boolean>)
     state.value = !state.value
 
   return cb()
+}
+
+export function isJson(value: unknown) {
+  try {
+    JSON.parse(value)
+    return true
+  }
+  catch(e) {
+    console.log('isJson error', e)
+    return false
+  }
 }

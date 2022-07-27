@@ -1,4 +1,4 @@
-import { employeeValidator, lineitemValidator, workorderValidator } from '~/types'
+import { employeeValidator, incomingWoValidator, lineitemValidator } from '~/types'
 
 export const jobFilters = [
   { name: 'Active', key: 'status', value: 'Active', isActive: true },
@@ -33,14 +33,14 @@ export const newTask = lineitemValidator.parse({
 
 export const woStatuses = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']
 
-export const newWorkorder = workorderValidator.parse({
+export const newWorkorder = incomingWoValidator.parse({
   'id': '',
   'wo_number': null,
   'FK|job_id': '',
   'FK|bid_id': '',
   'FK|client_id': '',
-  'FK|contact_id': '',
-  'FK|employee_id': '',
+  'FK|contact_id': [],
+  'FK|employee_id': [],
   'start_date': null,
   'due_date': null,
   'description': '',

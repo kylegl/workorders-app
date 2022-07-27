@@ -12,6 +12,7 @@ export const useWoStore = defineStore('woStore', () => {
   })
   const id = ref('')
   const wo = computed((): WorkorderType => main.getById({ id: id.value, type: 'workorders' }))
+  // todo this should be a function
   const wo_number = computed(() => (main.getByType({ type: 'workorders' })?.length || 0) + 1700)
   let watcher
 
@@ -24,7 +25,7 @@ export const useWoStore = defineStore('woStore', () => {
       newWo['FK|job_id'] = job.id
       newWo['FK|bid_id'] = job['FK|bid_id']?.id
       newWo['FK|client_id'] = job['FK|client_id'].id
-      newWo['FK|contact_id'] = job['FK|contact_id']?.id
+      newWo['FK|contact_id'] = [job['FK|contact_id']?.id]
     }
 
     main.addItem({ data: newWo, table: 'workorders' })
@@ -92,17 +93,18 @@ export const useWoStore = defineStore('woStore', () => {
     watcher = stop
   }
 
-  // cant have this watcher in pinia store
   watch(
     () => wo.value?.['FK|job_id'],
     () => {
-      const job = main.getById({ id: wo.value['FK|job_id'], type: 'jobs' })
+      if (wo.value?.['FK|job_id']) {
+        const job = main.getById({ id: wo.value['FK|job_id'], type: 'jobs' })
 
-      if (job) {
-        wo.value['FK|bid_id'] = job['FK|bid_id'] ?? wo.value['FK|bid_id']
-        wo.value['FK|client_id'] = job['FK|client_id'] ?? wo.value['FK|client_id']
-        wo.value['FK|contact_id'] = job['FK|contact_id'] ?? wo.value['FK|contact_id']
-        wo.value['FK|property_id'] = job['FK|property_id'] ?? wo.value['FK|property_id']
+        if (job) {
+          wo.value['FK|bid_id'] = job['FK|bid_id'] ?? wo.value['FK|bid_id']
+          wo.value['FK|client_id'] = job['FK|client_id'] ?? wo.value['FK|client_id']
+          wo.value['FK|contact_id'] = job['FK|contact_id'] ?? wo.value['FK|contact_id']
+          wo.value['FK|property_id'] = job['FK|property_id'] ?? wo.value['FK|property_id']
+        }
       }
     })
   return { createWo, saveWo, loadWo, editWo, trash, wo, state, watcher, safeToClose, close }

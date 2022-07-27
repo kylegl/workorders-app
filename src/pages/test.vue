@@ -1,6 +1,15 @@
 <script setup lang="ts">
 const { data, loading } = storeToRefs(useMainStore())
 const initialValue = $ref(data?.value?.contacts?.[0])
+
+const val = {
+  contacts: [
+    {
+      name: 'John Doe',
+      email: '',
+    },
+  ],
+}
 </script>
 
 <template>

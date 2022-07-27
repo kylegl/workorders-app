@@ -48,12 +48,12 @@ export const employeeValidator = z.object({
 
 export type EmployeeType = z.infer<typeof employeeValidator>
 
-export const incomingWorkorderValidator = z.object({
+export const incomingWoValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
-  'FK|employee_id': stringOrUndefined,
-  'FK|contact_id': stringOrUndefined,
+  'FK|employee_id': z.array(stringOrUndefined).nullable(),
+  'FK|contact_id': z.array(stringOrUndefined).nullable(),
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
   'FK|property_id': stringOrUndefined,
@@ -244,7 +244,7 @@ export const packValidator = z.discriminatedUnion('table', [
   z.object({ table: z.literal('contacts'), data: z.array(contactValidator), version: z.string().optional() }),
   z.object({ table: z.literal('clients'), data: z.array(clientValidator), version: z.string().optional() }),
   z.object({ table: z.literal('employees'), data: z.array(employeeValidator), version: z.string().optional() }),
-  z.object({ table: z.literal('workorders'), data: z.array(incomingWorkorderValidator), version: z.string().optional() }),
+  z.object({ table: z.literal('workorders'), data: z.array(incomingWoValidator), version: z.string().optional() }),
   z.object({ table: z.literal('line_items'), data: z.array(incomingLineitemValidator), version: z.string().optional() }),
   z.object({ table: z.literal('properties'), data: z.array(propertyValidator), version: z.string().optional() }),
 ])

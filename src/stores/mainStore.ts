@@ -31,7 +31,12 @@ export const useMainStore = defineStore('main', {
     },
     getById(state) {
       return ({ id, type, getParsed = false }: GetByIdParams) => {
-        const row = state.data?.[type]?.find(entry => entry.id.toString() === id?.toString())
+        const list = state.data?.[type]
+        if (!list || !list.length)
+          return undefined
+
+        const row = list?.find(entry => entry.id.toString() === id?.toString())
+
         return getParsed && row
           ? this.formatRowData({ row })
           : row
@@ -52,13 +57,33 @@ export const useMainStore = defineStore('main', {
     formatRowData() {
       return ({ row }: { row: TableRow }): TableRow | {} => {
         const rowKeys = Object.keys(row) as StoreDataKey[]
-        const parsedRow: DataTableParsed | {} = rowKeys.reduce<ReduceReturnType>((result, key) => {
-          const isForeignKey: StoreDataKey | undefined = isFK(key)
+        const parsedRow = rowKeys.reduce((result, key) => {
+          const { isForeignKey, name } = isFK(key)
 
           if (isForeignKey) {
-            const id = row[key]
-            const entry = this.getById({ id, type: isForeignKey }) as DataEntryType
-            result[key] = entry
+            const value = row[key]
+
+            if (Array.isArray(value)) {
+              if (value.length) {
+                const entries = value.map(id => this.getById({ id, type: name }))
+                result[key] = entries
+                return result
+              }
+
+              if (!value.length)
+                result[key] = value
+              return result
+            }
+
+            if (value) {
+              result[key] = this.getById({ id: value, type: name })
+              return result
+            }
+
+            if (!value) {
+              result[key] = value
+              return result
+            }
           }
 
           if (!isForeignKey) result[key] = row[key]

@@ -2,12 +2,14 @@
 import type { ParsedWorkorderType } from '~/types'
 const { workorder } = defineProps<{ workorder: ParsedWorkorderType }>()
 const { loadWo } = useWoStore()
+const { getById } = useMainStore()
 
+// TODO get multiple employees working. They aren't being passed to Assigned component
 const startDate = $computed(() => shortDate(workorder?.start_date))
 const dueDate = $computed(() => shortDate(workorder?.due_date))
 const job = $computed(() => workorder?.['FK|job_id'])
 const property = $computed(() => workorder?.['FK|property_id'])
-const employee = $computed(() => workorder?.['FK|employee_id'])
+const employees = $computed(() => workorder?.['FK|employee_id'])
 const client = $computed(() => workorder?.['FK|client_id'])
 </script>
 
@@ -30,10 +32,10 @@ const client = $computed(() => workorder?.['FK|client_id'])
             </span>
           </JobDates>
 
-          <Assigned :is-assigned="!!employee" :person="employee" />
+          <Assigned :is-assigned="!!employees.length" :persons="employees" />
         </div>
 
-        <Divider w=".25" h-full/>
+        <Divider w=".25" h-full />
 
         <!-- INFO -->
         <div flex="~ col" gap2 w-full overflow-hidden>
