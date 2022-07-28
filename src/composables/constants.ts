@@ -140,3 +140,13 @@ export function newJob() {
     'status': 'Upcoming',
   }
 }
+
+export function newProperty() {
+  return {
+    id: useUid(),
+    address: '',
+    gate_code: '',
+    created_at: +new Date(),
+    updated_at: null,
+  }
+}
