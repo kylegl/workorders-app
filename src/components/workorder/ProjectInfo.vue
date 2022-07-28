@@ -19,7 +19,7 @@ const { wo, state } = storeToRefs(useWoStore())
       />
       <PropertyPicker v-model:id="wo['FK|property_id']" :disabled="state.saved" />
       <ContactPicker
-        v-model:id="wo['FK|contact_id']" :disabled="state.saved"
+        v-model:id="wo['FK|contact_id']" :disabled="state.saved" :client-id="wo['FK|client_id']"
         z1
       />
       <div flex gap3>

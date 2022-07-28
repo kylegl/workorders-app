@@ -1,4 +1,4 @@
-import { employeeValidator, incomingWoValidator, lineitemValidator } from '~/types'
+import { contactValidator, employeeValidator, incomingWoValidator, lineitemValidator } from '~/types'
 
 export const jobFilters = [
   { name: 'Active', key: 'status', value: 'Active', isActive: true },
@@ -149,4 +149,16 @@ export function newProperty() {
     created_at: +new Date(),
     updated_at: null,
   }
+}
+
+export function newContact() {
+  return contactValidator.parse({
+    'id': useUid(),
+    'FK|client_id': '',
+    'name': '',
+    'phone': '',
+    'email': '',
+    'created_at': +new Date(),
+    'updated_at': null,
+  })
 }
