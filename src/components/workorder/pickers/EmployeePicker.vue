@@ -1,24 +1,44 @@
 <script setup lang="ts">
-const props = defineProps<{ id?: string | null; disabled: boolean }>()
+import type { EmployeeType } from '~/types'
+const props = defineProps<{ value?: Array<any>; disabled: boolean }>()
 const emit = defineEmits<{
-  (e: 'update:id', value: string | undefined): void
+  (e: 'update:value', value: Array<any>): void
 }>()
-
+const { getById } = useMainStore()
 const { data } = storeToRefs(useMainStore())
 
-const employeeId = useVModel(props, 'id', emit)
+const value = useVModel(props, 'value', emit)
+let employees: EmployeeType[] = $ref()
+
+function onChange() {
+  value.value = employees?.map(e => e.id)
+}
+
+function createEmployee(input: string) {
+  const employee = { ...newEmployee }
+  employee.id = useUid()
+  employee.name = input
+
+  return employee
+}
+
+watchEffect(() => {
+  if (props.value)
+    employees = props.value.map(id => getById({ id, type: 'employees' }))
+})
 </script>
 
 <template>
   <div>
-    <Datalist
-      v-model="employeeId"
-      label="Assigned To"
-      type="employees"
-      :list="data.employees"
+    <SelectV2
+      v-model:value="employees"
+      label="name"
+      :data="data.employees" 
       :search-keys="['name']"
-      :show-keys="['name', 'position']"
-      :disabled="disabled"
+      :disabled="disabled" :multiple="true" :taggable="true" :push-tags="false"
+      :create-option="createEmployee" table="employees"
+      @deselected="onChange"
+      @selected="onChange"
     />
   </div>
 </template>

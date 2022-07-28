@@ -8,7 +8,7 @@ const { wo, state } = storeToRefs(useWoStore())
       <div flex justify-between z10>
         <StatusPicker v-model:status="wo.status" :options="woStatuses" :disabled="state.saved" />
 
-        <EmployeePicker v-model:id="wo['FK|employee_id']" :disabled="state.saved" min-w-75 />
+        <EmployeePicker v-model:value="wo['FK|employee_id']" :disabled="state.saved" min-w-75 />
       </div>
 
       <section class="flex gap4" items-start>

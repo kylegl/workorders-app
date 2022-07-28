@@ -1,15 +1,18 @@
 <script setup lang="ts">
 const { data, loading } = storeToRefs(useMainStore())
-const initialValue = $ref(data?.value?.contacts?.[0])
+const { parsedWo, wo } = storeToRefs(useWoStore())
+const { loadWo } = useWoStore()
 
-const val = {
-  contacts: [
-    {
-      name: 'John Doe',
-      email: '',
-    },
-  ],
+const load = () => {
+  loadWo('0035cab8-d00e-4c89-bca8-c67efe9e699d')
 }
+
+const obj = $ref([
+  { name: 'John', age: 30 },
+  { name: 'Mary', age: 25 },
+])
+
+const localValue = $ref(parsedWo.value?.['FK|employee_id'])
 </script>
 
 <template>
@@ -18,13 +21,16 @@ const val = {
       Loading...
     </div>
     <div v-else flex="~ col">
-      {{ initialValue }}
+      <button @click="load">
+        Load
+      </button>
+      {{ localValue }}
       <SelectV2
-        v-model:value="initialValue"
-        :data="toRaw(data?.contacts) ?? []"
+        v-model:value="obj"
+        :data="toRaw(data?.employees) ?? []"
         :search-keys="['name']"
         label="name"
-        :multiple="true"
+        :multiple="true" :taggable="true" :disabled="loading" :push-tags="true"
         bg-1 text-norm
       />
     </div>
