@@ -13,6 +13,8 @@ const props = defineProps<{
   taggable?: boolean
   disabled?: boolean
   pushTags?: boolean
+  clearable?: boolean
+  searchable?: boolean
   createOption?: (input: any) => any
 }>()
 const emit = defineEmits<{
@@ -50,18 +52,27 @@ function fuseSearch(options: any, search: any) {
       :filter="fuseSearch"
       :label="label" :options="data"
       :multiple="multiple" :taggable="taggable" :push-tags="pushTags" :disabled="disabled"
+      :clearable="clearable" :searchable="searchable"
       :create-option="createOption"
       @option:selected="emit('selected')"
       @option:deselected="emit('deselected')"
       @option:created="addToDb"
-    />
+    >
+      <template #open-indicator="{ attributes }">
+        <Icon v-bind="attributes" i-fa:chevron-down />
+      </template>
+    </v-select>
   </div>
 </template>
 
 <style>
+#select button:disabled {
+  display: none
+}
 :root {
   --vs-dropdown-bg: #FAFAFA;
   --vs-dropdown-option--active-bg: #e4e4e7;
   --vs-dropdown-option--active-color: #18181b;
+  --vs-border-color: transparent;
 }
 </style>

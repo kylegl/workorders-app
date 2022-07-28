@@ -9,11 +9,12 @@ const currentStatus = useVModel(props, 'status', emit)
 
 <template>
   <div>
-    <Select
-      v-model="currentStatus"
-      label="Status"
-      :list="options"
-      :disabled="disabled"
+    <label text-h5>Status</label>
+    <SelectV2
+      v-model:value="currentStatus"
+      :data="options"
+      :disabled="disabled" :clearable="false" :searchable="false"
+      bg-1 text-norm border="~ base" rounded min-w-36
     />
   </div>
 </template>

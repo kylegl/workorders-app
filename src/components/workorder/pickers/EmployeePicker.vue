@@ -30,6 +30,7 @@ watchEffect(() => {
 
 <template>
   <div>
+    <label text-h5>Assigned To</label>
     <SelectV2
       v-model:value="employees"
       label="name"
@@ -39,6 +40,7 @@ watchEffect(() => {
       :create-option="createEmployee" table="employees"
       @deselected="onChange"
       @selected="onChange"
+      bg-1 text-norm border="~ base" rounded
     />
   </div>
 </template>
