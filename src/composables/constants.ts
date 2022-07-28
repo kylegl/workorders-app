@@ -29,6 +29,8 @@ export const newTask = lineitemValidator.parse({
   notes: '',
   item_number: null,
   completed: false,
+  created_at: null,
+  updated_at: null,
 })
 
 export const woStatuses = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']
@@ -98,6 +100,21 @@ export const newEmployee = employeeValidator.parse({
   name: '',
   email: '',
   phone: '',
+  created_at: null,
+  updated_at: null,
 })
 
 export const employeePositions = ['Manager', 'Painter', 'Supervisor']
+
+export function newClient() {
+  return {
+    id: useUid(),
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
+    notes: '',
+    created_at: +new Date(),
+    updated_at: null,
+  }
+}

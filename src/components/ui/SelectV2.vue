@@ -6,7 +6,7 @@ import type { DataEntryType, StoreDataKey } from '~/types'
 const props = defineProps<{
   data?: DataEntryType[]
   value: any
-  searchKeys: string[]
+  searchKeys?: string[]
   table?: StoreDataKey
   label?: string
   multiple?: boolean

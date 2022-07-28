@@ -11,7 +11,7 @@ const { wo, state } = storeToRefs(useWoStore())
         <EmployeePicker v-model:value="wo['FK|employee_id']" :disabled="state.saved" min-w-75 />
       </div>
 
-      <section class="flex gap4" items-start>
+      <section flex gap4 items-start>
         <ProjectInfo v-model:workorder="wo" :disabled="state.saved" bg-2 w="1/3" shrink-0 min-h-122 />
 
         <Card flex="~ col" w-full gap4 bg-2 min-h-122>

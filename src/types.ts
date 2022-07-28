@@ -44,6 +44,8 @@ export const employeeValidator = z.object({
   email: emailOrUndefined,
   phone: numberOrString,
   position: stringOrUndefined,
+  created_at: castStringToNumber,
+  updated_at: castStringToNumber,
 })
 
 export type EmployeeType = z.infer<typeof employeeValidator>
@@ -82,8 +84,8 @@ export const workorderValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
-  'FK|employee_id': stringOrUndefined,
-  'FK|contact_id': stringOrUndefined,
+  'FK|employee_id': z.array(stringOrUndefined).nullable(),
+  'FK|contact_id': z.array(stringOrUndefined).nullable(),
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
   'FK|property_id': z.string().optional(),
@@ -106,8 +108,8 @@ export const outgoingWorkorderValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
-  'FK|employee_id': stringOrUndefined,
-  'FK|contact_id': stringOrUndefined,
+  'FK|employee_id': z.array(stringOrUndefined).nullable(),
+  'FK|contact_id': z.array(stringOrUndefined).nullable(),
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
   'FK|property_id': z.string().optional(),
@@ -169,6 +171,8 @@ export const contactValidator = z.object({
   'email': stringOrUndefined,
   'FK|client_id': stringOrUndefined,
   'phone': numberOrString,
+  'created_at': castStringToNumber,
+  'updated_at': castStringToNumber,
 })
 
 export type ContactType = z.infer<typeof contactValidator>
@@ -179,6 +183,8 @@ export const clientValidator = z.object({
   email: emailOrUndefined,
   phone: numberOrString,
   address: stringOrUndefined,
+  created_at: castStringToNumber,
+  updated_at: castStringToNumber,
 })
 
 export type ClientType = z.infer<typeof clientValidator>
@@ -193,6 +199,8 @@ export const incomingLineitemValidator = z.object({
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
   'notes': casteToJSON,
+  'created_at': castStringToNumber,
+  'updated_at': castStringToNumber,
 })
 export const lineitemValidator = z.object({
   'id': z.string(),
@@ -204,6 +212,8 @@ export const lineitemValidator = z.object({
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
   'notes': stringOrDelta,
+  'created_at': castStringToNumber,
+  'updated_at': castStringToNumber,
 })
 
 export type LineitemType = z.infer<typeof lineitemValidator>
@@ -218,6 +228,8 @@ export const outgoingLineitemValidator = z.object({
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
   'notes': castJSONtoString,
+  'created_at': castStringToNumber,
+  'updated_at': castStringToNumber,
 })
 
 export const versionValidator = z.object({
