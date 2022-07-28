@@ -27,12 +27,14 @@ const { wo, state } = storeToRefs(useWoStore())
           v-model:type="wo.job_type"
           :options="jobTypeOptions"
           :disabled="state.saved"
+          w="1/2"
         />
 
         <BillTypePicker
           v-model:type="wo.bill_type"
           :options="billingOptions"
           :disabled="state.saved"
+           w="1/2"
         />
       </div>
     </div>

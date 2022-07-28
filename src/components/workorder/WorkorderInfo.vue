@@ -49,7 +49,7 @@ const { wo, state } = storeToRefs(useWoStore())
             />
 
             <div text-h5>
-              Parking Info
+              Property Info
             </div>
             <div v-if="state.saved" v-html="parseDelta(wo.parking_info)" />
             <Editor

@@ -1,19 +1,20 @@
 <script setup lang="ts">
-const props = defineProps<{ type?: string | null; options: Array<string>; disabled: boolean }>()
+const props = defineProps<{ type: string; options: Array<string>; disabled: boolean }>()
 const emit = defineEmits<{
   (e: 'update:type', value: string | undefined): void
 }>()
 
-const billType = useVModel(props, 'type', emit)
+const currType = useVModel(props, 'type', emit)
 </script>
 
 <template>
   <div>
-    <Select
-      v-model="billType"
-      label="Bill Type"
-      :list="options"
-      :disabled="disabled"
+    <label text-h5>Bill Type</label>
+    <SelectV2
+      v-model:value="currType"
+      :data="options"
+      :disabled="disabled" :clearable="false" :searchable="false"
+      bg-1 text-norm border="~ base" rounded
     />
   </div>
 </template>
