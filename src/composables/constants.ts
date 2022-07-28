@@ -118,3 +118,25 @@ export function newClient() {
     updated_at: null,
   }
 }
+
+export function newJob() {
+  return {
+    'id': useUid(),
+    'job_name': '',
+    'job_number': '',
+    'FK|client_id': '',
+    'FK|property_id': '',
+    'FK|employee_id': '',
+    'start_date': null,
+    'due_date': null,
+    'description': '',
+    'parking_info': '',
+    'notes': '',
+    'bill_type': '',
+    'job_type': '',
+    'created_at': +new Date(),
+    'updated_at': null,
+    'closed_at': null,
+    'status': 'Upcoming',
+  }
+}

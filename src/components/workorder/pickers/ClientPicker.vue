@@ -30,6 +30,7 @@ watchEffect(() => {
 
 <template>
   <div>
+    <label text-h5>Client</label>
     <SelectV2
       v-model:value="client"
       label="name"

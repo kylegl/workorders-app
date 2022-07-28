@@ -58,6 +58,9 @@ function fuseSearch(options: any, search: any) {
       @option:deselected="emit('deselected')"
       @option:created="addToDb"
     >
+      <template #option="option">
+        <slot name="option" :option="option" />
+      </template>
       <template #open-indicator="{ attributes }">
         <Icon v-bind="attributes" i-fa:chevron-down />
       </template>

@@ -8,9 +8,14 @@ import { Mutation } from '~/api/index'
 
 export function isFK(key: string): { isForeignKey: boolean; name: StoreDataKey | undefined } {
   const [,,type] = key.match(/^(FK\|)([^_]+)_(id)$/) ?? []
-  const name: StoreDataKey | undefined = type ? `${type}s` : undefined
   const isForeignKey = !!type
+  let name: StoreDataKey | undefined
 
+  if (isForeignKey) {
+    const endsInY = type.endsWith('y')
+
+    name = endsInY ? `${type.slice(0, -1)}ies` : `${type}s`
+  }
   return {
     isForeignKey,
     name,
@@ -29,7 +34,8 @@ const isErrorWithMessage = (error: unknown): error is ErrorWithMessage => {
 }
 
 const toErrorWithMessage = (maybeError: unknown): ErrorWithMessage => {
-  if (isErrorWithMessage(maybeError)) return maybeError
+  if (isErrorWithMessage(maybeError))
+    return maybeError
 
   try {
     return new Error(JSON.stringify(maybeError))
@@ -99,7 +105,7 @@ export function isJson(value: unknown) {
     JSON.parse(value)
     return true
   }
-  catch(e) {
+  catch (e) {
     console.log('isJson error', e)
     return false
   }
