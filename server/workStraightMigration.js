@@ -32,7 +32,8 @@ const createWos = () => {
     wo.bill_type = entry.bill_type
     wo.job_type = capFirst(entry.job_type)
 
-    if (Object.keys(error).length) jobNumsNotInDb.push(error)
+    if (Object.keys(error).length)
+      jobNumsNotInDb.push(error)
     return wo
   })
 

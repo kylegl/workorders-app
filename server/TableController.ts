@@ -71,8 +71,6 @@ class TableController {
 
     this.unlock()
 
-    // const formatData = Table.data.map(row => ({ ...row, type: this.table }))
-
     return { ok: true, data: Table.data, version: uuid, table: this.table }
   }
 

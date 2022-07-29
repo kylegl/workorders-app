@@ -25,7 +25,7 @@ export const useWoStore = defineStore('woStore', () => {
       newWo['FK|job_id'] = job.id
       newWo['FK|bid_id'] = job['FK|bid_id']?.id
       newWo['FK|client_id'] = job['FK|client_id'].id
-      newWo['FK|contact_id'] = [job['FK|contact_id']?.id]
+      newWo['FK|contact_id'] = job['FK|contact_id']?.length ? job['FK|contact_id']?.map(el => el.id) : []
     }
 
     main.addItem({ data: newWo, table: 'workorders' })

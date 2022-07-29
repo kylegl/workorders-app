@@ -4,13 +4,25 @@ export interface Header {
   key: string
   title: string
 }
-const stringOrUndefined = z.union([z.nullable(z.string()), z.undefined()])
+const stringOrUndefined = z.string().nullish()
 
-const numberOrUndefined = z.union([z.nullable(z.number()), z.undefined()])
+const numberOrUndefined = z.number().nullish()
 
-const emailOrUndefined = z.union([z.nullable(z.string().email()), z.undefined(), z.literal('')])
+const nullUndefEmpty = z.literal('').nullish()
+const emailOrUndefined = z.union([z.string().email(), nullUndefEmpty])
+
+const booleanUndef = z.union([z.boolean(), nullUndefEmpty])
 
 const numberOrString = z.union([stringOrUndefined, numberOrUndefined])
+
+const numberFalsy = z.union([z.number().nullable(), z.literal('')])
+
+const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()])
+type Literal = z.infer<typeof literalSchema>
+type Json = Literal | { [key: string]: Json } | Json[]
+const jsonSchema: z.ZodType<Json> = z.lazy(() =>
+  z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]),
+)
 
 export const deltaValidator = z.object({
   ops: z.array(z.object({
@@ -32,10 +44,10 @@ const parseJSON = (val: unknown) => {
     return val
   }
 }
-const casteToJSON = z.preprocess(val => parseJSON(val), stringOrNumberOrDelta)
-const castJSONtoString = z.preprocess(val => JSON.stringify(val), stringOrNumberOrDelta)
+const casteToJSON = (validator: any) => z.preprocess(val => parseJSON(val), validator)
+const castJSONtoString = (validator: any) => z.preprocess(val => JSON.stringify(val), validator)
 const castStringToNumber = z.preprocess(val => val === '' ? undefined : typeof val === 'string' ? +val : val, numberOrUndefined)
-
+const nullableArray = z.array(stringOrUndefined).nullable()
 export const employeeValidator = z.object({
   id: z.string(),
   name: z.string({
@@ -54,16 +66,16 @@ export const incomingWoValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
-  'FK|employee_id': z.array(stringOrUndefined).nullable(),
-  'FK|contact_id': z.array(stringOrUndefined).nullable(),
+  'FK|employee_id': casteToJSON(nullableArray),
+  'FK|contact_id': casteToJSON(nullableArray),
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
   'FK|property_id': stringOrUndefined,
   'start_date': castStringToNumber,
   'due_date': castStringToNumber,
-  'description': casteToJSON,
-  'parking_info': casteToJSON,
-  'notes': casteToJSON,
+  'description': casteToJSON(stringOrNumberOrDelta),
+  'parking_info': casteToJSON(stringOrNumberOrDelta),
+  'notes': casteToJSON(jsonSchema),
   'bill_type': stringOrUndefined,
   'job_type': stringOrUndefined,
   'created_at': castStringToNumber,
@@ -75,7 +87,7 @@ export const incomingWoValidator = z.object({
 export const propertyValidator = z.object({
   id: z.string(),
   address: z.string(),
-  gate_code: z.number().nullable().optional(),
+  gate_code: numberFalsy.optional(),
 })
 
 export type PropertyType = z.infer<typeof propertyValidator>
@@ -84,8 +96,8 @@ export const workorderValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
-  'FK|employee_id': z.array(stringOrUndefined).nullable(),
-  'FK|contact_id': z.array(stringOrUndefined).nullable(),
+  'FK|employee_id': nullableArray,
+  'FK|contact_id': nullableArray,
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
   'FK|property_id': z.string().optional(),
@@ -108,16 +120,16 @@ export const outgoingWorkorderValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
   'FK|client_id': z.string(),
-  'FK|employee_id': z.array(stringOrUndefined).nullable(),
-  'FK|contact_id': z.array(stringOrUndefined).nullable(),
+  'FK|employee_id': castJSONtoString(stringOrUndefined),
+  'FK|contact_id': castJSONtoString(stringOrUndefined),
   'FK|job_id': stringOrUndefined,
   'FK|bid_id': stringOrUndefined,
   'FK|property_id': z.string().optional(),
   'start_date': numberOrUndefined,
   'due_date': numberOrUndefined,
-  'description': castJSONtoString,
-  'parking_info': castJSONtoString,
-  'notes': castJSONtoString,
+  'description': castJSONtoString(stringOrNumberOrDelta),
+  'parking_info': castJSONtoString(stringOrNumberOrDelta),
+  'notes': castJSONtoString(stringOrNumberOrDelta),
   'bill_type': stringOrUndefined,
   'job_type': stringOrUndefined,
   'created_at': numberOrUndefined,
@@ -128,26 +140,35 @@ export const outgoingWorkorderValidator = z.object({
 
 export const jobValidator = z.object({
   'id': z.string(),
-  'FK|client_id': z.string(),
-  'FK|contact_id': stringOrUndefined,
-  'FK|bid_id': stringOrUndefined,
+  'FK|client_id': z.string().optional(),
+  'FK|contact_id': casteToJSON(nullableArray),
+  'FK|bid_id': stringOrUndefined.optional(),
   'FK|property_id': z.string().optional(),
-  'job_number': numberOrString,
-  'prevailing_wage': z.boolean(),
-  'job_folder_id': z.string(),
+  'job_number': numberOrString.optional(),
+  'prevailing_wage': booleanUndef,
+  'job_folder_id': z.string().optional(),
   'job_name': stringOrUndefined,
-  'status': z.string(),
-  'billing_type': z.string(),
+  'status': z.string().optional(),
+  'billing_type': z.string().optional(),
   'start_date': castStringToNumber,
   'closed_date': castStringToNumber,
 })
+export const stringifyArray = castJSONtoString(z.string().nullish())
+
+export const outgoingJobValidator = jobValidator
+  .omit({ 'FK|contact_id': true })
+  .merge(z.object({
+    'FK|contact_id': stringifyArray,
+  }))
+
+export const parseArrayString = casteToJSON(nullableArray)
 
 export type JobType = z.infer<typeof jobValidator>
 
 export const bidValidator = z.object({
   'id': z.string(),
   'FK|client_id': z.string(),
-  'FK|contact_id': stringOrUndefined,
+  'FK|contact_id': casteToJSON(nullableArray),
   'FK|property_id': z.string().optional(),
   'bid_id': z.string(),
   'prevailing_wage': z.boolean(),
@@ -192,13 +213,13 @@ export type ClientType = z.infer<typeof clientValidator>
 export const incomingLineitemValidator = z.object({
   'id': z.string(),
   'FK|workorder_id': z.string().optional(),
-  'description': casteToJSON,
-  'details': casteToJSON,
-  'quantity': casteToJSON,
+  'description': casteToJSON(stringOrNumberOrDelta),
+  'details': casteToJSON(stringOrNumberOrDelta),
+  'quantity': casteToJSON(stringOrNumberOrDelta),
   'hours': numberOrString,
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
-  'notes': casteToJSON,
+  'notes': casteToJSON(stringOrNumberOrDelta),
   'created_at': castStringToNumber,
   'updated_at': castStringToNumber,
 })
@@ -221,13 +242,13 @@ export type LineitemType = z.infer<typeof lineitemValidator>
 export const outgoingLineitemValidator = z.object({
   'id': z.string(),
   'FK|workorder_id': z.string().optional(),
-  'description': castJSONtoString,
-  'details': castJSONtoString,
-  'quantity': castJSONtoString,
+  'description': castJSONtoString(stringOrNumberOrDelta),
+  'details': castJSONtoString(stringOrNumberOrDelta),
+  'quantity': castJSONtoString(stringOrNumberOrDelta),
   'hours': numberOrString,
   'item_number': numberOrUndefined,
   'completed': z.boolean().optional(),
-  'notes': castJSONtoString,
+  'notes': castJSONtoString(stringOrNumberOrDelta),
   'created_at': castStringToNumber,
   'updated_at': castStringToNumber,
 })
@@ -262,14 +283,14 @@ export const packValidator = z.discriminatedUnion('table', [
 ])
 
 export const mutationValidator = z.discriminatedUnion('table', [
-  z.object({ table: z.literal('jobs'), data: jobValidator }),
-  z.object({ table: z.literal('bids'), data: bidValidator }),
-  z.object({ table: z.literal('contacts'), data: contactValidator }),
-  z.object({ table: z.literal('clients'), data: clientValidator }),
-  z.object({ table: z.literal('employees'), data: employeeValidator }),
-  z.object({ table: z.literal('workorders'), data: outgoingWorkorderValidator }),
-  z.object({ table: z.literal('line_items'), data: outgoingLineitemValidator }),
-  z.object({ table: z.literal('properties'), data: z.array(propertyValidator) }),
+  z.object({ table: z.literal('jobs'), data: outgoingJobValidator.optional() }),
+  z.object({ table: z.literal('bids'), data: bidValidator.optional() }),
+  z.object({ table: z.literal('contacts'), data: contactValidator.optional() }),
+  z.object({ table: z.literal('clients'), data: clientValidator.optional() }),
+  z.object({ table: z.literal('employees'), data: employeeValidator.optional() }),
+  z.object({ table: z.literal('workorders'), data: outgoingWorkorderValidator.optional() }),
+  z.object({ table: z.literal('line_items'), data: outgoingLineitemValidator.optional() }),
+  z.object({ table: z.literal('properties'), data: propertyValidator.optional() }),
 ])
 
 export const requestDataResponseValidator = z.object({
@@ -365,7 +386,7 @@ export type Move = z.infer<typeof moveValidator>
 export const jobParsedValidator = z.object({
   'id': z.string(),
   'FK|client_id': clientValidator,
-  'FK|contact_id': contactValidator,
+  'FK|contact_id': z.array(contactValidator).optional(),
   'FK|bid_id': bidValidator,
   'FK|property_id': propertyValidator.optional(),
   'job_number': numberOrString,
@@ -384,8 +405,8 @@ export const parsedWorkorderValidator = z.object({
   'id': z.string(),
   'wo_number': numberOrUndefined,
   'FK|client_id': clientValidator.optional(),
-  'FK|employee_id': employeeValidator.optional(),
-  'FK|contact_id': contactValidator.optional(),
+  'FK|employee_id': z.array(employeeValidator).optional(),
+  'FK|contact_id': z.array(contactValidator).optional(),
   'FK|job_id': jobValidator.optional(),
   'FK|bid_id': bidValidator.optional(),
   'FK|property_id': propertyValidator.optional(),

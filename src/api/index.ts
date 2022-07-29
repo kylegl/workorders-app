@@ -10,7 +10,6 @@ export async function Query(versions: VersionType, path: string) {
       const result = await gasQuery(versions, path)
       if (!result)
         throw new Error('No response from API')
-
       return result as ApiResponse
     }
 

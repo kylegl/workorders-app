@@ -36,7 +36,7 @@ watchEffect(() => {
       label="address"
       :data="data.properties"
       :search-keys="['address']"
-      :disabled="disabled" :taggable="true"
+      :disabled="disabled" :taggable="true" :searchable="true"
       :create-option="createProperty" table="properties"
       bg-1
       text-norm

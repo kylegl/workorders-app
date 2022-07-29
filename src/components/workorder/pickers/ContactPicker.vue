@@ -36,7 +36,7 @@ watchEffect(() => {
       label="name"
       :data="data.contacts"
       :search-keys="['name']"
-      :disabled="disabled" :multiple="true" :taggable="true" :push-tags="false"
+      :disabled="disabled" :multiple="true" :taggable="true" :push-tags="false" :searchable="true"
       :create-option="createContact" table="contacts"
       bg-1
       text-norm

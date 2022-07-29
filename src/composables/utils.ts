@@ -2,7 +2,7 @@ import type { WatchWithFilterOptions } from '@vueuse/core'
 import { promiseTimeout } from '@vueuse/core'
 import type { Ref, WatchCallback } from 'vue'
 import { nanoid } from 'nanoid'
-import type { Data, DataEntryType, DataTable, ErrorWithMessage, Id, StoreDataKey, Version } from '~/types'
+import type { DataEntryType, ErrorWithMessage, StoreDataKey, Version } from '~/types'
 import { mutationValidator } from '~/types'
 import { Mutation } from '~/api/index'
 
@@ -89,9 +89,6 @@ export function getStatusColor(status: string, startDate: number | null | undefi
 }
 
 export async function useDelay(ms: number, cb: () => void, state?: Ref<boolean>) {
-  if (state)
-    state.value = !state.value
-
   await promiseTimeout(ms)
 
   if (state)

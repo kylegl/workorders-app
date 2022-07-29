@@ -32,7 +32,7 @@ const client = $computed(() => workorder?.['FK|client_id'])
             </span>
           </JobDates>
 
-          <Assigned :is-assigned="!!employees.length" :persons="employees" />
+          <Assigned :is-assigned="!!employees?.length" :persons="employees" />
         </div>
 
         <Divider w=".25" h-full />

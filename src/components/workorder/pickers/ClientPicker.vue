@@ -36,7 +36,7 @@ watchEffect(() => {
       label="name"
       :data="data.clients"
       :search-keys="['name']"
-      :disabled="disabled" :taggable="true"
+      :disabled="disabled" :taggable="true" :searchable="true"
       :create-option="createClient" table="employees"
       bg-1
       text-norm

@@ -4,7 +4,6 @@ import { getErrorMessage } from '~/composables/utils'
 
 export const handleResponse = (rawResponse: string) => {
   const parsedRes = JSON.parse(rawResponse)
-
   const res = apiResponseValidator.parse(parsedRes)
   return res
 }

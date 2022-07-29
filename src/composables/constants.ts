@@ -1,4 +1,4 @@
-import { contactValidator, employeeValidator, incomingWoValidator, lineitemValidator } from '~/types'
+import { contactValidator, employeeValidator, incomingWoValidator, lineitemValidator, workorderValidator } from '~/types'
 
 export const jobFilters = [
   { name: 'Active', key: 'status', value: 'Active', isActive: true },
@@ -35,7 +35,7 @@ export const newTask = lineitemValidator.parse({
 
 export const woStatuses = ['Upcoming', 'In-progress', 'Completed', 'On-hold', 'Cancelled']
 
-export const newWorkorder = incomingWoValidator.parse({
+export const newWorkorder = workorderValidator.parse({
   'id': '',
   'wo_number': null,
   'FK|job_id': '',
@@ -73,7 +73,6 @@ export const woSearchKeys = [
   'job_name',
   'address',
   'wo_number',
-  'FK|client_id.name',
   'FK|employee_id.name',
   'FK|job_id.job_name',
   'FK|property_id.address',
@@ -126,7 +125,7 @@ export function newJob() {
     'job_number': '',
     'FK|client_id': '',
     'FK|property_id': '',
-    'FK|employee_id': '',
+    'FK|contact_id': [],
     'start_date': null,
     'due_date': null,
     'description': '',
@@ -146,6 +145,7 @@ export function newProperty() {
     id: useUid(),
     address: '',
     gate_code: '',
+    notes: '',
     created_at: +new Date(),
     updated_at: null,
   }
