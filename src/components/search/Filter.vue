@@ -6,9 +6,10 @@ interface Filter {
   isActive?: boolean
 }
 
-const { filterList, data } = defineProps<{
+const { filterList, data, disabled } = defineProps<{
   filterList: Filter[]
   data: any[]
+  disabled?: boolean
 }>()
 
 const emit = defineEmits(['update:filteredData'])
@@ -18,7 +19,8 @@ const filters = $ref(filterList)
 const filteredData = $computed(() => {
   const activeFilters = filters.filter(filter => filter.isActive)
 
-  if (activeFilters.length === 0) return data
+  if (activeFilters.length === 0)
+    return data
 
   return data.filter((row) => {
     return activeFilters.some((filter) => {
@@ -40,6 +42,7 @@ const isActive = (filter: Filter) => filter.isActive ? 'btn-active' : 'btn-inact
       v-for="filter in filters"
       :key="filter.name"
       :class="isActive(filter)"
+      :disabled="disabled"
       @click="toggleFilter(filter)"
     >
       {{ filter.name }}

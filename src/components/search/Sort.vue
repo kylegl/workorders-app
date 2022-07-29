@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { SortKey, SortKeyArray } from '~/types'
-const { keys, list } = defineProps<{
+const { keys, list, disabled } = defineProps<{
   keys: SortKeyArray
   list: any[] | undefined
+  disabled?: boolean
 }>()
 const emit = defineEmits(['update:sortedList'])
 
@@ -45,6 +46,7 @@ const active = (key: SortKey) => key.isActive ? 'btn-active' : 'btn-inactive'
       flex gap1
       :class="active(key)"
       @click="toggleSort(key)"
+      :disabled="disabled"
     >
       {{ key.name }}
       <Icon v-if="!key.isString"

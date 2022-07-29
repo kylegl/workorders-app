@@ -23,6 +23,7 @@ const res = $ref()
     <section flex="~ col" gap4 w-full>
       <div flex justify-between>
         <Search
+          :disabled="loading"
           v-model:results="searchResults" :data="rawWos"
           :keys="woSearchKeys"
           w="1/2"
@@ -30,7 +31,7 @@ const res = $ref()
           max-w-75
         />
 
-        <Button btn-primary @click="createWo">
+        <Button btn-primary :disabled="loading" @click="createWo">
           <Icon i-fa-solid:plus text-2xl />
           Work Order
         </Button>
@@ -39,9 +40,15 @@ const res = $ref()
       <div flex gap2 items-center>
         <Icon i-mdi:filter text-2xl my-auto />
         <div flex gap2 w-full flex-wrap>
-          <Filter v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" flex gap2 />
+          <Filter
+            v-model:filteredData="filteredWos" :filter-list="woFilters" :data="wos" :disabled="loading"
+            flex gap2
+          />
 
-          <Sort v-if="filteredWos" v-model:sortedList="sortedWos" :list="filteredWos" :keys="woSortKeys" flex gap2 />
+          <Sort
+            v-if="filteredWos" v-model:sortedList="sortedWos" :list="filteredWos" :keys="woSortKeys" :disabled="loading"
+            flex gap2
+          />
         </div>
       </div>
 
