@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
-const { data, keys } = defineProps<{
+const { data, keys, disabled } = defineProps<{
   data: any[]
   keys: string[]
-  initial?: string
+  disabled?: boolean
 }>()
 
 const emit = defineEmits(['update:results'])
@@ -17,7 +17,8 @@ const options = {
 const searchValue = $ref('')
 const fuse = $computed(() => new Fuse(data, options))
 const searchResult = $computed(() => {
-  if (searchValue === '') return data
+  if (searchValue === '')
+    return data
   return fuse.search(searchValue)
     ?.map((result) => {
       return result.item
@@ -33,10 +34,11 @@ const searchResult = $computed(() => {
       place-holder-text="Search..."
       @keydown.enter="emit('update:results', searchResult)"
       @input="emit('update:results', searchResult)"
+      :disabled="disabled"
     >
       <template #after>
         <button class="flex" @click="true">
-          <Icon i-fluent-search-12-regular text-2xl in_out m-auto action-hover mx2/>
+          <Icon i-fluent-search-12-regular text-2xl in_out m-auto action-hover mx2 />
         </button>
       </template>
     </Input>

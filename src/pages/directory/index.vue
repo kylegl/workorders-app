@@ -40,13 +40,19 @@ const employees = $computed(() => {
             {{ employee.position }}
           </div>
         </div>
-        <div flex text-h5 gap2 items-center w-40 shrink-0>
+        <div
+          v-if="employee?.phone"
+          flex text-h5 gap2 items-center w-40 shrink-0
+        >
           <Icon i-carbon:phone shrink-0 />
           <div>
             {{ employee?.phone }}
           </div>
         </div>
-        <div flex text-h5 gap2 grow shrink-0 items-center>
+        <div
+          v-if="employee?.email"
+          flex text-h5 gap2 grow shrink-0 items-center
+        >
           <Icon i-carbon:email shrink-0 />
           <div>
             {{ employee?.email }}

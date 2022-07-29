@@ -71,11 +71,11 @@ export const useWoStore = defineStore('woStore', () => {
   }
 
   function safeToClose() {
-    const trash = Boolean(state.new && !state.dirty)
+    const isTrash = Boolean(state.new && !state.dirty)
 
-    const close = Boolean(state.saved || (!state.new && !state.dirty))
+    const canClose = Boolean(state.saved || (!state.new && !state.dirty))
 
-    return { trash, close }
+    return { isTrash, canClose }
   }
 
   function close() {

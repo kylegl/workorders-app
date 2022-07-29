@@ -11,7 +11,7 @@ const numberOrUndefined = z.number().nullish()
 const nullUndefEmpty = z.literal('').nullish()
 const emailOrUndefined = z.union([z.string().email(), nullUndefEmpty])
 
-const booleanUndef = z.union([z.boolean(), nullUndefEmpty])
+const booleanUndef = z.union([z.boolean().nullish(), nullUndefEmpty])
 
 const numberOrString = z.union([stringOrUndefined, numberOrUndefined])
 

@@ -33,13 +33,16 @@ const openDialog = async () => {
 }
 
 async function checkWoState(action: string) {
-  const isSafe = safeToClose()[action as keyof typeof safeToClose]
+  const { isTrash, canClose } = safeToClose()
   let confirm = true
 
-  if (!isSafe) {
+  if (isTrash)
+    return deleteW()
+
+  if (!isTrash || !canClose) {
     popupMsg = action === 'close'
-      ? 'Do you want to save before leaving?'
-      : 'Do you want to delete this work order?'
+      ? 'Save before leaving?'
+      : 'Delete this work order?'
 
     const { isCanceled } = await openDialog()
     confirm = !isCanceled
@@ -51,7 +54,8 @@ async function checkWoState(action: string) {
   if (confirm && action === 'trash')
     deleteW()
 
-  close()
+  if (!confirm && action === 'close')
+    close()
 }
 </script>
 
